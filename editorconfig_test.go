@@ -30,9 +30,11 @@ func TestParse(t *testing.T) {
 	assert.Equal(t, "*.go", def.Selector)
 	assert.Equal(t, IdentStyleTab, def.IndentStyle)
 	assert.Equal(t, "4", def.IndentSize)
+	assert.Equal(t, 4, def.TabWidth)
 
 	def = ec.Definitions[2]
 	assert.Equal(t, "*.{js,css,less,htm,html}", def.Selector)
 	assert.Equal(t, IdentStyleSpaces, def.IndentStyle)
 	assert.Equal(t, "2", def.IndentSize)
+	assert.Equal(t, 2, def.TabWidth)
 }

@@ -4,6 +4,7 @@ package editorconfig
 
 import (
 	"io/ioutil"
+	"strconv"
 
 	"gopkg.in/ini.v1"
 )
@@ -74,6 +75,15 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		// tab_width defaults to indent_size:
+		// https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties#tab_width
+		if definition.TabWidth <= 0 {
+			if num, err := strconv.Atoi(definition.IndentSize); err == nil {
+				definition.TabWidth = num
+			}
+		}
+
 		definition.Selector = sectionStr
 		editorConfig.Definitions = append(editorConfig.Definitions, definition)
 	}
