@@ -58,3 +58,19 @@ func TestFilenameMatches(t *testing.T) {
 	assertFilenameNotMatch("*.{js,css}", "main.go")
 	assertFilenameMatch("*.{css,less}", "foo/bar/file.less")
 }
+
+func TestGetDefinition(t *testing.T) {
+	ec, err := ParseFile(testFile)
+	if err != nil {
+		t.Errorf("Couldn't parse file: %v", err)
+	}
+
+	def := ec.GetDefinitionForFilename("main.go")
+	assert.Equal(t, IdentStyleTab, def.IndentStyle)
+	assert.Equal(t, "4", def.IndentSize)
+	assert.Equal(t, 4, def.TabWidth)
+	assert.Equal(t, true, def.TrimTrailingWhitespace)
+	assert.Equal(t, CharsetUTF8, def.Charset)
+	assert.Equal(t, true, def.InsertFinalNewline)
+	assert.Equal(t, EndOfLineLf, def.EndOfLine)
+}

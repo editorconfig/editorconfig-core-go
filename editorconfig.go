@@ -138,3 +138,41 @@ func filenameMatches(pattern, name string) bool {
 	}
 	return false
 }
+
+func (d *Definition) merge(md *Definition) {
+	if len(d.Charset) == 0 {
+		d.Charset = md.Charset
+	}
+	if len(d.IndentStyle) == 0 {
+		d.IndentStyle = md.IndentStyle
+	}
+	if len(d.IndentSize) == 0 {
+		d.IndentSize = md.IndentSize
+	}
+	if d.TabWidth <= 0 {
+		d.TabWidth = md.TabWidth
+	}
+	if len(d.EndOfLine) == 0 {
+		d.EndOfLine = md.EndOfLine
+	}
+	if !d.TrimTrailingWhitespace {
+		d.TrimTrailingWhitespace = md.TrimTrailingWhitespace
+	}
+	if !d.InsertFinalNewline {
+		d.InsertFinalNewline = md.InsertFinalNewline
+	}
+}
+
+// GetDefinitionForFilename returns a definition for the given filename.
+// The result is a merge of the selectors that matched the file.
+// The last section has preference over the priors.
+func (e *Editorconfig) GetDefinitionForFilename(name string) *Definition {
+	def := &Definition{}
+	for i := len(e.Definitions) - 1; i >= 0; i-- {
+		actualDef := e.Definitions[i]
+		if filenameMatches(actualDef.Selector, name) {
+			def.merge(actualDef)
+		}
+	}
+	return def
+}
