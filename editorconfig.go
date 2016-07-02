@@ -13,10 +13,10 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-// IdentStyle possible values
+// IndentStyle possible values
 const (
-	IdentStyleTab    = "tab"
-	IdentStyleSpaces = "space"
+	IndentStyleTab    = "tab"
+	IndentStyleSpaces = "space"
 )
 
 // EndOfLine possible values
