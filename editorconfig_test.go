@@ -38,3 +38,23 @@ func TestParse(t *testing.T) {
 	assert.Equal(t, "2", def.IndentSize)
 	assert.Equal(t, 2, def.TabWidth)
 }
+
+func TestFilenameMatches(t *testing.T) {
+	assertFilenameMatch := func(pattern, name string) {
+		assert.Equal(t, true, filenameMatches(pattern, name), "\"%s\" should match \"%s\"", name, pattern)
+	}
+	assertFilenameNotMatch := func(pattern, name string) {
+		assert.Equal(t, false, filenameMatches(pattern, name), "\"%s\" should not match \"%s\"", name, pattern)
+	}
+	assertFilenameMatch("*", "main.go")
+	assertFilenameMatch("*.go", "main.go")
+	assertFilenameNotMatch("*.js", "main.go")
+	assertFilenameMatch("main.go", "main.go")
+	assertFilenameMatch("main.go", "foo/bar/main.go")
+	assertFilenameMatch("foo/bar/main.go", "foo/bar/main.go")
+	assertFilenameMatch("foo", "foo/main.go")
+
+	assertFilenameMatch("*.{go,css}", "main.go")
+	assertFilenameNotMatch("*.{js,css}", "main.go")
+	assertFilenameMatch("*.{css,less}", "foo/bar/file.less")
+}

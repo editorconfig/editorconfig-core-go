@@ -3,8 +3,12 @@
 package editorconfig
 
 import (
+	"fmt"
 	"io/ioutil"
+	"path/filepath"
+	"regexp"
 	"strconv"
+	"strings"
 
 	"gopkg.in/ini.v1"
 )
@@ -98,4 +102,39 @@ func ParseFile(f string) (*Editorconfig, error) {
 	}
 
 	return ParseBytes(data)
+}
+
+var (
+	regexpMultiExtension = regexp.MustCompile("\\.{.*}$")
+)
+
+func filenameMatches(pattern, name string) bool {
+	// basic match
+	matched, _ := filepath.Match(pattern, name)
+	if matched {
+		return true
+	}
+	// foo/bar/main.go should match main.go
+	matched, _ = filepath.Match(pattern, filepath.Base(name))
+	if matched {
+		return true
+	}
+	// foo should match foo/main.go
+	matched, _ = filepath.Match(filepath.Join(pattern, "*"), name)
+	if matched {
+		return true
+	}
+	// *.{js,go} should match main.go
+	if str := regexpMultiExtension.FindString(pattern); len(str) > 0 {
+		// remote initial ".{" and final "}"
+		str = str[2 : len(str)-1]
+
+		for _, ext := range strings.Split(str, ",") {
+			matched, _ = filepath.Match(fmt.Sprintf("*.%s", ext), filepath.Base(name))
+			if matched {
+				return true
+			}
+		}
+	}
+	return false
 }
