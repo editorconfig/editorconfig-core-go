@@ -1,6 +1,6 @@
-# Go Editorconfig
+# Editorconfig Core Go
 
-A Go parser for [Editorconfig][editorconfig] files.
+A [Editorconfig][editorconfig] file parser and manipulator for Go.
 
 ## Usage
 
@@ -23,7 +23,7 @@ if err != nil {
 }
 ```
 
-### Get definition to a given filename.
+### Get definition to a given filename
 
 This method builds a definition to a given filename.
 This definition is a merge of the properties with selectors that matched the
@@ -47,6 +47,24 @@ type Definition struct {
 	EndOfLine              string
 	TrimTrailingWhitespace bool
 	InsertFinalNewline     bool
+}
+```
+
+### Generating a .editorconfig file
+
+You can easily convert a Editorconfig struct to a compatible INI file:
+
+```go
+// serialize to slice of bytes
+data, err := editorConfig.Serialize()
+if err != nil {
+    log.Fatal(err)
+}
+
+// save directly to file
+err := editorConfig.Save("path/to/.editorconfig")
+if err != nil {
+    log.Fatal(err)
 }
 ```
 
