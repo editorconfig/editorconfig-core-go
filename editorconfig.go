@@ -3,6 +3,7 @@
 package editorconfig
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"path/filepath"
@@ -39,7 +40,7 @@ const (
 // The definition is composed of the selector ("*", "*.go", "*.{js.css}", etc),
 // plus the properties of the selected files.
 type Definition struct {
-	Selector string
+	Selector string `ini:"-"`
 
 	Charset                string `ini:"charset"`
 	IndentStyle            string `ini:"indent_style"`
@@ -175,4 +176,62 @@ func (e *Editorconfig) GetDefinitionForFilename(name string) *Definition {
 		}
 	}
 	return def
+}
+
+func boolToString(b bool) string {
+	if b {
+		return "true"
+	}
+	return "false"
+}
+
+// Serialize converts the Editorconfig to a slice of bytes, containing the
+// content of the file in the INI format.
+func (e *Editorconfig) Serialize() ([]byte, error) {
+	var (
+		iniFile = ini.Empty()
+		buffer  = bytes.NewBuffer(nil)
+	)
+	iniFile.Section(ini.DEFAULT_SECTION).Comment = "http://editorconfig.org"
+	if e.Root {
+		iniFile.Section(ini.DEFAULT_SECTION).Key("root").SetValue(boolToString(e.Root))
+	}
+	for _, d := range e.Definitions {
+		iniSec := iniFile.Section(d.Selector)
+		if len(d.Charset) > 0 {
+			iniSec.Key("charset").SetValue(d.Charset)
+		}
+		if len(d.IndentStyle) > 0 {
+			iniSec.Key("indent_style").SetValue(d.IndentStyle)
+		}
+		if len(d.IndentSize) > 0 {
+			iniSec.Key("indent_size").SetValue(d.IndentSize)
+		}
+		if d.TabWidth > 0 && strconv.Itoa(d.TabWidth) != d.IndentSize {
+			iniSec.Key("tab_width").SetValue(strconv.Itoa(d.TabWidth))
+		}
+		if len(d.EndOfLine) > 0 {
+			iniSec.Key("end_of_line").SetValue(d.EndOfLine)
+		}
+		if d.TrimTrailingWhitespace {
+			iniSec.Key("trim_trailing_whitespace").SetValue(boolToString(d.TrimTrailingWhitespace))
+		}
+		if d.InsertFinalNewline {
+			iniSec.Key("insert_final_newline").SetValue(boolToString(d.InsertFinalNewline))
+		}
+	}
+	_, err := iniFile.WriteTo(buffer)
+	if err != nil {
+		return nil, err
+	}
+	return buffer.Bytes(), nil
+}
+
+// Save saves the Editorconfig to a compatible INI file.
+func (e *Editorconfig) Save(filename string) error {
+	data, err := e.Serialize()
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(filename, data, 0666)
 }

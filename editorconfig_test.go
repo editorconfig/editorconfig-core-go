@@ -1,6 +1,8 @@
 package editorconfig
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"gopkg.in/stretchr/testify.v1/assert"
@@ -10,12 +12,7 @@ const (
 	testFile = "testdata/.editorconfig"
 )
 
-func TestParse(t *testing.T) {
-	ec, err := ParseFile(testFile)
-	if err != nil {
-		t.Errorf("Couldn't parse file: %v", err)
-	}
-
+func testParse(t *testing.T, ec *Editorconfig) {
 	assert.Equal(t, true, ec.Root)
 	assert.Equal(t, 3, len(ec.Definitions))
 
@@ -37,6 +34,15 @@ func TestParse(t *testing.T) {
 	assert.Equal(t, IndentStyleSpaces, def.IndentStyle)
 	assert.Equal(t, "2", def.IndentSize)
 	assert.Equal(t, 2, def.TabWidth)
+}
+
+func TestParse(t *testing.T) {
+	ec, err := ParseFile(testFile)
+	if err != nil {
+		t.Errorf("Couldn't parse file: %v", err)
+	}
+
+	testParse(t, ec)
 }
 
 func TestFilenameMatches(t *testing.T) {
@@ -73,4 +79,22 @@ func TestGetDefinition(t *testing.T) {
 	assert.Equal(t, CharsetUTF8, def.Charset)
 	assert.Equal(t, true, def.InsertFinalNewline)
 	assert.Equal(t, EndOfLineLf, def.EndOfLine)
+}
+
+func TestSave(t *testing.T) {
+	ec, err := ParseFile(testFile)
+	if err != nil {
+		t.Errorf("Couldn't parse file: %v", err)
+	}
+
+	tempFile := filepath.Join(os.TempDir(), ".editorconfig")
+	defer os.Remove(tempFile)
+
+	err = ec.Save(tempFile)
+	assert.Nil(t, err)
+
+	savedEc, err := ParseFile(tempFile)
+	assert.Nil(t, err)
+
+	testParse(t, savedEc)
 }
