@@ -2,6 +2,14 @@
 
 A [Editorconfig][editorconfig] file parser and manipulator for Go.
 
+> This package is already working, but still under testing.
+
+## Installing
+
+```bash
+go get -u gopkg.in/editorconfig/editorconfig-core-go.v1
+```
+
 ## Usage
 
 ### Parse from file
