@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/gopkg.in/editorconfig/editorconfig-core-go.v1?status.svg)](https://godoc.org/gopkg.in/editorconfig/editorconfig-core-go.v1)
+
 # Editorconfig Core Go
 
 A [Editorconfig][editorconfig] file parser and manipulator for Go.
@@ -6,8 +8,19 @@ A [Editorconfig][editorconfig] file parser and manipulator for Go.
 
 ## Installing
 
+We recommend the use of [gopkg.in][gopkg] for this package:
+
 ```bash
 go get -u gopkg.in/editorconfig/editorconfig-core-go.v1
+```
+
+Import by the same path. Tha package name you will use to access it is
+`editorconfig`.
+
+```go
+import (
+    "gopkg.in/editorconfig/editorconfig-core-go.v1"
+)
 ```
 
 ## Usage
@@ -85,3 +98,4 @@ go test
 ```
 
 [editorconfig]: http://editorconfig.org/
+[gopkg]: https://gopkg.in
