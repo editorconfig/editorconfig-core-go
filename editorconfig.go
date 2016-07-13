@@ -4,7 +4,6 @@ package editorconfig
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
@@ -106,7 +105,7 @@ func ParseFile(f string) (*Editorconfig, error) {
 }
 
 var (
-	regexpMultiExtension = regexp.MustCompile("\\.{.*}$")
+	regexpBraces = regexp.MustCompile("{.*}")
 )
 
 func filenameMatches(pattern, name string) bool {
@@ -126,12 +125,21 @@ func filenameMatches(pattern, name string) bool {
 		return true
 	}
 	// *.{js,go} should match main.go
-	if str := regexpMultiExtension.FindString(pattern); len(str) > 0 {
-		// remote initial ".{" and final "}"
-		str = str[2 : len(str)-1]
+	if str := regexpBraces.FindString(pattern); len(str) > 0 {
+		// remote initial "{" and final "}"
+		str = strings.TrimPrefix(str, "{")
+		str = strings.TrimSuffix(str, "}")
 
-		for _, ext := range strings.Split(str, ",") {
-			matched, _ = filepath.Match(fmt.Sprintf("*.%s", ext), filepath.Base(name))
+		// testing for empty brackets: "{}"
+		if len(str) == 0 {
+			patt := regexpBraces.ReplaceAllString(pattern, "*")
+			matched, _ = filepath.Match(patt, filepath.Base(name))
+			return matched
+		}
+
+		for _, patt := range strings.Split(str, ",") {
+			patt = regexpBraces.ReplaceAllString(pattern, patt)
+			matched, _ = filepath.Match(patt, filepath.Base(name))
 			if matched {
 				return true
 			}
