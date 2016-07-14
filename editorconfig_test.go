@@ -74,6 +74,9 @@ func TestFilenameMatches(t *testing.T) {
 	assertFilenameNotMatch("a{a,b,,d}.go", "ac.go")
 	assertFilenameNotMatch("a{b,c,d}.go", "a.go")
 	assertFilenameMatch("a{b,c,,d}.go", "a.go")
+
+	assertFilenameMatch("a[a-d].go", "ac.go")
+	assertFilenameNotMatch("a[a-d].go", "af.go")
 }
 
 func TestGetDefinition(t *testing.T) {
