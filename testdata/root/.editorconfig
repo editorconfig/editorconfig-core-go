@@ -1,0 +1,5 @@
+root = true
+
+[*.go]
+indent_style = space
+insert_final_newline = true

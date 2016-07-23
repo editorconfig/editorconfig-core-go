@@ -112,3 +112,12 @@ func TestSave(t *testing.T) {
 
 	testParse(t, savedEc)
 }
+
+func TestPublicTestDefinitionForFilename(t *testing.T) {
+	def, err := GetDefinitionForFilename("testdata/root/src/dummy.go")
+	assert.Nil(t, err)
+	assert.Equal(t, "4", def.IndentSize)
+	assert.Equal(t, IndentStyleTab, def.IndentStyle)
+	assert.Equal(t, true, def.InsertFinalNewline)
+	assert.Equal(t, false, def.TrimTrailingWhitespace)
+}

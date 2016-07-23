@@ -5,6 +5,7 @@ package editorconfig
 import (
 	"bytes"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -242,4 +243,35 @@ func (e *Editorconfig) Save(filename string) error {
 		return err
 	}
 	return ioutil.WriteFile(filename, data, 0666)
+}
+
+// GetDefinitionForFilename given a filename, searches
+// for .editorconfig files, starting from the file folder,
+// walking through the previous folders, until it reaches a
+// folder with `root = true`, and returns the right editorconfig
+// definition for the given file.
+func GetDefinitionForFilename(filename string) (*Definition, error) {
+	abs, err := filepath.Abs(filename)
+	if err != nil {
+		return nil, err
+	}
+	definition := &Definition{}
+
+	dir := abs
+	for dir != filepath.Dir(dir) {
+		dir = filepath.Dir(dir)
+		ecFile := filepath.Join(dir, ".editorconfig")
+		if _, err := os.Stat(ecFile); os.IsNotExist(err) {
+			continue
+		}
+		ec, err := ParseFile(ecFile)
+		if err != nil {
+			return nil, err
+		}
+		definition.merge(ec.GetDefinitionForFilename(filename))
+		if ec.Root {
+			break
+		}
+	}
+	return definition, nil
 }
