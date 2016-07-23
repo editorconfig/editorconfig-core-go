@@ -72,6 +72,25 @@ type Definition struct {
 }
 ```
 
+#### Automatic search for `.editorconfig` files
+
+If you want a definition of a file without having to manually
+parse the `.editorconfig` files, you can then use the static version
+of `GetDefinitionForFilename`:
+
+```go
+def, err := editorconfig.GetDefinitionForFilename("foo/bar/baz/my-file.go")
+```
+
+In the example above, the package will automatically search for
+`.editorconfig` files on:
+
+- `foo/bar/baz/.editorconfig`
+- `foo/baz/.editorconfig`
+- `foo/.editorconfig`
+
+Until it reaches a file with `root = true` or the root of the filesystem.
+
 ### Generating a .editorconfig file
 
 You can easily convert a Editorconfig struct to a compatible INI file:
