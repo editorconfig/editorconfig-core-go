@@ -40,15 +40,15 @@ const (
 // The definition is composed of the selector ("*", "*.go", "*.{js.css}", etc),
 // plus the properties of the selected files.
 type Definition struct {
-	Selector string `ini:"-"`
+	Selector string `ini:"-" json:"-"`
 
-	Charset                string `ini:"charset"`
-	IndentStyle            string `ini:"indent_style"`
-	IndentSize             string `ini:"indent_size"`
-	TabWidth               int    `ini:"tab_width"`
-	EndOfLine              string `ini:"end_of_line"`
-	TrimTrailingWhitespace bool   `ini:"trim_trailing_whitespace"`
-	InsertFinalNewline     bool   `ini:"insert_final_newline"`
+	Charset                string `ini:"charset" json:"charset,omitempty"`
+	IndentStyle            string `ini:"indent_style" json:"indent_style,omitempty"`
+	IndentSize             string `ini:"indent_size" json:"indent_size,omitempty"`
+	TabWidth               int    `ini:"tab_width" json:"tab_width,omitempty"`
+	EndOfLine              string `ini:"end_of_line" json:"end_of_line,omitempty"`
+	TrimTrailingWhitespace bool   `ini:"trim_trailing_whitespace" json:"trim_trailing_whitespace,omitempty"`
+	InsertFinalNewline     bool   `ini:"insert_final_newline" json:"insert_final_newline,omitempty"`
 }
 
 // Editorconfig represents a .editorconfig file.
