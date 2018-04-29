@@ -251,6 +251,10 @@ func (e *Editorconfig) Save(filename string) error {
 // folder with `root = true`, and returns the right editorconfig
 // definition for the given file.
 func GetDefinitionForFilename(filename string) (*Definition, error) {
+	return GetDefinitionForFilenameWithConfigname(filename, ".editorconfig")
+}
+
+func GetDefinitionForFilenameWithConfigname(filename string, configname string) (*Definition, error) {
 	abs, err := filepath.Abs(filename)
 	if err != nil {
 		return nil, err
@@ -260,7 +264,7 @@ func GetDefinitionForFilename(filename string) (*Definition, error) {
 	dir := abs
 	for dir != filepath.Dir(dir) {
 		dir = filepath.Dir(dir)
-		ecFile := filepath.Join(dir, ".editorconfig")
+		ecFile := filepath.Join(dir, configname)
 		if _, err := os.Stat(ecFile); os.IsNotExist(err) {
 			continue
 		}
