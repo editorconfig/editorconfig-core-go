@@ -2,17 +2,12 @@
 language: go
 sudo: false
 go:
-  - 1.7.3
-  - 1.8.1
-  - tip
-
-matrix:
-  allow_failures:
-    - go: tip
+  - '1.8'
+  - '1.9'
+  - '1.10'
 
 install:
-  - go get -u ./...
-  - go get -u gopkg.in/stretchr/testify.v1/assert
+  - go get -u -t ./...
 
 script:
   - go test -v
