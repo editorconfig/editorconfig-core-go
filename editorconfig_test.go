@@ -121,3 +121,12 @@ func TestPublicTestDefinitionForFilename(t *testing.T) {
 	assert.Equal(t, true, def.InsertFinalNewline)
 	assert.Equal(t, false, def.TrimTrailingWhitespace)
 }
+
+func TestPublicTestDefinitionForFilenameWithConfigname(t *testing.T) {
+	def, err := GetDefinitionForFilenameWithConfigname("testdata/root/src/dummy.go", "a.ini")
+	assert.Nil(t, err)
+	assert.Equal(t, "5", def.IndentSize)
+	assert.Equal(t, IndentStyleSpaces, def.IndentStyle)
+	assert.Equal(t, false, def.InsertFinalNewline)
+	assert.Equal(t, false, def.TrimTrailingWhitespace)
+}
