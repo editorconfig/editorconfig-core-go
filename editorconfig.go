@@ -14,6 +14,10 @@ import (
 	"gopkg.in/ini.v1"
 )
 
+const (
+	ConfigNameDefault = ".editorconfig"
+)
+
 // IndentStyle possible values
 const (
 	IndentStyleTab    = "tab"
@@ -251,7 +255,7 @@ func (e *Editorconfig) Save(filename string) error {
 // folder with `root = true`, and returns the right editorconfig
 // definition for the given file.
 func GetDefinitionForFilename(filename string) (*Definition, error) {
-	return GetDefinitionForFilenameWithConfigname(filename, ".editorconfig")
+	return GetDefinitionForFilenameWithConfigname(filename, ConfigNameDefault)
 }
 
 func GetDefinitionForFilenameWithConfigname(filename string, configname string) (*Definition, error) {
