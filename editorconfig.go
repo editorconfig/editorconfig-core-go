@@ -177,6 +177,31 @@ func (d *Definition) merge(md *Definition) {
 	}
 }
 
+func (d *Definition) InsertToIniFile(iniFile *ini.File) {
+		iniSec := iniFile.Section(d.Selector)
+		if len(d.Charset) > 0 {
+			iniSec.Key("charset").SetValue(d.Charset)
+		}
+		if len(d.IndentStyle) > 0 {
+			iniSec.Key("indent_style").SetValue(d.IndentStyle)
+		}
+		if len(d.IndentSize) > 0 {
+			iniSec.Key("indent_size").SetValue(d.IndentSize)
+		}
+		if d.TabWidth > 0 && strconv.Itoa(d.TabWidth) != d.IndentSize {
+			iniSec.Key("tab_width").SetValue(strconv.Itoa(d.TabWidth))
+		}
+		if len(d.EndOfLine) > 0 {
+			iniSec.Key("end_of_line").SetValue(d.EndOfLine)
+		}
+		if d.TrimTrailingWhitespace {
+			iniSec.Key("trim_trailing_whitespace").SetValue(boolToString(d.TrimTrailingWhitespace))
+		}
+		if d.InsertFinalNewline {
+			iniSec.Key("insert_final_newline").SetValue(boolToString(d.InsertFinalNewline))
+		}
+}
+
 // GetDefinitionForFilename returns a definition for the given filename.
 // The result is a merge of the selectors that matched the file.
 // The last section has preference over the priors.
@@ -210,28 +235,7 @@ func (e *Editorconfig) Serialize() ([]byte, error) {
 		iniFile.Section(ini.DEFAULT_SECTION).Key("root").SetValue(boolToString(e.Root))
 	}
 	for _, d := range e.Definitions {
-		iniSec := iniFile.Section(d.Selector)
-		if len(d.Charset) > 0 {
-			iniSec.Key("charset").SetValue(d.Charset)
-		}
-		if len(d.IndentStyle) > 0 {
-			iniSec.Key("indent_style").SetValue(d.IndentStyle)
-		}
-		if len(d.IndentSize) > 0 {
-			iniSec.Key("indent_size").SetValue(d.IndentSize)
-		}
-		if d.TabWidth > 0 && strconv.Itoa(d.TabWidth) != d.IndentSize {
-			iniSec.Key("tab_width").SetValue(strconv.Itoa(d.TabWidth))
-		}
-		if len(d.EndOfLine) > 0 {
-			iniSec.Key("end_of_line").SetValue(d.EndOfLine)
-		}
-		if d.TrimTrailingWhitespace {
-			iniSec.Key("trim_trailing_whitespace").SetValue(boolToString(d.TrimTrailingWhitespace))
-		}
-		if d.InsertFinalNewline {
-			iniSec.Key("insert_final_newline").SetValue(boolToString(d.InsertFinalNewline))
-		}
+		d.InsertToIniFile(iniFile)
 	}
 	_, err := iniFile.WriteTo(buffer)
 	if err != nil {
