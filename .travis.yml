@@ -8,6 +8,7 @@ go:
 
 install:
   - go get -u -t ./...
+  - make submodule
 
 script:
-  - go test -v
+  - make check
