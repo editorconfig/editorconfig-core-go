@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/editorconfig/editorconfig-core-go.svg?branch=master)](https://travis-ci.org/editorconfig/editorconfig-core-go)
 [![GoDoc](https://godoc.org/gopkg.in/editorconfig/editorconfig-core-go.v1?status.svg)](https://godoc.org/gopkg.in/editorconfig/editorconfig-core-go.v1)
 [![Go Report Card](https://goreportcard.com/badge/gopkg.in/editorconfig/editorconfig-core-go.v1)](https://goreportcard.com/report/gopkg.in/editorconfig/editorconfig-core-go.v1)
 
