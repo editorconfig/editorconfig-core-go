@@ -5,9 +5,11 @@ go:
   - '1.8'
   - '1.9'
   - '1.10'
+go_import_path: gopkg.in/editorconfig/editorconfig-core-go.v1
 
 install:
-  - go get -u -t ./...
+  - go get -t ./...
+  - make submodule
 
 script:
-  - go test -v
+  - make check
