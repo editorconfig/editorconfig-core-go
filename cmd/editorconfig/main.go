@@ -36,6 +36,11 @@ func main() {
 
 	rest := flag.Args()
 
+	if len(rest) < 1 {
+		flag.Usage()
+		os.Exit(1)
+	}
+
 	for _, file := range rest {
 		if !filepath.IsAbs(file) {
 			fmt.Fprintf(os.Stderr, "Input file must be a full path name: %s\n", file)
