@@ -16,7 +16,7 @@ We recommend the use of [gopkg.in][gopkg] for this package:
 go get -u gopkg.in/editorconfig/editorconfig-core-go.v1
 ```
 
-Import by the same path. Tha package name you will use to access it is
+Import by the same path. The package name you will use to access it is
 `editorconfig`.
 
 ```go
