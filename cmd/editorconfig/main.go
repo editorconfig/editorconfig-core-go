@@ -23,7 +23,7 @@ func main() {
 		configversion string
 		showVersionFlag bool
 	)
-	flag.StringVar(&configname, "f", editorconfig.ConfigNameDefault, "Specify conf filename other than `.editorconfig'")
+	flag.StringVar(&configname, "f", editorconfig.ConfigNameDefault, "Specify conf filename other than '.editorconfig'")
 	flag.StringVar(&configversion, "b", "", "Specify version (used by devs to test compatibility)")
 	flag.BoolVar(&showVersionFlag, "v", false, "Display version information")
 	flag.BoolVar(&showVersionFlag, "version", false, "Display version information")
