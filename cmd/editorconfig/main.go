@@ -10,7 +10,7 @@ import (
 
 	"gopkg.in/ini.v1"
 
-	ec "github.com/editorconfig/editorconfig-core-go"
+	editorconfig "github.com/editorconfig/editorconfig-core-go"
 )
 
 const (
@@ -23,7 +23,7 @@ func main() {
 		configversion string
 		showVersionFlag bool
 	)
-	flag.StringVar(&configname, "f", ec.ConfigNameDefault, "Specify conf filename other than `.editorconfig'")
+	flag.StringVar(&configname, "f", editorconfig.ConfigNameDefault, "Specify conf filename other than `.editorconfig'")
 	flag.StringVar(&configversion, "b", "", "Specify version (used by devs to test compatibility)")
 	flag.BoolVar(&showVersionFlag, "v", false, "Display version information")
 	flag.BoolVar(&showVersionFlag, "version", false, "Display version information")
@@ -41,7 +41,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Input file must be a full path name: %s\n", file)
 			os.Exit(1)
 		}
-		def, err := ec.GetDefinitionForFilenameWithConfigname(file, configname)
+		def, err := editorconfig.GetDefinitionForFilenameWithConfigname(file, configname)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
