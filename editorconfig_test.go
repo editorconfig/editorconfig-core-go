@@ -78,8 +78,25 @@ func TestFilenameMatches(t *testing.T) {
 	assertFilenameNotMatch("a{b,c,d}.go", "a.go")
 	assertFilenameMatch("a{b,c,,d}.go", "a.go")
 
+	assertFilenameMatch("[abc].js", "b.js")
+	assertFilenameMatch("[abc]b.js", "ab.js")
 	assertFilenameMatch("a[a-d].go", "ac.go")
+	assertFilenameMatch("a[a-d].go", "ac.go")
+	assertFilenameMatch("a[a-d].go", "ac.go")
+	assertFilenameMatch("[abd-g].go", "e.go")
+	assertFilenameMatch("[!abc].js", "d.js")
+	assertFilenameMatch("[!abc]b.js", "db.js")
+	assertFilenameMatch("/dir/[!abc].js", "/dir/f.js")
+	assertFilenameMatch("[!a-c].js", "d.js")
+
+	assertFilenameNotMatch("[!abc].js", "b.js")
+	assertFilenameNotMatch("[!abc]b.js", "bb.js")
+	assertFilenameNotMatch("[!abc]b.js", "ab.js")
+	assertFilenameNotMatch("/dir/[!abc].js", "/dir/a.js")
 	assertFilenameNotMatch("a[a-d].go", "af.go")
+	assertFilenameNotMatch("[!a-c].js", "a.js")
+
+
 }
 
 func TestGetDefinition(t *testing.T) {
