@@ -62,6 +62,7 @@ type Definition struct {
 // file.
 type Editorconfig struct {
 	Root        bool
+	Path        string
 	Definitions []*Definition
 }
 
@@ -110,12 +111,22 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 
 // ParseFile parses from a file.
 func ParseFile(f string) (*Editorconfig, error) {
-	data, err := ioutil.ReadFile(f)
+	abs, err := filepath.Abs(f)
 	if err != nil {
 		return nil, err
 	}
 
-	return ParseBytes(data)
+	data, err := ioutil.ReadFile(abs)
+	if err != nil {
+		return nil, err
+	}
+
+	ec, err := ParseBytes(data)
+	if err != nil {
+		return nil, err
+	}
+	ec.Path = abs
+	return ec, nil
 }
 
 var (
