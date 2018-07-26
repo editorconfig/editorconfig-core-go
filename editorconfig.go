@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"gopkg.in/ini.v1"
+	"github.com/gobwas/glob"
 )
 
 const (
@@ -131,43 +132,30 @@ func ParseFile(f string) (*Editorconfig, error) {
 
 var (
 	regexpBraces = regexp.MustCompile("{.*}")
+	regexpSingleBrace = regexp.MustCompile("(?:^|[^\\\\]){[^},]+[^\\\\]}")
 )
 
-func filenameMatches(pattern, name string) bool {
+func filenameMatches(pattern, str string) bool {
 	// basic match
-	matched, _ := filepath.Match(pattern, name)
+	g, err := glob.Compile(pattern)
+	if err != nil {
+		return false
+	}
+	matched := g.Match(str)
 	if matched {
 		return true
 	}
-	// foo/bar/main.go should match main.go
-	matched, _ = filepath.Match(pattern, filepath.Base(name))
-	if matched {
-		return true
-	}
-	// foo should match foo/main.go
-	matched, _ = filepath.Match(filepath.Join(pattern, "*"), name)
-	if matched {
-		return true
-	}
-	// *.{js,go} should match main.go
-	if str := regexpBraces.FindString(pattern); len(str) > 0 {
-		// remote initial "{" and final "}"
-		str = strings.TrimPrefix(str, "{")
-		str = strings.TrimSuffix(str, "}")
+	// {single}.b should match "{single}.b" but currently gobwas/glob does
+	// not support this
+	if singleBrace := regexpSingleBrace.FindString(pattern); len(singleBrace) > 0 {
+		// Replace { and } to \{ and \}
+		singleBrace = regexp.MustCompile("^{").ReplaceAllString(singleBrace, "\\{")
+		singleBrace = regexp.MustCompile("}$").ReplaceAllString(singleBrace, "\\}")
 
-		// testing for empty brackets: "{}"
-		if len(str) == 0 {
-			patt := regexpBraces.ReplaceAllString(pattern, "*")
-			matched, _ = filepath.Match(patt, filepath.Base(name))
-			return matched
-		}
-
-		for _, patt := range strings.Split(str, ",") {
-			patt = regexpBraces.ReplaceAllString(pattern, patt)
-			matched, _ = filepath.Match(patt, filepath.Base(name))
-			if matched {
-				return true
-			}
+		newPattern := regexpSingleBrace.ReplaceAllString(pattern, singleBrace)
+		matched = filenameMatches(newPattern, str)
+		if matched {
+			return true
 		}
 	}
 	return false
@@ -213,16 +201,33 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 // GetDefinitionForFilename returns a definition for the given filename.
 // The result is a merge of the selectors that matched the file.
 // The last section has preference over the priors.
-func (e *Editorconfig) GetDefinitionForFilename(name string) *Definition {
+func (e *Editorconfig) GetDefinitionForFilename(name string) (*Definition, error) {
+	abs, err := filepath.Abs(name)
+	if err != nil {
+		return nil, err
+	}
+
 	def := &Definition{}
 	def.Raw = make(map[string]string)
 	for i := len(e.Definitions) - 1; i >= 0; i-- {
 		actualDef := e.Definitions[i]
-		if filenameMatches(actualDef.Selector, name) {
+		pattern := actualDef.Selector
+
+		targetName := abs
+
+		// If path separator not in pattern, just check file basename
+		// Otherwise pattern is relative to .editorconfig base directory
+		if p := strings.Index(pattern, string(filepath.Separator)); p == -1 {
+			targetName = filepath.Base(targetName)
+		} else {
+			pattern = filepath.Join(filepath.Dir(e.Path), pattern)
+		}
+
+		if filenameMatches(pattern, targetName) {
 			def.merge(actualDef)
 		}
 	}
-	return def
+	return def, nil
 }
 
 func boolToString(b bool) string {
@@ -290,7 +295,11 @@ func GetDefinitionForFilenameWithConfigname(filename string, configname string) 
 		if err != nil {
 			return nil, err
 		}
-		definition.merge(ec.GetDefinitionForFilename(filename))
+		def, err := ec.GetDefinitionForFilename(filename)
+		if err != nil {
+			return nil, err
+		}
+		definition.merge(def)
 		if ec.Root {
 			break
 		}

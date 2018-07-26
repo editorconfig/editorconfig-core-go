@@ -105,7 +105,8 @@ func TestGetDefinition(t *testing.T) {
 		t.Errorf("Couldn't parse file: %v", err)
 	}
 
-	def := ec.GetDefinitionForFilename("main.go")
+	def, err := ec.GetDefinitionForFilename("testdata/main.go")
+	assert.Nil(t, err)
 	assert.Equal(t, IndentStyleTab, def.IndentStyle)
 	assert.Equal(t, "4", def.IndentSize)
 	assert.Equal(t, 4, def.TabWidth)
@@ -135,6 +136,9 @@ func TestSave(t *testing.T) {
 
 func TestPublicTestDefinitionForFilename(t *testing.T) {
 	def, err := GetDefinitionForFilename("testdata/root/src/dummy.go")
+	if err != nil {
+		t.Errorf("Couldn't get file definition: %v", err)
+	}
 	assert.Nil(t, err)
 	assert.Equal(t, "4", def.IndentSize)
 	assert.Equal(t, IndentStyleTab, def.IndentStyle)
