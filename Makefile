@@ -1,17 +1,20 @@
 PROJECT_ROOT_DIR := $(CURDIR)
 SRC := editorconfig.go cmd/editorconfig/main.go
 
-.PHONY: bin check test test-core submodule
+.PHONY: bin test test-go test-core submodule installdeps
 
-check: test test-core
+test: test-go test-core
 
 submodule:
 	git submodule update --init
 
+installdeps:
+	go get -t ./...
+
 editorconfig: $(SRC)
 	go build ./cmd/editorconfig
 
-test:
+test-go:
 	go test -v
 
 test-core: editorconfig

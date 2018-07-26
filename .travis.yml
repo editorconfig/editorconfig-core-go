@@ -8,8 +8,7 @@ go:
 go_import_path: gopkg.in/editorconfig/editorconfig-core-go.v1
 
 install:
-  - go get -t ./...
-  - make submodule
+  - make installdeps
 
 script:
-  - make check
+  - make test
