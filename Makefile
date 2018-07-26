@@ -20,6 +20,5 @@ test-go:
 test-core: editorconfig
 	cd $(PROJECT_ROOT_DIR)/core-test && \
 		cmake -DEDITORCONFIG_CMD="$(PROJECT_ROOT_DIR)/editorconfig" .
-# Temporarily disable core-test
-	# cd $(PROJECT_ROOT_DIR)/core-test && \
-	# 	ctest --output-on-failure .
+	cd $(PROJECT_ROOT_DIR)/core-test && \
+		ctest --output-on-failure .
