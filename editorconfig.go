@@ -132,7 +132,7 @@ func ParseFile(f string) (*Editorconfig, error) {
 
 var (
 	regexpBraces = regexp.MustCompile("{.*}")
-	regexpSingleBrace = regexp.MustCompile("(?:^|[^\\\\]){[^},]+[^\\\\]}")
+	regexpSingleBrace = regexp.MustCompile("(?:^|[^\\\\]){[^},]*[^\\\\},]}")
 )
 
 func filenameMatches(pattern, str string) bool {
