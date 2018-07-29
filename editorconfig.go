@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"gopkg.in/ini.v1"
-	"github.com/gobwas/glob"
+	"github.com/danwakefield/fnmatch"
 )
 
 const (
@@ -131,33 +131,42 @@ func ParseFile(f string) (*Editorconfig, error) {
 }
 
 var (
-	regexpBraces = regexp.MustCompile("{.*}")
-	regexpSingleBrace = regexp.MustCompile("(?:^|[^\\\\]){[^},]*[^\\\\},]}")
+	regexpBraces = regexp.MustCompile("^(|.*?[^\\\\])({[^}]*,[^}]*[^\\\\}]})(.*)$")
 )
 
 func filenameMatches(pattern, str string) bool {
-	// basic match
-	g, err := glob.Compile(pattern)
-	if err != nil {
+	// Expand brace like {a,b,c}.js into a.js, b.js and c.js .
+	// {single}.b should match "{single}.b"
+	if braceMatch := regexpBraces.FindStringSubmatch(pattern); braceMatch != nil {
+		candidates := strings.TrimPrefix(braceMatch[2], "{")
+		candidates = strings.TrimSuffix(candidates, "}")
+
+		for _, candidate := range strings.Split(candidates, ",") {
+			newPattern := regexpBraces.ReplaceAllString(pattern, "${1}" + candidate + "${3}")
+			matched := filenameMatches(newPattern, str)
+			if matched {
+				return true
+			}
+		}
 		return false
 	}
-	matched := g.Match(str)
+
+	// basic match
+	matched := fnmatch.Match(pattern, str, 0)
 	if matched {
 		return true
 	}
-	// {single}.b should match "{single}.b" but currently gobwas/glob does
-	// not support this
-	if singleBrace := regexpSingleBrace.FindString(pattern); len(singleBrace) > 0 {
-		// Replace { and } to \{ and \}
-		singleBrace = regexp.MustCompile("^{").ReplaceAllString(singleBrace, "\\{")
-		singleBrace = regexp.MustCompile("}$").ReplaceAllString(singleBrace, "\\}")
+	// if singleBrace := regexpSingleBrace.FindString(pattern); len(singleBrace) > 0 {
+	// 	// Replace { and } to \{ and \}
+	// 	singleBrace = regexp.MustCompile("^{").ReplaceAllString(singleBrace, "\\{")
+	// 	singleBrace = regexp.MustCompile("}$").ReplaceAllString(singleBrace, "\\}")
 
-		newPattern := regexpSingleBrace.ReplaceAllString(pattern, singleBrace)
-		matched = filenameMatches(newPattern, str)
-		if matched {
-			return true
-		}
-	}
+	// 	newPattern := regexpSingleBrace.ReplaceAllString(pattern, singleBrace)
+	// 	matched = filenameMatches(newPattern, str)
+	// 	if matched {
+	// 		return true
+	// 	}
+	// }
 	return false
 }
 
