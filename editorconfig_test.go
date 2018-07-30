@@ -82,6 +82,11 @@ func TestFilenameMatches(t *testing.T) {
 	assertFilenameNotMatch("a{b,c,d}.go", "a.go")
 	assertFilenameMatch("a{b,c,,d}.go", "a.go")
 
+	assertFilenameMatch("a{1..3}.go", "a2.go")
+	assertFilenameNotMatch("a{1..3}.go", "a4.go")
+	assertFilenameMatch("a{-3..3}.go", "a-2.go")
+	assertFilenameMatch("a{-3..3}.{go,css}", "a2.go")
+
 	assertFilenameMatch("[abc].js", "b.js")
 	assertFilenameMatch("[abc]b.js", "ab.js")
 	assertFilenameMatch("a[a-d].go", "ac.go")

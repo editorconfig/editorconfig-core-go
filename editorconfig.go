@@ -4,6 +4,7 @@ package editorconfig
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -131,10 +132,36 @@ func ParseFile(f string) (*Editorconfig, error) {
 }
 
 var (
+	regexpNumRanges = regexp.MustCompile("^(|.*?[^\\\\])({[-+]?\\d+\\.\\.[-+]?\\d+})(.*)$")
 	regexpBraces = regexp.MustCompile("^(|.*?[^\\\\])({[^}]*,[^}]*[^\\\\}]})(.*)$")
 )
 
 func filenameMatches(pattern, str string) bool {
+	// Expand num range like {1..3}.js into 1.js, 2.js, 3.js
+	if numRangesMatch := regexpNumRanges.FindStringSubmatch(pattern); numRangesMatch != nil {
+		numRange := strings.TrimPrefix(numRangesMatch[2], "{")
+		numRange = strings.TrimSuffix(numRange, "}")
+		numRangeArray := strings.Split(numRange, "..")
+		rangeMin, err := strconv.Atoi(numRangeArray[0])
+		if err != nil {
+			// The value of regexpNumRanges should be broken
+			panic(err)
+		}
+		rangeMax, err := strconv.Atoi(numRangeArray[1])
+		if err != nil {
+			// The value of regexpNumRanges should be broken
+			panic(err)
+		}
+		for i := rangeMin; i <= rangeMax; i++ {
+			newPattern := fmt.Sprintf("%s%d%s", numRangesMatch[1], i, numRangesMatch[3])
+			matched := filenameMatches(newPattern, str)
+			if matched {
+				return true
+			}
+		}
+		return false
+	}
+
 	// Expand brace like {a,b,c}.js into a.js, b.js and c.js .
 	// {single}.b should match "{single}.b"
 	if braceMatch := regexpBraces.FindStringSubmatch(pattern); braceMatch != nil {
@@ -156,17 +183,7 @@ func filenameMatches(pattern, str string) bool {
 	if matched {
 		return true
 	}
-	// if singleBrace := regexpSingleBrace.FindString(pattern); len(singleBrace) > 0 {
-	// 	// Replace { and } to \{ and \}
-	// 	singleBrace = regexp.MustCompile("^{").ReplaceAllString(singleBrace, "\\{")
-	// 	singleBrace = regexp.MustCompile("}$").ReplaceAllString(singleBrace, "\\}")
 
-	// 	newPattern := regexpSingleBrace.ReplaceAllString(pattern, singleBrace)
-	// 	matched = filenameMatches(newPattern, str)
-	// 	if matched {
-	// 		return true
-	// 	}
-	// }
 	return false
 }
 
