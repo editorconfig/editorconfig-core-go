@@ -142,7 +142,7 @@ func filenameMatches(pattern, str string) bool {
 		candidates = strings.TrimSuffix(candidates, "}")
 
 		for _, candidate := range strings.Split(candidates, ",") {
-			newPattern := regexpBraces.ReplaceAllString(pattern, "${1}" + candidate + "${3}")
+			newPattern := braceMatch[1] + candidate + braceMatch[3]
 			matched := filenameMatches(newPattern, str)
 			if matched {
 				return true
