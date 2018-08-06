@@ -134,9 +134,16 @@ func ParseFile(f string) (*Editorconfig, error) {
 var (
 	regexpNumRanges = regexp.MustCompile("^(|.*?[^\\\\])({[-+]?\\d+\\.\\.[-+]?\\d+})(.*)$")
 	regexpBraces = regexp.MustCompile("^(|.*?[^\\\\])({[^}]*,[^}]*[^\\\\}]})(.*)$")
+	regexpBracketsSlashInside = regexp.MustCompile("(^|[^\\\\])\\[(.*?/.*?)\\]")
 )
 
 func filenameMatches(pattern, str string) bool {
+	// ab[e/]cd.i should match ab[e/]cd.i, and not abecd.i
+	if bracketsSlashInsideMatch := regexpBracketsSlashInside.FindStringSubmatch(pattern); bracketsSlashInsideMatch != nil {
+		newPattern := regexpBracketsSlashInside.ReplaceAllString(pattern, "${1}\\[${2}\\]")
+		return filenameMatches(newPattern, str)
+	}
+
 	// Expand num range like {1..3}.js into 1.js, 2.js, 3.js
 	if numRangesMatch := regexpNumRanges.FindStringSubmatch(pattern); numRangesMatch != nil {
 		numRange := strings.TrimPrefix(numRangesMatch[2], "{")
