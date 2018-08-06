@@ -135,12 +135,19 @@ var (
 	regexpNumRanges = regexp.MustCompile("^(|.*?[^\\\\])({[-+]?\\d+\\.\\.[-+]?\\d+})(.*)$")
 	regexpBraces = regexp.MustCompile("^(|.*?[^\\\\])({[^}]*,[^}]*[^\\\\}]})(.*)$")
 	regexpBracketsSlashInside = regexp.MustCompile("(^|[^\\\\])\\[(.*?/.*?)\\]")
+	regexpBracketsHalfOpen = regexp.MustCompile("(^|[^\\\\])\\[([^\\\\]]*)$")
 )
 
 func filenameMatches(pattern, str string) bool {
 	// ab[e/]cd.i should match ab[e/]cd.i, and not abecd.i
 	if bracketsSlashInsideMatch := regexpBracketsSlashInside.FindStringSubmatch(pattern); bracketsSlashInsideMatch != nil {
 		newPattern := regexpBracketsSlashInside.ReplaceAllString(pattern, "${1}\\[${2}\\]")
+		return filenameMatches(newPattern, str)
+	}
+
+	// ab[/c should match ab[/c
+	if bracketsHalfOpenMatch := regexpBracketsHalfOpen.FindStringSubmatch(pattern); bracketsHalfOpenMatch != nil {
+		newPattern := regexpBracketsHalfOpen.ReplaceAllString(pattern, "${1}\\[${2}")
 		return filenameMatches(newPattern, str)
 	}
 

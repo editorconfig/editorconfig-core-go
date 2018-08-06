@@ -108,6 +108,7 @@ func TestFilenameMatches(t *testing.T) {
 	assertFilenameMatch("ab[e/]cd.i", "ab[e/]cd.i")
 	assertFilenameNotMatch("ab[e/]cd.i", "ab/cd.i")
 	assertFilenameNotMatch("ab[e/]cd.i", "abecd.i")
+	assertFilenameNotMatch("ab[/c", "ab[/c")
 
 
 
