@@ -258,7 +258,7 @@ func (e *Editorconfig) GetDefinitionForFilename(name string) (*Definition, error
 		// If path separator not in pattern, just check file basename
 		// Otherwise pattern is relative to .editorconfig base directory
 		if p := strings.Index(pattern, string(filepath.Separator)); p == -1 {
-			pattern = filepath.Join("**/", pattern)
+			pattern = filepath.Join("**", pattern)
 		} else {
 			pattern = filepath.Join(filepath.Dir(e.Path), pattern)
 		}
