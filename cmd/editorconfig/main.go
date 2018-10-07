@@ -21,18 +21,11 @@ const (
 // if it is already absolute it returns
 // the given one
 func getAbsoluteFilePath(path string) string {
-	var absolutePath string
-	if !filepath.IsAbs(path) {
-		var err error
-		absolutePath, err = filepath.Abs(path)
+	absolutePath, err := filepath.Abs(path)
 
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "The argument is not a file: %s\n", path)
-			os.Exit(1)
-		}
-
-	} else {
-		absolutePath = path
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "The argument is not a file: %s\n", path)
+		os.Exit(1)
 	}
 
 	return absolutePath
