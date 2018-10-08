@@ -17,20 +17,6 @@ const (
 	Version = "1.2.0"
 )
 
-// Returns the absolute path of a file
-// if it is already absolute it returns
-// the given one
-func getAbsoluteFilePath(path string) string {
-	absolutePath, err := filepath.Abs(path)
-
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "The argument is not a file: %s\n", path)
-		os.Exit(1)
-	}
-
-	return absolutePath
-}
-
 func main() {
 	var (
 		configName      string
@@ -56,7 +42,12 @@ func main() {
 	}
 
 	for _, file := range rest {
-		absolutePath := getAbsoluteFilePath(file)
+		absolutePath, err := filepath.Abs(file)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
 		def, err := editorconfig.GetDefinitionForFilenameWithConfigname(absolutePath, configName)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
