@@ -2,11 +2,11 @@ package main
 
 import (
 	"bytes"
-	"path/filepath"
 	"flag"
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/ini.v1"
 
@@ -19,8 +19,8 @@ const (
 
 func main() {
 	var (
-		configName string
-		configVersion string
+		configName      string
+		configVersion   string
 		showVersionFlag bool
 	)
 	flag.StringVar(&configName, "f", editorconfig.ConfigNameDefault, "Specify conf filename other than '.editorconfig'")
@@ -42,11 +42,13 @@ func main() {
 	}
 
 	for _, file := range rest {
-		if !filepath.IsAbs(file) {
-			fmt.Fprintf(os.Stderr, "Input file must be a full path name: %s\n", file)
+		absolutePath, err := filepath.Abs(file)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-		def, err := editorconfig.GetDefinitionForFilenameWithConfigname(file, configName)
+
+		def, err := editorconfig.GetDefinitionForFilenameWithConfigname(absolutePath, configName)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
@@ -60,7 +62,7 @@ func main() {
 		if len(rest) < 2 {
 			def.Selector = ini.DEFAULT_SECTION
 		} else {
-			def.Selector = file
+			def.Selector = absolutePath
 		}
 		def.InsertToIniFile(iniFile)
 		_, err = iniFile.WriteTo(buffer)
