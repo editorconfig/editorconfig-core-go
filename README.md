@@ -72,6 +72,7 @@ type Definition struct {
 	EndOfLine              string
 	TrimTrailingWhitespace bool
 	InsertFinalNewline     bool
+	Raw                    map[string]string
 }
 ```
 
