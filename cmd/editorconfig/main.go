@@ -10,7 +10,7 @@ import (
 
 	"gopkg.in/ini.v1"
 
-	"gopkg.in/editorconfig/editorconfig-core-go.v1"
+	"github.com/editorconfig/editorconfig-core-go"
 )
 
 const (
