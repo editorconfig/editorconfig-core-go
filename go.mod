@@ -1,8 +1,6 @@
-module github.com/editorconfig/editorconfig-core-go
+module github.com/editorconfig/editorconfig-core-go/v2
 
 go 1.12
-
-replace gopkg.ini/ini.v1 => github.com/go-ini/ini v1.42.0
 
 require (
 	github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a // indirect

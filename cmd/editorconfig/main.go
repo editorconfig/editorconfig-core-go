@@ -10,11 +10,12 @@ import (
 
 	"gopkg.in/ini.v1"
 
-	"github.com/editorconfig/editorconfig-core-go"
+	"github.com/editorconfig/editorconfig-core-go/v2"
 )
 
 const (
-	Version = "1.3.0"
+	// Version indicates the current version number
+	Version = "2.0.0-alpha"
 )
 
 func main() {
