@@ -1,21 +1,18 @@
 PROJECT_ROOT_DIR := $(CURDIR)
-SRC := editorconfig.go cmd/editorconfig/main.go
+SRC := $(shell git ls-files *.go)
 
-.PHONY: bin test test-go test-core submodule installdeps
+.PHONY: bin test test-go test-core submodule
 
 test: test-go test-core
 
 submodule:
 	git submodule update --init
 
-installdeps:
-	go get -t ./...
-
 editorconfig: $(SRC)
 	go build ./cmd/editorconfig
 
 test-go:
-	go test -v
+	go test -v ./...
 
 test-core: editorconfig
 	cd $(PROJECT_ROOT_DIR)/core-test && \
