@@ -1,5 +1,5 @@
 PROJECT_ROOT_DIR := $(CURDIR)
-SRC := $(shell git ls-files *.go)
+SRC := $(shell git ls-files *.go */*.go)
 
 .PHONY: bin test test-go test-core submodule
 
@@ -15,8 +15,5 @@ test-go:
 	go test -v ./...
 
 test-core: editorconfig
-	cd $(PROJECT_ROOT_DIR)/core-test && \
-		cmake -DEDITORCONFIG_CMD="$(PROJECT_ROOT_DIR)/editorconfig" .
-# Temporarily disable core-test
-	# cd $(PROJECT_ROOT_DIR)/core-test && \
-	# 	ctest --output-on-failure .
+	cd core-test; cmake ..
+	cd core-test; ctest -E "^(tab_|indent_size_|lowercase_|comments_after_|octothorpe_|escaped_octothorpe_|max_property_|max_section_name_|root_file_|unset_)" --output-on-failure .

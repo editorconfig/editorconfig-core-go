@@ -15,6 +15,7 @@ import (
 )
 
 const (
+	// ConfigNameDefault represents the name of the configuration file
 	ConfigNameDefault = ".editorconfig"
 )
 
@@ -81,7 +82,7 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 		var (
 			iniSection = iniFile.Section(sectionStr)
 			definition = &Definition{}
-			raw  = make(map[string]string)
+			raw        = make(map[string]string)
 		)
 		err := iniSection.MapTo(&definition)
 		if err != nil {
@@ -122,46 +123,6 @@ var (
 	regexpBraces = regexp.MustCompile("{.*}")
 )
 
-func filenameMatches(pattern, name string) bool {
-	// basic match
-	matched, _ := filepath.Match(pattern, name)
-	if matched {
-		return true
-	}
-	// foo/bar/main.go should match main.go
-	matched, _ = filepath.Match(pattern, filepath.Base(name))
-	if matched {
-		return true
-	}
-	// foo should match foo/main.go
-	matched, _ = filepath.Match(filepath.Join(pattern, "*"), name)
-	if matched {
-		return true
-	}
-	// *.{js,go} should match main.go
-	if str := regexpBraces.FindString(pattern); len(str) > 0 {
-		// remote initial "{" and final "}"
-		str = strings.TrimPrefix(str, "{")
-		str = strings.TrimSuffix(str, "}")
-
-		// testing for empty brackets: "{}"
-		if len(str) == 0 {
-			patt := regexpBraces.ReplaceAllString(pattern, "*")
-			matched, _ = filepath.Match(patt, filepath.Base(name))
-			return matched
-		}
-
-		for _, patt := range strings.Split(str, ",") {
-			patt = regexpBraces.ReplaceAllString(pattern, patt)
-			matched, _ = filepath.Match(patt, filepath.Base(name))
-			if matched {
-				return true
-			}
-		}
-	}
-	return false
-}
-
 func (d *Definition) merge(md *Definition) {
 	if len(d.Charset) == 0 {
 		d.Charset = md.Charset
@@ -192,6 +153,7 @@ func (d *Definition) merge(md *Definition) {
 	}
 }
 
+// InsertToIniFile ... TODO
 func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 	iniSec := iniFile.Section(d.Selector)
 	for k, v := range d.Raw {
@@ -207,7 +169,18 @@ func (e *Editorconfig) GetDefinitionForFilename(name string) *Definition {
 	def.Raw = make(map[string]string)
 	for i := len(e.Definitions) - 1; i >= 0; i-- {
 		actualDef := e.Definitions[i]
-		if filenameMatches(actualDef.Selector, name) {
+		selector := actualDef.Selector
+		if !strings.HasPrefix(selector, "/") {
+			if strings.ContainsRune(selector, '/') {
+				selector = "/" + selector
+			} else {
+				selector = "/**/" + selector
+			}
+		}
+		if !strings.HasPrefix(name, "/") {
+			name = "/" + name
+		}
+		if FnmatchCase(selector, name) {
 			def.merge(actualDef)
 		}
 	}
@@ -279,10 +252,15 @@ func GetDefinitionForFilenameWithConfigname(filename string, configname string) 
 		if err != nil {
 			return nil, err
 		}
-		definition.merge(ec.GetDefinitionForFilename(filename))
+		relativeFilename := filename
+		if len(dir) < len(filename) {
+			relativeFilename = filename[len(dir):]
+		}
+		definition.merge(ec.GetDefinitionForFilename(relativeFilename))
 		if ec.Root {
 			break
 		}
 	}
+
 	return definition, nil
 }
