@@ -99,11 +99,12 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 
 		// Shallow copy all properties
 		for k, v := range iniSection.KeysHash() {
-			raw[k] = v
+			raw[strings.ToLower(k)] = v
 		}
 
 		definition.Selector = sectionStr
 		definition.Raw = raw
+		definition.normalize()
 		editorConfig.Definitions = append(editorConfig.Definitions, definition)
 	}
 	return editorConfig, nil
@@ -122,6 +123,13 @@ func ParseFile(f string) (*Editorconfig, error) {
 var (
 	regexpBraces = regexp.MustCompile("{.*}")
 )
+
+// normalize fixes some values to their lowercaes value
+func (d *Definition) normalize() {
+	d.Charset = strings.ToLower(d.Charset)
+	d.EndOfLine = strings.ToLower(d.EndOfLine)
+	d.IndentStyle = strings.ToLower(d.IndentStyle)
+}
 
 func (d *Definition) merge(md *Definition) {
 	if len(d.Charset) == 0 {
@@ -157,7 +165,19 @@ func (d *Definition) merge(md *Definition) {
 func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 	iniSec := iniFile.Section(d.Selector)
 	for k, v := range d.Raw {
-		iniSec.Key(k).SetValue(v)
+		if k == "insert_final_newline" {
+			iniSec.Key(k).SetValue(strconv.FormatBool(d.InsertFinalNewline))
+		} else if k == "trim_trailing_whitespace" {
+			iniSec.Key(k).SetValue(strconv.FormatBool(d.TrimTrailingWhitespace))
+		} else if k == "charset" {
+			iniSec.Key(k).SetValue(d.Charset)
+		} else if k == "end_of_line" {
+			iniSec.Key(k).SetValue(d.EndOfLine)
+		} else if k == "indent_style" {
+			iniSec.Key(k).SetValue(d.IndentStyle)
+		} else {
+			iniSec.Key(k).SetValue(v)
+		}
 	}
 }
 

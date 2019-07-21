@@ -16,4 +16,4 @@ test-go:
 
 test-core: editorconfig
 	cd core-test; cmake ..
-	cd core-test; ctest -E "^(tab_|indent_size_|lowercase_|comments_after_|octothorpe_|escaped_octothorpe_|max_property_|max_section_name_|root_file_|unset_)" --output-on-failure .
+	cd core-test; ctest -E "^(tab_|indent_size_|comments_after_|octothorpe_|escaped_octothorpe_|max_property_|max_section_name_|root_file_|unset_)" --output-on-failure .
