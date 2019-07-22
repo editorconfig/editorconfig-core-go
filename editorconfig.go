@@ -38,6 +38,7 @@ const (
 	CharsetUTF8    = "utf-8"
 	CharsetUTF16BE = "utf-16be"
 	CharsetUTF16LE = "utf-16le"
+	CharsetUTF8BOM = "utf-8 bom"
 )
 
 // Definition represents a definition inside the .editorconfig file.
@@ -89,14 +90,6 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 			return nil, err
 		}
 
-		// tab_width defaults to indent_size:
-		// https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties#tab_width
-		if definition.TabWidth <= 0 {
-			if num, err := strconv.Atoi(definition.IndentSize); err == nil {
-				definition.TabWidth = num
-			}
-		}
-
 		// Shallow copy all properties
 		for k, v := range iniSection.KeysHash() {
 			raw[strings.ToLower(k)] = v
@@ -129,6 +122,14 @@ func (d *Definition) normalize() {
 	d.Charset = strings.ToLower(d.Charset)
 	d.EndOfLine = strings.ToLower(d.EndOfLine)
 	d.IndentStyle = strings.ToLower(d.IndentStyle)
+
+	// tab_width defaults to indent_size:
+	// https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties#tab_width
+	num, err := strconv.Atoi(d.IndentSize)
+
+	if err == nil && d.TabWidth <= 0 {
+		d.TabWidth = num
+	}
 }
 
 func (d *Definition) merge(md *Definition) {
@@ -175,8 +176,20 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 			iniSec.Key(k).SetValue(d.EndOfLine)
 		} else if k == "indent_style" {
 			iniSec.Key(k).SetValue(d.IndentStyle)
+		} else if k == "tab_width" {
+			iniSec.Key(k).SetValue(strconv.Itoa(d.TabWidth))
+		} else if k == "indent_size" {
+			iniSec.Key(k).SetValue(d.IndentSize)
 		} else {
 			iniSec.Key(k).SetValue(v)
+		}
+	}
+	if _, ok := d.Raw["indent_size"]; !ok && d.TabWidth > 0 {
+		iniSec.Key("indent_size").SetValue(strconv.Itoa(d.TabWidth))
+	}
+	if _, ok := d.Raw["tab_width"]; !ok && len(d.IndentSize) > 0 {
+		if _, err := strconv.Atoi(d.IndentSize); err == nil {
+			iniSec.Key("tab_width").SetValue(d.IndentSize)
 		}
 	}
 }
