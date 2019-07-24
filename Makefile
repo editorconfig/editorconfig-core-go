@@ -16,4 +16,4 @@ test-go:
 
 test-core: editorconfig
 	cd core-test; cmake ..
-	cd core-test; ctest -E "(comments_after_section|octothorpe|unset_|indent_size_default|max_|root_file_mixed_case)" --output-on-failure .
+	cd core-test; ctest -E "(comments_after_section|octothorpe|unset_|_pre_0.9.0|max_|root_file_mixed_case)" --output-on-failure .

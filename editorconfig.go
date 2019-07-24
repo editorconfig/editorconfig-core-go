@@ -184,9 +184,14 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 			iniSec.Key(k).SetValue(v)
 		}
 	}
-	if _, ok := d.Raw["indent_size"]; !ok && d.TabWidth > 0 {
-		iniSec.Key("indent_size").SetValue(strconv.Itoa(d.TabWidth))
+	if _, ok := d.Raw["indent_size"]; !ok {
+		if d.TabWidth > 0 {
+			iniSec.Key("indent_size").SetValue(strconv.Itoa(d.TabWidth))
+		} else if d.IndentStyle == IndentStyleTab {
+			iniSec.Key("indent_size").SetValue(IndentStyleTab)
+		}
 	}
+
 	if _, ok := d.Raw["tab_width"]; !ok && len(d.IndentSize) > 0 {
 		if _, err := strconv.Atoi(d.IndentSize); err == nil {
 			iniSec.Key("tab_width").SetValue(d.IndentSize)
