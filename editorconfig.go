@@ -126,7 +126,6 @@ func (d *Definition) normalize() {
 	// tab_width defaults to indent_size:
 	// https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties#tab_width
 	num, err := strconv.Atoi(d.IndentSize)
-
 	if err == nil && d.TabWidth <= 0 {
 		d.TabWidth = num
 	}
