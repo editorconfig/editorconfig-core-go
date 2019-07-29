@@ -7,11 +7,22 @@ import (
 	"strings"
 )
 
+var (
+	// findLeftBrackets matches the opening left bracket {
+	findLeftBrackets = regexp.MustCompile(`(^|[^\\])\{`)
+	// findLeftBrackets matches the closing right bracket {
+	findRightBrackets = regexp.MustCompile(`(^|[^\\])\}`)
+	// findNumericRange matches a range of number, e.g. -2..5
+	findNumericRange = regexp.MustCompile(`^([+-]?\d+)\.\.([+-]?\d+)$`)
+)
+
+// FnmatchCase tests whether the name matches the given pattern case included.
 func FnmatchCase(pattern, name string) (bool, error) {
 	p, err := translate(pattern)
 	if err != nil {
 		return false, err
 	}
+
 	r, err := regexp.Compile(fmt.Sprintf("^%s$", p))
 	if err != nil {
 		return false, err
@@ -31,11 +42,7 @@ func translate(pattern string) (string, error) {
 	isEscaped := false
 	inBrackets := false
 
-	findLeftBrackets := regexp.MustCompile(`(^|[^\\])\{`)
-	findRightBrackets := regexp.MustCompile(`(^|[^\\])\}`)
 	matchesBraces := len(findLeftBrackets.FindAllString(pattern, -1)) == len(findRightBrackets.FindAllString(pattern, -1))
-
-	findNumericRange := regexp.MustCompile(`^([+-]?\d+)\.\.([+-]?\d+)$`)
 
 	for index < length {
 		r := pat[index]
