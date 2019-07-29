@@ -201,7 +201,7 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 // GetDefinitionForFilename returns a definition for the given filename.
 // The result is a merge of the selectors that matched the file.
 // The last section has preference over the priors.
-func (e *Editorconfig) GetDefinitionForFilename(name string) *Definition {
+func (e *Editorconfig) GetDefinitionForFilename(name string) (*Definition, error) {
 	def := &Definition{}
 	def.Raw = make(map[string]string)
 	for i := len(e.Definitions) - 1; i >= 0; i-- {
@@ -217,11 +217,15 @@ func (e *Editorconfig) GetDefinitionForFilename(name string) *Definition {
 		if !strings.HasPrefix(name, "/") {
 			name = "/" + name
 		}
-		if FnmatchCase(selector, name) {
+		ok, err := FnmatchCase(selector, name)
+		if err != nil {
+			return nil, err
+		}
+		if ok {
 			def.merge(actualDef)
 		}
 	}
-	return def
+	return def, nil
 }
 
 func boolToString(b bool) string {
@@ -293,7 +297,14 @@ func GetDefinitionForFilenameWithConfigname(filename string, configname string) 
 		if len(dir) < len(filename) {
 			relativeFilename = filename[len(dir):]
 		}
-		definition.merge(ec.GetDefinitionForFilename(relativeFilename))
+
+		def, err := ec.GetDefinitionForFilename(relativeFilename)
+		if err != nil {
+			return nil, err
+		}
+
+		definition.merge(def)
+
 		if ec.Root {
 			break
 		}

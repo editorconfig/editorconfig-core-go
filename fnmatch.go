@@ -2,21 +2,22 @@ package editorconfig
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
-func FnmatchCase(pattern, name string) bool {
-	p, _ := translate(pattern)
-	r, err := regexp.Compile(fmt.Sprintf("^%s$", p))
-
+func FnmatchCase(pattern, name string) (bool, error) {
+	p, err := translate(pattern)
 	if err != nil {
-		log.Fatal(err)
+		return false, err
+	}
+	r, err := regexp.Compile(fmt.Sprintf("^%s$", p))
+	if err != nil {
+		return false, err
 	}
 
-	return r.MatchString(name)
+	return r.MatchString(name), nil
 }
 
 func translate(pattern string) (string, error) {

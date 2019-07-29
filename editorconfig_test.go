@@ -51,7 +51,11 @@ func TestGetDefinition(t *testing.T) {
 		t.Errorf("Couldn't parse file: %v", err)
 	}
 
-	def := ec.GetDefinitionForFilename("main.go")
+	def, err := ec.GetDefinitionForFilename("main.go")
+	if err != nil {
+		t.Errorf("Couldn't parse file: %v", err)
+	}
+
 	assert.Equal(t, IndentStyleTab, def.IndentStyle)
 	assert.Equal(t, "4", def.IndentSize)
 	assert.Equal(t, 4, def.TabWidth)
