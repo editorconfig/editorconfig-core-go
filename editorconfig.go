@@ -51,8 +51,8 @@ type Definition struct {
 	IndentSize             string `ini:"indent_size" json:"indent_size,omitempty"`
 	TabWidth               int    `ini:"tab_width" json:"tab_width,omitempty"`
 	EndOfLine              string `ini:"end_of_line" json:"end_of_line,omitempty"`
-	TrimTrailingWhitespace bool   `ini:"trim_trailing_whitespace" json:"trim_trailing_whitespace,omitempty"`
-	InsertFinalNewline     bool   `ini:"insert_final_newline" json:"insert_final_newline,omitempty"`
+	TrimTrailingWhitespace *bool  `ini:"trim_trailing_whitespace" json:"trim_trailing_whitespace,omitempty"`
+	InsertFinalNewline     *bool  `ini:"insert_final_newline" json:"insert_final_newline,omitempty"`
 
 	Raw map[string]string `ini:"-" json:"-"`
 }
@@ -81,7 +81,7 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 		var (
 			iniSection = iniFile.Section(sectionStr)
 			definition = &Definition{}
-			raw  = make(map[string]string)
+			raw        = make(map[string]string)
 		)
 		err := iniSection.MapTo(&definition)
 		if err != nil {
@@ -178,10 +178,10 @@ func (d *Definition) merge(md *Definition) {
 	if len(d.EndOfLine) == 0 {
 		d.EndOfLine = md.EndOfLine
 	}
-	if !d.TrimTrailingWhitespace {
+	if d.TrimTrailingWhitespace == nil || !*d.TrimTrailingWhitespace {
 		d.TrimTrailingWhitespace = md.TrimTrailingWhitespace
 	}
-	if !d.InsertFinalNewline {
+	if d.InsertFinalNewline == nil || !*d.InsertFinalNewline {
 		d.InsertFinalNewline = md.InsertFinalNewline
 	}
 
