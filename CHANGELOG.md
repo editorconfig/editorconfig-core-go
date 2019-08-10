@@ -1,5 +1,11 @@
 # Change log
 
+## v2.1.0 - 2019-08-10
+
+- This package is now *way* more compliant with the Editorconfig definition
+  thanks to a refactor work made by [@greut](https://github.com/greut)
+  ([#15](https://github.com/editorconfig/editorconfig-core-go/pull/15)).
+
 ## v2.0.0 - 2019-07-14
 
 - This project now uses [Go Modules](https://blog.golang.org/using-go-modules)
