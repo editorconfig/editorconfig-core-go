@@ -70,6 +70,6 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%s", buffer.String())
+		fmt.Print(buffer.String())
 	}
 }

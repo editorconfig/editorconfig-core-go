@@ -10,6 +10,11 @@ A [Editorconfig][editorconfig] file parser and manipulator for Go.
 > Currently this package does some basic work but does not fully support
 > EditorConfig specs, so using it in "real world" is not recommended.
 
+## Missing features
+
+- `unset`
+- escaping comments in values, probably in [go-ini/ini](https://github.com/go-ini/ini)
+
 ## Installing
 
 We recommend the use of Go 1.11+ modules for this package.
@@ -114,7 +119,7 @@ if err != nil {
 To run the tests:
 
 ```bash
-go test -v
+go test -v ./...
 ```
 
 [editorconfig]: http://editorconfig.org/
