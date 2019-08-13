@@ -4,6 +4,7 @@ package editorconfig
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -48,15 +49,14 @@ const (
 type Definition struct {
 	Selector string `ini:"-" json:"-"`
 
-	Charset                string `ini:"charset" json:"charset,omitempty"`
-	IndentStyle            string `ini:"indent_style" json:"indent_style,omitempty"`
-	IndentSize             string `ini:"indent_size" json:"indent_size,omitempty"`
-	TabWidth               int    `ini:"tab_width" json:"tab_width,omitempty"`
-	EndOfLine              string `ini:"end_of_line" json:"end_of_line,omitempty"`
-	TrimTrailingWhitespace bool   `ini:"trim_trailing_whitespace" json:"trim_trailing_whitespace,omitempty"`
-	InsertFinalNewline     bool   `ini:"insert_final_newline" json:"insert_final_newline,omitempty"`
-
-	Raw map[string]string `ini:"-" json:"-"`
+	Charset                string            `ini:"charset" json:"charset,omitempty"`
+	IndentStyle            string            `ini:"indent_style" json:"indent_style,omitempty"`
+	IndentSize             string            `ini:"indent_size" json:"indent_size,omitempty"`
+	TabWidth               int               `ini:"-" json:"-"`
+	EndOfLine              string            `ini:"end_of_line" json:"end_of_line,omitempty"`
+	TrimTrailingWhitespace *bool             `ini:"-" json:"-"`
+	InsertFinalNewline     *bool             `ini:"-" json:"-"`
+	Raw                    map[string]string `ini:"-" json:"-"`
 }
 
 // Editorconfig represents a .editorconfig file.
@@ -97,7 +97,9 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 
 		definition.Selector = sectionStr
 		definition.Raw = raw
-		definition.normalize()
+		if err := definition.normalize(); err != nil {
+			return nil, err
+		}
 		editorConfig.Definitions = append(editorConfig.Definitions, definition)
 	}
 	return editorConfig, nil
@@ -118,10 +120,38 @@ var (
 )
 
 // normalize fixes some values to their lowercaes value
-func (d *Definition) normalize() {
+func (d *Definition) normalize() error {
 	d.Charset = strings.ToLower(d.Charset)
-	d.EndOfLine = strings.ToLower(d.EndOfLine)
-	d.IndentStyle = strings.ToLower(d.IndentStyle)
+	d.EndOfLine = strings.ToLower(d.Raw["end_of_line"])
+	d.IndentStyle = strings.ToLower(d.Raw["indent_style"])
+
+	trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]
+	if ok && trimTrailingWhitespace != "unset" {
+		trim, err := strconv.ParseBool(trimTrailingWhitespace)
+		if err != nil {
+			return fmt.Errorf("trim_trailing_whitespace=%s is not an acceptable value. %s", trimTrailingWhitespace, err)
+		}
+		d.TrimTrailingWhitespace = &trim
+	}
+
+	insertNewLine, ok := d.Raw["insert_new_line"]
+	if ok && insertNewLine != "unset" {
+		trim, err := strconv.ParseBool(insertNewLine)
+		if err != nil {
+			return fmt.Errorf("insert_new_line=%s is not an acceptable value. %s", insertNewLine, err)
+		}
+		d.TrimTrailingWhitespace = &trim
+	}
+
+	// tab_width from Raw
+	tabWidth, ok := d.Raw["tab_width"]
+	if ok && tabWidth != "unset" {
+		num, err := strconv.Atoi(tabWidth)
+		if err != nil {
+			return fmt.Errorf("tab_width=%s is not an acceptable value. %s", tabWidth, err)
+		}
+		d.TabWidth = num
+	}
 
 	// tab_width defaults to indent_size:
 	// https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties#tab_width
@@ -129,6 +159,8 @@ func (d *Definition) normalize() {
 	if err == nil && d.TabWidth <= 0 {
 		d.TabWidth = num
 	}
+
+	return nil
 }
 
 func (d *Definition) merge(md *Definition) {
@@ -147,11 +179,11 @@ func (d *Definition) merge(md *Definition) {
 	if len(d.EndOfLine) == 0 {
 		d.EndOfLine = md.EndOfLine
 	}
-	if !d.TrimTrailingWhitespace {
-		d.TrimTrailingWhitespace = md.TrimTrailingWhitespace
+	if d.TrimTrailingWhitespace != nil && !*d.TrimTrailingWhitespace {
+		*d.TrimTrailingWhitespace = *md.TrimTrailingWhitespace
 	}
-	if !d.InsertFinalNewline {
-		d.InsertFinalNewline = md.InsertFinalNewline
+	if d.InsertFinalNewline != nil && !*d.InsertFinalNewline {
+		*d.InsertFinalNewline = *md.InsertFinalNewline
 	}
 
 	for k, v := range md.Raw {
@@ -166,9 +198,23 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 	iniSec := iniFile.Section(d.Selector)
 	for k, v := range d.Raw {
 		if k == "insert_final_newline" {
-			iniSec.Key(k).SetValue(strconv.FormatBool(d.InsertFinalNewline))
+			if d.InsertFinalNewline != nil {
+				iniSec.Key(k).SetValue(strconv.FormatBool(*d.InsertFinalNewline))
+			} else {
+				insertFinalNewline, ok := d.Raw["insert_final_newline"]
+				if ok {
+					iniSec.Key(k).SetValue(strings.ToLower(insertFinalNewline))
+				}
+			}
 		} else if k == "trim_trailing_whitespace" {
-			iniSec.Key(k).SetValue(strconv.FormatBool(d.TrimTrailingWhitespace))
+			if d.TrimTrailingWhitespace != nil {
+				iniSec.Key(k).SetValue(strconv.FormatBool(*d.TrimTrailingWhitespace))
+			} else {
+				trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]
+				if ok {
+					iniSec.Key(k).SetValue(strings.ToLower(trimTrailingWhitespace))
+				}
+			}
 		} else if k == "charset" {
 			iniSec.Key(k).SetValue(d.Charset)
 		} else if k == "end_of_line" {
@@ -176,24 +222,38 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 		} else if k == "indent_style" {
 			iniSec.Key(k).SetValue(d.IndentStyle)
 		} else if k == "tab_width" {
-			iniSec.Key(k).SetValue(strconv.Itoa(d.TabWidth))
+			tabWidth, ok := d.Raw["tab_width"]
+			if ok && tabWidth == "unset" {
+				iniSec.Key(k).SetValue(tabWidth)
+			} else {
+				iniSec.Key(k).SetValue(strconv.Itoa(d.TabWidth))
+			}
 		} else if k == "indent_size" {
 			iniSec.Key(k).SetValue(d.IndentSize)
 		} else {
 			iniSec.Key(k).SetValue(v)
 		}
 	}
+
 	if _, ok := d.Raw["indent_size"]; !ok {
-		if d.TabWidth > 0 {
+		tabWidth, ok := d.Raw["tab_width"]
+		if ok && tabWidth == "unset" {
+			// do nothing
+		} else if d.TabWidth > 0 {
 			iniSec.Key("indent_size").SetValue(strconv.Itoa(d.TabWidth))
 		} else if d.IndentStyle == IndentStyleTab {
 			iniSec.Key("indent_size").SetValue(IndentStyleTab)
 		}
 	}
 
-	if _, ok := d.Raw["tab_width"]; !ok && len(d.IndentSize) > 0 {
-		if _, err := strconv.Atoi(d.IndentSize); err == nil {
+	if _, ok := d.Raw["tab_width"]; !ok {
+		if d.IndentSize == "unset" {
 			iniSec.Key("tab_width").SetValue(d.IndentSize)
+		} else {
+			_, err := strconv.Atoi(d.IndentSize)
+			if err == nil {
+				iniSec.Key("tab_width").SetValue(d.Raw["indent_size"])
+			}
 		}
 	}
 }
