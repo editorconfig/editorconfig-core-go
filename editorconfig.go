@@ -293,9 +293,10 @@ func GetDefinitionForFilenameWithConfigname(filename string, configname string) 
 		if err != nil {
 			return nil, err
 		}
+
 		relativeFilename := filename
-		if len(dir) < len(filename) {
-			relativeFilename = filename[len(dir):]
+		if len(dir) < len(abs) {
+			relativeFilename = abs[len(dir):]
 		}
 
 		def, err := ec.GetDefinitionForFilename(relativeFilename)
