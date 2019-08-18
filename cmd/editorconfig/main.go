@@ -15,7 +15,7 @@ import (
 
 const (
 	// Version indicates the current version number
-	Version = "2.1.0"
+	Version = "2.1.1"
 )
 
 func main() {

@@ -1,5 +1,11 @@
 # Change log
 
+## v2.1.1 - 2019-08-18
+
+- Fix a small path bug
+  ([#17](https://github.com/editorconfig/editorconfig-core-go/issues/17),
+  [#18](https://github.com/editorconfig/editorconfig-core-go/pull/18)).
+
 ## v2.1.0 - 2019-08-10
 
 - This package is now *way* more compliant with the Editorconfig definition
