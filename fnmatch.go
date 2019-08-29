@@ -16,6 +16,25 @@ var (
 	findNumericRange = regexp.MustCompile(`^([+-]?\d+)\.\.([+-]?\d+)$`)
 )
 
+func fnmatchCaseWithCache(pattern, name string, cache map[string]*regexp.Regexp) (bool, error) {
+	r, ok := cache[pattern]
+	if !ok {
+		p, err := translate(pattern)
+		if err != nil {
+			return false, err
+		}
+
+		r, err = regexp.Compile(fmt.Sprintf("^%s$", p))
+		if err != nil {
+			return false, err
+		}
+
+		cache[pattern] = r
+	}
+
+	return r.MatchString(name), nil
+}
+
 // FnmatchCase tests whether the name matches the given pattern case included.
 func FnmatchCase(pattern, name string) (bool, error) {
 	p, err := translate(pattern)

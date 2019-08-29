@@ -65,6 +65,7 @@ type Definition struct {
 type Editorconfig struct {
 	Root        bool
 	Definitions []*Definition
+	cache       map[string]*regexp.Regexp
 }
 
 // ParseBytes parses from a slice of bytes.
@@ -76,6 +77,7 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 
 	editorConfig := &Editorconfig{}
 	editorConfig.Root = iniFile.Section(ini.DEFAULT_SECTION).Key("root").MustBool(false)
+	editorConfig.cache = make(map[string]*regexp.Regexp)
 	for _, sectionStr := range iniFile.SectionStrings() {
 		if sectionStr == ini.DEFAULT_SECTION {
 			continue
@@ -277,7 +279,7 @@ func (e *Editorconfig) GetDefinitionForFilename(name string) (*Definition, error
 		if !strings.HasPrefix(name, "/") {
 			name = "/" + name
 		}
-		ok, err := FnmatchCase(selector, name)
+		ok, err := fnmatchCaseWithCache(selector, name, e.cache)
 		if err != nil {
 			return nil, err
 		}
