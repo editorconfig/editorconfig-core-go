@@ -1,14 +1,10 @@
-<!-- Currently tests against core-test are not done so hide build status badge for now -->
-<!-- [![Build Status](https://travis-ci.org/editorconfig/editorconfig-core-go.svg?branch=master)](https://travis-ci.org/editorconfig/editorconfig-core-go) -->
+[![Build Status](https://travis-ci.org/editorconfig/editorconfig-core-go.svg?branch=master)](https://travis-ci.org/editorconfig/editorconfig-core-go)
 [![GoDoc](https://godoc.org/github.com/editorconfig/editorconfig-core-go?status.svg)](https://godoc.org/github.com/editorconfig/editorconfig-core-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/editorconfig/editorconfig-core-go)](https://goreportcard.com/report/github.com/editorconfig/editorconfig-core-go)
 
 # Editorconfig Core Go
 
 A [Editorconfig][editorconfig] file parser and manipulator for Go.
-
-> Currently this package does some basic work but does not fully support
-> EditorConfig specs, so using it in "real world" is not recommended.
 
 ## Missing features
 
