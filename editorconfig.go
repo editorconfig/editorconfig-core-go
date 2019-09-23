@@ -334,6 +334,11 @@ func GetDefinitionForFilename(filename string) (*Definition, error) {
 	return GetDefinitionForFilenameWithConfigname(filename, ConfigNameDefault)
 }
 
+// GetDefinitionForFilenameWithConfigname given a filename and a configname,
+// searches for configname files, starting from the file folder,
+// walking through the previous folders, until it reaches a
+// folder with `root = true`, and returns the right editorconfig
+// definition for the given file.
 func GetDefinitionForFilenameWithConfigname(filename string, configname string) (*Definition, error) {
 	abs, err := filepath.Abs(filename)
 	if err != nil {
