@@ -311,71 +311,79 @@ func (d *Definition) merge(md *Definition) {
 	}
 }
 
-// InsertToIniFile ... TODO
-func (d *Definition) InsertToIniFile(iniFile *ini.File) {
-	iniSec := iniFile.Section(d.Selector)
-	for k, v := range d.Raw {
-		switch k {
-		case "insert_final_newline":
-			if d.InsertFinalNewline != nil {
-				iniSec.NewKey(k, strconv.FormatBool(*d.InsertFinalNewline))
-			} else {
-				insertFinalNewline, ok := d.Raw["insert_final_newline"]
-				if ok {
-					iniSec.NewKey(k, strings.ToLower(insertFinalNewline))
-				}
+func setValues(d *Definition, iniSection *ini.Section, key string, value string) {
+	switch key {
+	case "insert_final_newline":
+		if d.InsertFinalNewline != nil {
+			iniSection.Key(key).SetValue(strconv.FormatBool(*d.InsertFinalNewline))
+		} else {
+			insertFinalNewline, ok := d.Raw["insert_final_newline"]
+			if ok {
+				iniSection.Key(key).SetValue(strings.ToLower(insertFinalNewline))
 			}
-		case "trim_trailing_whitespace":
-			if d.TrimTrailingWhitespace != nil {
-				iniSec.NewKey(k, strconv.FormatBool(*d.TrimTrailingWhitespace))
-			} else {
-				trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]
-				if ok {
-					iniSec.NewKey(k, strings.ToLower(trimTrailingWhitespace))
-				}
-			}
-		case "charset":
-			iniSec.NewKey(k, d.Charset)
-		case "end_of_line":
-			iniSec.NewKey(k, d.EndOfLine)
-		case "indent_style":
-			iniSec.NewKey(k, d.IndentStyle)
-		case "tab_width":
-			tabWidth, ok := d.Raw["tab_width"]
-			if ok && tabWidth == UnsetValue {
-				iniSec.NewKey(k, tabWidth)
-			} else {
-				iniSec.NewKey(k, strconv.Itoa(d.TabWidth))
-			}
-		case "indent_size":
-			iniSec.NewKey(k, d.IndentSize)
-		default:
-			iniSec.NewKey(k, v)
 		}
+	case "trim_trailing_whitespace":
+		if d.TrimTrailingWhitespace != nil {
+			iniSection.NewKey(key, strconv.FormatBool(*d.TrimTrailingWhitespace))
+		} else {
+			trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]
+			if ok {
+				iniSection.NewKey(key, strings.ToLower(trimTrailingWhitespace))
+			}
+		}
+	case "charset":
+		iniSection.Key(key).SetValue(d.Charset)
+	case "end_of_line":
+		iniSection.Key(key).SetValue(d.EndOfLine)
+	case "indent_style":
+		iniSection.Key(key).SetValue(d.IndentStyle)
+	case "tab_width":
+		tabWidth, ok := d.Raw["tab_width"]
+		if ok && tabWidth == UnsetValue {
+			iniSection.Key(key).SetValue(tabWidth)
+		} else {
+			iniSection.Key(key).SetValue(strconv.Itoa(d.TabWidth))
+		}
+	case "indent_size":
+		iniSection.Key(key).SetValue(d.IndentSize)
+	default:
+		iniSection.Key(key).SetValue(value)
 	}
+}
 
+func setRawValues(d *Definition, iniSection *ini.Section) {
 	if _, ok := d.Raw["indent_size"]; !ok {
 		tabWidth, ok := d.Raw["tab_width"]
 		switch {
 		case ok && tabWidth == UnsetValue:
 			// do nothing
 		case d.TabWidth > 0:
-			iniSec.NewKey("indent_size", strconv.Itoa(d.TabWidth))
+			iniSection.NewKey("indent_size", strconv.Itoa(d.TabWidth))
 		case d.IndentStyle == IndentStyleTab && (d.version == nil || d.version.GTE(v0_9_0)):
-			iniSec.NewKey("indent_size", IndentStyleTab)
+			iniSection.NewKey("indent_size", IndentStyleTab)
 		}
 	}
 
 	if _, ok := d.Raw["tab_width"]; !ok {
 		if d.IndentSize == UnsetValue {
-			iniSec.NewKey("tab_width", d.IndentSize)
+			iniSection.NewKey("tab_width", d.IndentSize)
 		} else {
 			_, err := strconv.Atoi(d.IndentSize)
 			if err == nil {
-				iniSec.NewKey("tab_width", d.Raw["indent_size"])
+				iniSection.NewKey("tab_width", d.Raw["indent_size"])
 			}
 		}
 	}
+}
+
+// InsertToIniFile ... TODO
+func (d *Definition) InsertToIniFile(iniFile *ini.File) {
+	iniSec := iniFile.Section(d.Selector)
+	for k, v := range d.Raw {
+		setValues(d, iniSec, k, v)
+	}
+
+	setRawValues(d, iniSec)
 }
 
 // GetDefinitionForFilename returns a definition for the given filename.
