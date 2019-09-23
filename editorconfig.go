@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strconv"
 	"strings"
 
@@ -114,10 +113,6 @@ func ParseFile(f string) (*Editorconfig, error) {
 
 	return ParseBytes(data)
 }
-
-var (
-	regexpBraces = regexp.MustCompile("{.*}")
-)
 
 // normalize fixes some values to their lowercaes value
 func (d *Definition) normalize() error {
