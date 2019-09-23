@@ -1,0 +1,32 @@
+project_name: editorconfig-core-go
+
+before:
+  hooks:
+    - go mod tidy
+builds:
+- id: editorconfig
+  main: ./cmd/editorconfig/main.go
+  binary: editorconfig
+  env:
+  - CGO_ENABLED=0
+  goos:
+  - linux
+  - darwin
+  - windows
+checksum:
+  name_template: 'checksums.txt'
+signs:
+  - artifacts: checksum
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+release:
+  github:
+    owner: editorconfig
+    name: editorconfig-core-go
+  draft: true
