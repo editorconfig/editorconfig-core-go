@@ -193,69 +193,77 @@ func (d *Definition) merge(md *Definition) {
 	}
 }
 
-// InsertToIniFile ... TODO
-func (d *Definition) InsertToIniFile(iniFile *ini.File) {
-	iniSec := iniFile.Section(d.Selector)
-	for k, v := range d.Raw {
-		if k == "insert_final_newline" {
-			if d.InsertFinalNewline != nil {
-				iniSec.Key(k).SetValue(strconv.FormatBool(*d.InsertFinalNewline))
-			} else {
-				insertFinalNewline, ok := d.Raw["insert_final_newline"]
-				if ok {
-					iniSec.Key(k).SetValue(strings.ToLower(insertFinalNewline))
-				}
-			}
-		} else if k == "trim_trailing_whitespace" {
-			if d.TrimTrailingWhitespace != nil {
-				iniSec.Key(k).SetValue(strconv.FormatBool(*d.TrimTrailingWhitespace))
-			} else {
-				trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]
-				if ok {
-					iniSec.Key(k).SetValue(strings.ToLower(trimTrailingWhitespace))
-				}
-			}
-		} else if k == "charset" {
-			iniSec.Key(k).SetValue(d.Charset)
-		} else if k == "end_of_line" {
-			iniSec.Key(k).SetValue(d.EndOfLine)
-		} else if k == "indent_style" {
-			iniSec.Key(k).SetValue(d.IndentStyle)
-		} else if k == "tab_width" {
-			tabWidth, ok := d.Raw["tab_width"]
-			if ok && tabWidth == "unset" {
-				iniSec.Key(k).SetValue(tabWidth)
-			} else {
-				iniSec.Key(k).SetValue(strconv.Itoa(d.TabWidth))
-			}
-		} else if k == "indent_size" {
-			iniSec.Key(k).SetValue(d.IndentSize)
+func setValues(d *Definition, iniSection *ini.Section, key string, value string) {
+	if key == "insert_final_newline" {
+		if d.InsertFinalNewline != nil {
+			iniSection.Key(key).SetValue(strconv.FormatBool(*d.InsertFinalNewline))
 		} else {
-			iniSec.Key(k).SetValue(v)
+			insertFinalNewline, ok := d.Raw["insert_final_newline"]
+			if ok {
+				iniSection.Key(key).SetValue(strings.ToLower(insertFinalNewline))
+			}
 		}
+	} else if key == "trim_trailing_whitespace" {
+		if d.TrimTrailingWhitespace != nil {
+			iniSection.Key(key).SetValue(strconv.FormatBool(*d.TrimTrailingWhitespace))
+		} else {
+			trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]
+			if ok {
+				iniSection.Key(key).SetValue(strings.ToLower(trimTrailingWhitespace))
+			}
+		}
+	} else if key == "charset" {
+		iniSection.Key(key).SetValue(d.Charset)
+	} else if key == "end_of_line" {
+		iniSection.Key(key).SetValue(d.EndOfLine)
+	} else if key == "indent_style" {
+		iniSection.Key(key).SetValue(d.IndentStyle)
+	} else if key == "tab_width" {
+		tabWidth, ok := d.Raw["tab_width"]
+		if ok && tabWidth == "unset" {
+			iniSection.Key(key).SetValue(tabWidth)
+		} else {
+			iniSection.Key(key).SetValue(strconv.Itoa(d.TabWidth))
+		}
+	} else if key == "indent_size" {
+		iniSection.Key(key).SetValue(d.IndentSize)
+	} else {
+		iniSection.Key(key).SetValue(value)
 	}
+}
 
+func setRawValues(d *Definition, iniSection *ini.Section) {
 	if _, ok := d.Raw["indent_size"]; !ok {
 		tabWidth, ok := d.Raw["tab_width"]
 		if ok && tabWidth == "unset" {
 			// do nothing
 		} else if d.TabWidth > 0 {
-			iniSec.Key("indent_size").SetValue(strconv.Itoa(d.TabWidth))
+			iniSection.Key("indent_size").SetValue(strconv.Itoa(d.TabWidth))
 		} else if d.IndentStyle == IndentStyleTab {
-			iniSec.Key("indent_size").SetValue(IndentStyleTab)
+			iniSection.Key("indent_size").SetValue(IndentStyleTab)
 		}
 	}
 
 	if _, ok := d.Raw["tab_width"]; !ok {
 		if d.IndentSize == "unset" {
-			iniSec.Key("tab_width").SetValue(d.IndentSize)
+			iniSection.Key("tab_width").SetValue(d.IndentSize)
 		} else {
 			_, err := strconv.Atoi(d.IndentSize)
 			if err == nil {
-				iniSec.Key("tab_width").SetValue(d.Raw["indent_size"])
+				iniSection.Key("tab_width").SetValue(d.Raw["indent_size"])
 			}
 		}
 	}
+}
+
+// InsertToIniFile ... TODO
+func (d *Definition) InsertToIniFile(iniFile *ini.File) {
+	iniSec := iniFile.Section(d.Selector)
+	for k, v := range d.Raw {
+		setValues(d, iniSec, k, v)
+	}
+
+	setRawValues(d, iniSec)
 }
 
 // GetDefinitionForFilename returns a definition for the given filename.
