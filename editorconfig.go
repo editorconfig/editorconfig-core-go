@@ -16,6 +16,8 @@ import (
 const (
 	// ConfigNameDefault represents the name of the configuration file
 	ConfigNameDefault = ".editorconfig"
+	// UnsetValue is the value that unsets a preexisting variable
+	UnsetValue = "unset"
 )
 
 // IndentStyle possible values
@@ -237,7 +239,7 @@ func (d *Definition) normalize() error {
 	d.IndentStyle = strings.ToLower(d.Raw["indent_style"])
 
 	trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]
-	if ok && trimTrailingWhitespace != "unset" {
+	if ok && trimTrailingWhitespace != UnsetValue {
 		trim, err := strconv.ParseBool(trimTrailingWhitespace)
 		if err != nil {
 			return fmt.Errorf("trim_trailing_whitespace=%s is not an acceptable value. %s", trimTrailingWhitespace, err)
@@ -246,7 +248,7 @@ func (d *Definition) normalize() error {
 	}
 
 	insertFinalNewline, ok := d.Raw["insert_final_newline"]
-	if ok && insertFinalNewline != "unset" {
+	if ok && insertFinalNewline != UnsetValue {
 		insert, err := strconv.ParseBool(insertFinalNewline)
 		if err != nil {
 			return fmt.Errorf("insert_final_newline=%s is not an acceptable value. %s", insertFinalNewline, err)
@@ -256,7 +258,7 @@ func (d *Definition) normalize() error {
 
 	// tab_width from Raw
 	tabWidth, ok := d.Raw["tab_width"]
-	if ok && tabWidth != "unset" {
+	if ok && tabWidth != UnsetValue {
 		num, err := strconv.Atoi(tabWidth)
 		if err != nil {
 			return fmt.Errorf("tab_width=%s is not an acceptable value. %s", tabWidth, err)
@@ -313,7 +315,8 @@ func (d *Definition) merge(md *Definition) {
 func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 	iniSec := iniFile.Section(d.Selector)
 	for k, v := range d.Raw {
-		if k == "insert_final_newline" {
+		switch k {
+		case "insert_final_newline":
 			if d.InsertFinalNewline != nil {
 				iniSec.NewKey(k, strconv.FormatBool(*d.InsertFinalNewline))
 			} else {
@@ -322,7 +325,7 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 					iniSec.NewKey(k, strings.ToLower(insertFinalNewline))
 				}
 			}
-		} else if k == "trim_trailing_whitespace" {
+		case "trim_trailing_whitespace":
 			if d.TrimTrailingWhitespace != nil {
 				iniSec.NewKey(k, strconv.FormatBool(*d.TrimTrailingWhitespace))
 			} else {
@@ -331,39 +334,40 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 					iniSec.NewKey(k, strings.ToLower(trimTrailingWhitespace))
 				}
 			}
-		} else if k == "charset" {
+		case "charset":
 			iniSec.NewKey(k, d.Charset)
-		} else if k == "end_of_line" {
+		case "end_of_line":
 			iniSec.NewKey(k, d.EndOfLine)
-		} else if k == "indent_style" {
+		case "indent_style":
 			iniSec.NewKey(k, d.IndentStyle)
-		} else if k == "tab_width" {
+		case "tab_width":
 			tabWidth, ok := d.Raw["tab_width"]
-			if ok && tabWidth == "unset" {
+			if ok && tabWidth == UnsetValue {
 				iniSec.NewKey(k, tabWidth)
 			} else {
 				iniSec.NewKey(k, strconv.Itoa(d.TabWidth))
 			}
-		} else if k == "indent_size" {
+		case "indent_size":
 			iniSec.NewKey(k, d.IndentSize)
-		} else {
+		default:
 			iniSec.NewKey(k, v)
 		}
 	}
 
 	if _, ok := d.Raw["indent_size"]; !ok {
 		tabWidth, ok := d.Raw["tab_width"]
-		if ok && tabWidth == "unset" {
+		switch {
+		case ok && tabWidth == UnsetValue:
 			// do nothing
-		} else if d.TabWidth > 0 {
+		case d.TabWidth > 0:
 			iniSec.NewKey("indent_size", strconv.Itoa(d.TabWidth))
-		} else if d.IndentStyle == IndentStyleTab && (d.version == nil || d.version.GTE(v0_9_0)) {
+		case d.IndentStyle == IndentStyleTab && (d.version == nil || d.version.GTE(v0_9_0)):
 			iniSec.NewKey("indent_size", IndentStyleTab)
 		}
 	}
 
 	if _, ok := d.Raw["tab_width"]; !ok {
-		if d.IndentSize == "unset" {
+		if d.IndentSize == UnsetValue {
 			iniSec.NewKey("tab_width", d.IndentSize)
 		} else {
 			_, err := strconv.Atoi(d.IndentSize)
