@@ -19,13 +19,5 @@ test-core: editorconfig
 		cmake ..
 	cd core-test; \
 		ctest \
-		-E "^octothorpe_in_value$$" \
 		--output-on-failure \
-		.
-
-test-skipped: editorconfig
-	cd core-test; \
-		ctest \
-		-R "^octothorpe_in_value$$" \
-		--show-only \
 		.
