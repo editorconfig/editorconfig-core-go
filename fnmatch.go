@@ -28,7 +28,7 @@ func FnmatchCase(pattern, name string) (bool, error) {
 	return r.MatchString(name), nil
 }
 
-func translate(pattern string) string {
+func translate(pattern string) string { // nolint: gocyclo
 	index := 0
 	pat := []rune(pattern)
 	length := len(pat)

@@ -5,6 +5,7 @@ linters-settings:
 linters:
   enable:
     - goconst
+    - gocyclo
     - gofmt
     - golint
     - gocritic
