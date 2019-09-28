@@ -5,6 +5,7 @@ package editorconfig
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -67,8 +68,15 @@ type Editorconfig struct {
 }
 
 // ParseBytes parses from a slice of bytes.
+//
+// Deprecated: use Parse instead.
 func ParseBytes(data []byte) (*Editorconfig, error) {
-	iniFile, err := ini.Load(data)
+	return Parse(bytes.NewReader(data))
+}
+
+// Parse parses from a reader.
+func Parse(r io.Reader) (*Editorconfig, error) {
+	iniFile, err := ini.Load(ioutil.NopCloser(r))
 	if err != nil {
 		return nil, err
 	}
@@ -105,13 +113,13 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 }
 
 // ParseFile parses from a file.
-func ParseFile(f string) (*Editorconfig, error) {
-	data, err := ioutil.ReadFile(f)
+func ParseFile(path string) (*Editorconfig, error) {
+	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
-
-	return ParseBytes(data)
+	defer f.Close()
+	return Parse(f)
 }
 
 // normalize fixes some values to their lowercaes value
