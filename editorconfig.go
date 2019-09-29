@@ -67,20 +67,42 @@ type Editorconfig struct {
 	Definitions []*Definition
 }
 
-// ParseBytes parses from a slice of bytes.
-//
-// Deprecated: use Parse instead.
-func ParseBytes(data []byte) (*Editorconfig, error) {
-	return Parse(bytes.NewReader(data))
-}
-
 // Parse parses from a reader.
 func Parse(r io.Reader) (*Editorconfig, error) {
-	iniFile, err := ini.Load(ioutil.NopCloser(r))
+	iniFile, err := ini.Load(r)
 	if err != nil {
 		return nil, err
 	}
 
+	return newEditorconfig(iniFile)
+}
+
+// ParseBytes parses from a slice of bytes.
+//
+// Deprecated: use Parse instead.
+func ParseBytes(data []byte) (*Editorconfig, error) {
+	iniFile, err := ini.Load(data)
+	if err != nil {
+		return nil, err
+	}
+
+	return newEditorconfig(iniFile)
+}
+
+// ParseFile parses from a file.
+//
+// Deprecated: use Parse instead.
+func ParseFile(path string) (*Editorconfig, error) {
+	iniFile, err := ini.Load(path)
+	if err != nil {
+		return nil, err
+	}
+
+	return newEditorconfig(iniFile)
+}
+
+// newEditorconfig builds the configuration from an INI file.
+func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 	editorConfig := &Editorconfig{}
 	editorConfig.Root = iniFile.Section(ini.DEFAULT_SECTION).Key("root").MustBool(false)
 	for _, sectionStr := range iniFile.SectionStrings() {
@@ -110,16 +132,6 @@ func Parse(r io.Reader) (*Editorconfig, error) {
 		editorConfig.Definitions = append(editorConfig.Definitions, definition)
 	}
 	return editorConfig, nil
-}
-
-// ParseFile parses from a file.
-func ParseFile(path string) (*Editorconfig, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-	return Parse(f)
 }
 
 // normalize fixes some values to their lowercaes value
