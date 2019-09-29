@@ -66,13 +66,32 @@ type Editorconfig struct {
 	Definitions []*Definition
 }
 
-// ParseBytes parses from a slice of bytes.
-func ParseBytes(data []byte) (*Editorconfig, error) {
-	iniFile, err := ini.Load(data)
+// Parse parses from a source handled by go-ini (Reader, filename, byte slice)
+func Parse(source interface{}) (*Editorconfig, error) {
+	iniFile, err := ini.Load(source)
 	if err != nil {
 		return nil, err
 	}
 
+	return NewEditorconfig(iniFile)
+}
+
+// ParseBytes parses from a slice of bytes.
+//
+// Deprecated uses Parse directly.
+func ParseBytes(data []byte) (*Editorconfig, error) {
+	return Parse(data)
+}
+
+// ParseFile parses from a file.
+//
+// Deprecated uses Parse directly.
+func ParseFile(path string) (*Editorconfig, error) {
+	return Parse(path)
+}
+
+// NewEditorconfig builds the configuration from an INI file.
+func NewEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 	editorConfig := &Editorconfig{}
 	editorConfig.Root = iniFile.Section(ini.DEFAULT_SECTION).Key("root").MustBool(false)
 	for _, sectionStr := range iniFile.SectionStrings() {
@@ -102,16 +121,6 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 		editorConfig.Definitions = append(editorConfig.Definitions, definition)
 	}
 	return editorConfig, nil
-}
-
-// ParseFile parses from a file.
-func ParseFile(f string) (*Editorconfig, error) {
-	data, err := ioutil.ReadFile(f)
-	if err != nil {
-		return nil, err
-	}
-
-	return ParseBytes(data)
 }
 
 // normalize fixes some values to their lowercaes value

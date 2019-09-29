@@ -1,6 +1,7 @@
 package editorconfig
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -36,8 +37,37 @@ func testParse(t *testing.T, ec *Editorconfig) {
 	assert.Equal(t, 2, def.TabWidth)
 }
 
-func TestParse(t *testing.T) {
+func TestParseFile(t *testing.T) {
 	ec, err := ParseFile(testFile)
+	if err != nil {
+		t.Errorf("Couldn't parse file: %v", err)
+	}
+
+	testParse(t, ec)
+}
+
+func TestParseBytes(t *testing.T) {
+	data, err := ioutil.ReadFile(testFile)
+	if err != nil {
+		t.Errorf("Couldn't read file: %v", err)
+	}
+
+	ec, err := ParseBytes(data)
+	if err != nil {
+		t.Errorf("Couldn't parse data: %v", err)
+	}
+
+	testParse(t, ec)
+}
+
+func TestParseReader(t *testing.T) {
+	f, err := os.Open(testFile)
+	if err != nil {
+		t.Errorf("Couldn't open file: %v", err)
+	}
+	defer f.Close()
+
+	ec, err := Parse(f)
 	if err != nil {
 		t.Errorf("Couldn't parse file: %v", err)
 	}
