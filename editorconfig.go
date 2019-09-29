@@ -67,8 +67,8 @@ type Editorconfig struct {
 }
 
 // Parse parses from a source handled by go-ini (Reader, filename, byte slice)
-func Parse(source interface{}) (*Editorconfig, error) {
-	iniFile, err := ini.Load(source)
+func Parse(source interface{}, others ...interface{}) (*Editorconfig, error) {
+	iniFile, err := ini.Load(source, others...)
 	if err != nil {
 		return nil, err
 	}
