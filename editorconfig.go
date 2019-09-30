@@ -358,7 +358,7 @@ func GetDefinitionForFilenameWithConfigname(filename string, configname string) 
 		if _, err := os.Stat(ecFile); os.IsNotExist(err) {
 			continue
 		}
-		ec, err := ParseFile(ecFile)
+		ec, err := Parse(ecFile)
 		if err != nil {
 			return nil, err
 		}
