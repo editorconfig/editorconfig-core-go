@@ -45,14 +45,12 @@ func main() {
 	for _, file := range rest {
 		absolutePath, err := filepath.Abs(file)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
 		def, err := editorconfig.GetDefinitionForFilenameWithConfigname(absolutePath, configName)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
 		var (

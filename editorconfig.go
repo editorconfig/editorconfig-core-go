@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -344,13 +343,23 @@ func (e *Editorconfig) Serialize() ([]byte, error) {
 	return buffer.Bytes(), nil
 }
 
-// Save saves the Editorconfig to a compatible INI file.
-func (e *Editorconfig) Save(filename string) error {
+// Write writes the Editorconfig to the Writer in a compatible INI file.
+func (e *Editorconfig) Write(w io.Writer) error {
 	data, err := e.Serialize()
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(filename, data, 0666)
+	_, err = w.Write(data)
+	return err
+}
+
+// Save saves the Editorconfig to a compatible INI file.
+func (e *Editorconfig) Save(filename string) error {
+	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	return e.Write(f)
 }
 
 // GetDefinitionForFilename given a filename, searches

@@ -39,38 +39,28 @@ func testParse(t *testing.T, ec *Editorconfig) {
 
 func TestParseFile(t *testing.T) {
 	ec, err := ParseFile(testFile)
-	if err != nil {
-		t.Errorf("Couldn't parse file: %v", err)
-	}
+	assert.Nil(t, err)
 
 	testParse(t, ec)
 }
 
 func TestParseBytes(t *testing.T) {
 	data, err := ioutil.ReadFile(testFile)
-	if err != nil {
-		t.Errorf("Couldn't read file: %v", err)
-	}
+	assert.Nil(t, err)
 
 	ec, err := ParseBytes(data)
-	if err != nil {
-		t.Errorf("Couldn't parse data: %v", err)
-	}
+	assert.Nil(t, err)
 
 	testParse(t, ec)
 }
 
 func TestParseReader(t *testing.T) {
 	f, err := os.Open(testFile)
-	if err != nil {
-		t.Errorf("Couldn't open file: %v", err)
-	}
+	assert.Nil(t, err)
 	defer f.Close()
 
 	ec, err := Parse(f)
-	if err != nil {
-		t.Errorf("Couldn't parse file: %v", err)
-	}
+	assert.Nil(t, err)
 
 	testParse(t, ec)
 }
@@ -93,6 +83,31 @@ func TestGetDefinition(t *testing.T) {
 	assert.Equal(t, CharsetUTF8, def.Charset)
 	assert.Equal(t, (*bool)(nil), def.InsertFinalNewline)
 	assert.Equal(t, EndOfLineLf, def.EndOfLine)
+}
+
+func TestWrite(t *testing.T) {
+	ec, err := ParseFile(testFile)
+	if err != nil {
+		t.Errorf("Couldn't parse file: %v", err)
+	}
+
+	tempFile := filepath.Join(os.TempDir(), ".editorconfig")
+	defer os.Remove(tempFile)
+
+	f, err := os.OpenFile(tempFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	assert.Nil(t, err)
+	defer os.Remove(tempFile)
+
+	err = ec.Write(f)
+	assert.Nil(t, err)
+
+	f.Close()
+
+	savedEc, err := ParseFile(tempFile)
+	assert.Nil(t, err)
+
+	testParse(t, savedEc)
+	os.Remove(tempFile)
 }
 
 func TestSave(t *testing.T) {
