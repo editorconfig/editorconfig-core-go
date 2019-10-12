@@ -42,6 +42,13 @@ const (
 	CharsetUTF8BOM = "utf-8 bom"
 )
 
+// Limits for section name, properties, and values.
+const (
+	MaxPropertyLength = 50
+	MaxSectionLength  = 4096
+	MaxValueLength    = 255
+)
+
 // Definition represents a definition inside the .editorconfig file.
 // E.g. a section of the file.
 // The definition is composed of the selector ("*", "*.go", "*.{js.css}", etc),
@@ -109,6 +116,9 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 		if sectionStr == ini.DEFAULT_SECTION {
 			continue
 		}
+		if len(sectionStr) > MaxSectionLength {
+			continue
+		}
 		var (
 			iniSection = iniFile.Section(sectionStr)
 			definition = &Definition{}
@@ -121,6 +131,9 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 
 		// Shallow copy all properties
 		for k, v := range iniSection.KeysHash() {
+			if len(k) > MaxPropertyLength || len(v) > MaxValueLength {
+				continue
+			}
 			raw[strings.ToLower(k)] = v
 		}
 
