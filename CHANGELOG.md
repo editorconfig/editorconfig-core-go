@@ -1,6 +1,6 @@
 # Change log
 
-## v2.1.2 - 2019-10-12
+## v2.2.0 - 2019-10-12
 
 - Allow parsing from an `io.Reader`, effectively deprecating `ParseBytes`
   by [@mvdan](https://github.com/mvdan)
