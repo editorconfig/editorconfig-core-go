@@ -325,18 +325,8 @@ func boolToString(b bool) string {
 // Serialize converts the Editorconfig to a slice of bytes, containing the
 // content of the file in the INI format.
 func (e *Editorconfig) Serialize() ([]byte, error) {
-	var (
-		iniFile = ini.Empty()
-		buffer  = bytes.NewBuffer(nil)
-	)
-	iniFile.Section(ini.DEFAULT_SECTION).Comment = "http://editorconfig.org"
-	if e.Root {
-		iniFile.Section(ini.DEFAULT_SECTION).Key("root").SetValue(boolToString(e.Root))
-	}
-	for _, d := range e.Definitions {
-		d.InsertToIniFile(iniFile)
-	}
-	_, err := iniFile.WriteTo(buffer)
+	buffer := bytes.NewBuffer(nil)
+	err := e.Write(buffer)
 	if err != nil {
 		return nil, err
 	}
@@ -345,11 +335,17 @@ func (e *Editorconfig) Serialize() ([]byte, error) {
 
 // Write writes the Editorconfig to the Writer in a compatible INI file.
 func (e *Editorconfig) Write(w io.Writer) error {
-	data, err := e.Serialize()
-	if err != nil {
-		return err
+	var (
+		iniFile = ini.Empty()
+	)
+	iniFile.Section(ini.DEFAULT_SECTION).Comment = "http://editorconfig.org"
+	if e.Root {
+		iniFile.Section(ini.DEFAULT_SECTION).Key("root").SetValue(boolToString(e.Root))
 	}
-	_, err = w.Write(data)
+	for _, d := range e.Definitions {
+		d.InsertToIniFile(iniFile)
+	}
+	_, err := iniFile.WriteTo(w)
 	return err
 }
 
