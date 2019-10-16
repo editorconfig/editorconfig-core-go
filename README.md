@@ -29,7 +29,13 @@ import (
 ### Parse from file
 
 ```go
-editorConfig, err := editorconfig.ParseFile("path/to/.editorconfig")
+fp, err := os.Open("path/to/.editorconfig")
+if err != nil {
+  log.Fatal(err)
+}
+defer fp.Close()
+
+editorConfig, err := editorconfig.Parse(fp)
 if err != nil {
     log.Fatal(err)
 }
