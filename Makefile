@@ -15,5 +15,10 @@ test-go:
 	go test -v ./...
 
 test-core: editorconfig
-	cd core-test; cmake ..
-	cd core-test; ctest -E "^(comments_after_section|(escaped_)?octothorpe_(in_|comments_).*|indent_size_default_pre_0.9.0|root_file_mixed_case)$$" .
+	cd core-test; \
+		cmake ..
+	cd core-test; \
+		ctest \
+		-E "^(comments_after_section|(escaped_)?octothorpe_(in_|comments_).*|root_file_mixed_case)$$" \
+		--output-on-failure \
+		.

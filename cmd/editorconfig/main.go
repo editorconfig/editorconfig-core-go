@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 
 	"gopkg.in/ini.v1"
 
@@ -42,12 +41,11 @@ func main() {
 	}
 
 	for _, file := range rest {
-		absolutePath, err := filepath.Abs(file)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		def, err := editorconfig.GetDefinitionForFilenameWithConfigname(absolutePath, configName)
+		def, err := editorconfig.NewDefinition(editorconfig.Config{
+			Path:    file,
+			Name:    configName,
+			Version: configVersion,
+		})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -59,7 +57,7 @@ func main() {
 		if len(rest) < 2 {
 			def.Selector = ini.DEFAULT_SECTION
 		} else {
-			def.Selector = absolutePath
+			def.Selector = file
 		}
 		def.InsertToIniFile(iniFile)
 		_, err = iniFile.WriteTo(os.Stdout)
