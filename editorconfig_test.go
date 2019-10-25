@@ -92,22 +92,21 @@ func TestWrite(t *testing.T) {
 	}
 
 	tempFile := filepath.Join(os.TempDir(), ".editorconfig")
-	defer os.Remove(tempFile)
 
 	f, err := os.OpenFile(tempFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	assert.Nil(t, err)
-	defer os.Remove(tempFile)
+	defer func() {
+		f.Close()
+		os.Remove(tempFile)
+	}()
 
 	err = ec.Write(f)
 	assert.Nil(t, err)
-
-	f.Close()
 
 	savedEc, err := ParseFile(tempFile)
 	assert.Nil(t, err)
 
 	testParse(t, savedEc)
-	os.Remove(tempFile)
 }
 
 func TestSave(t *testing.T) {
