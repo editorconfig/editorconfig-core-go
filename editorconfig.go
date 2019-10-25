@@ -379,10 +379,12 @@ func GetDefinitionForFilenameWithConfigname(filename string, configname string) 
 	for dir != filepath.Dir(dir) {
 		dir = filepath.Dir(dir)
 		ecFile := filepath.Join(dir, configname)
-		if _, err := os.Stat(ecFile); os.IsNotExist(err) {
+		fp, err := os.Open(ecFile)
+		if os.IsNotExist(err) {
 			continue
 		}
-		ec, err := ParseFile(ecFile)
+		defer fp.Close()
+		ec, err := Parse(fp)
 		if err != nil {
 			return nil, err
 		}
