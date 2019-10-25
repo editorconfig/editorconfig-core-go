@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -326,9 +325,18 @@ func boolToString(b bool) string {
 // Serialize converts the Editorconfig to a slice of bytes, containing the
 // content of the file in the INI format.
 func (e *Editorconfig) Serialize() ([]byte, error) {
+	buffer := bytes.NewBuffer(nil)
+	err := e.Write(buffer)
+	if err != nil {
+		return nil, err
+	}
+	return buffer.Bytes(), nil
+}
+
+// Write writes the Editorconfig to the Writer in a compatible INI file.
+func (e *Editorconfig) Write(w io.Writer) error {
 	var (
 		iniFile = ini.Empty()
-		buffer  = bytes.NewBuffer(nil)
 	)
 	iniFile.Section(ini.DEFAULT_SECTION).Comment = "http://editorconfig.org"
 	if e.Root {
@@ -337,20 +345,17 @@ func (e *Editorconfig) Serialize() ([]byte, error) {
 	for _, d := range e.Definitions {
 		d.InsertToIniFile(iniFile)
 	}
-	_, err := iniFile.WriteTo(buffer)
-	if err != nil {
-		return nil, err
-	}
-	return buffer.Bytes(), nil
+	_, err := iniFile.WriteTo(w)
+	return err
 }
 
 // Save saves the Editorconfig to a compatible INI file.
 func (e *Editorconfig) Save(filename string) error {
-	data, err := e.Serialize()
+	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(filename, data, 0666)
+	return e.Write(f)
 }
 
 // GetDefinitionForFilename given a filename, searches

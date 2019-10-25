@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
 	"log"
@@ -45,19 +44,16 @@ func main() {
 	for _, file := range rest {
 		absolutePath, err := filepath.Abs(file)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
 		def, err := editorconfig.GetDefinitionForFilenameWithConfigname(absolutePath, configName)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
+			log.Fatal(err)
 		}
 
 		var (
 			iniFile = ini.Empty()
-			buffer  = bytes.NewBuffer(nil)
 		)
 		ini.PrettyFormat = false
 		if len(rest) < 2 {
@@ -66,10 +62,9 @@ func main() {
 			def.Selector = absolutePath
 		}
 		def.InsertToIniFile(iniFile)
-		_, err = iniFile.WriteTo(buffer)
+		_, err = iniFile.WriteTo(os.Stdout)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Print(buffer.String())
 	}
 }
