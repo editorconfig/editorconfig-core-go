@@ -19,6 +19,6 @@ test-core: editorconfig
 		cmake ..
 	cd core-test; \
 		ctest \
-		-E "^(comments_after_section|(escaped_)?octothorpe_(in_|comments_).*|root_file_mixed_case)$$" \
+		-E "^(comments_after_section|(escaped_)?octothorpe_(in_|comments_).*)$$" \
 		--output-on-failure \
 		.

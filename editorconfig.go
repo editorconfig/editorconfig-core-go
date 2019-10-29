@@ -191,7 +191,12 @@ func ParseFile(path string) (*Editorconfig, error) {
 // newEditorconfig builds the configuration from an INI file.
 func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 	editorConfig := &Editorconfig{}
-	editorConfig.Root = iniFile.Section(ini.DEFAULT_SECTION).Key("root").MustBool(false)
+
+	// Consider mixed-case values for true and false.
+	rootKey := iniFile.Section(ini.DEFAULT_SECTION).Key("root")
+	rootKey.SetValue(strings.ToLower(rootKey.Value()))
+	editorConfig.Root = rootKey.MustBool(false)
+
 	for _, sectionStr := range iniFile.SectionStrings() {
 		if sectionStr == ini.DEFAULT_SECTION {
 			continue
