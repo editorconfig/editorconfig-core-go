@@ -242,13 +242,13 @@ func (d *Definition) normalize() error {
 		d.TrimTrailingWhitespace = &trim
 	}
 
-	insertNewLine, ok := d.Raw["insert_new_line"]
-	if ok && insertNewLine != "unset" {
-		trim, err := strconv.ParseBool(insertNewLine)
+	insertFinalNewline, ok := d.Raw["insert_final_newline"]
+	if ok && insertFinalNewline != "unset" {
+		insert, err := strconv.ParseBool(insertFinalNewline)
 		if err != nil {
-			return fmt.Errorf("insert_new_line=%s is not an acceptable value. %s", insertNewLine, err)
+			return fmt.Errorf("insert_final_newline=%s is not an acceptable value. %s", insertFinalNewline, err)
 		}
-		d.TrimTrailingWhitespace = &trim
+		d.InsertFinalNewline = &insert
 	}
 
 	// tab_width from Raw
@@ -271,6 +271,7 @@ func (d *Definition) normalize() error {
 	return nil
 }
 
+// merge the parent definition into the child definition
 func (d *Definition) merge(md *Definition) {
 	if len(d.Charset) == 0 {
 		d.Charset = md.Charset
@@ -287,11 +288,15 @@ func (d *Definition) merge(md *Definition) {
 	if len(d.EndOfLine) == 0 {
 		d.EndOfLine = md.EndOfLine
 	}
-	if d.TrimTrailingWhitespace != nil && !*d.TrimTrailingWhitespace {
-		*d.TrimTrailingWhitespace = *md.TrimTrailingWhitespace
+	if trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]; !ok || trimTrailingWhitespace != "unset" {
+		if d.TrimTrailingWhitespace == nil {
+			d.TrimTrailingWhitespace = md.TrimTrailingWhitespace
+		}
 	}
-	if d.InsertFinalNewline != nil && !*d.InsertFinalNewline {
-		*d.InsertFinalNewline = *md.InsertFinalNewline
+	if insertFinalNewline, ok := d.Raw["insert_final_newline"]; !ok || insertFinalNewline != "unset" {
+		if d.InsertFinalNewline == nil {
+			d.InsertFinalNewline = md.InsertFinalNewline
+		}
 	}
 
 	for k, v := range md.Raw {
