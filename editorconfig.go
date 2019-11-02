@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/blang/semver"
 	"gopkg.in/ini.v1"
 )
 
@@ -48,6 +49,85 @@ const (
 	MaxValueLength    = 255
 )
 
+var (
+	v0_10_0 = semver.Version{
+		Major: 0,
+		Minor: 10,
+		Patch: 0,
+	}
+)
+
+// Config holds the configuration
+type Config struct {
+	Path    string
+	Name    string
+	Version string
+}
+
+// NewDefinition builds a definition from a given config
+func NewDefinition(config Config) (*Definition, error) {
+	if config.Name == "" {
+		config.Name = ConfigNameDefault
+	}
+
+	abs, err := filepath.Abs(config.Path)
+	if err != nil {
+		return nil, err
+	}
+
+	config.Path = abs
+
+	return newDefinition(config)
+}
+
+// newDefinition recursively builds the definition
+func newDefinition(config Config) (*Definition, error) {
+	definition := &Definition{}
+	definition.Raw = make(map[string]string)
+
+	if config.Version != "" {
+		version, err := semver.New(config.Version)
+		if err != nil {
+			return nil, err
+		}
+		definition.version = version
+	}
+
+	dir := config.Path
+	for dir != filepath.Dir(dir) {
+		dir = filepath.Dir(dir)
+		ecFile := filepath.Join(dir, config.Name)
+		fp, err := os.Open(ecFile)
+		if os.IsNotExist(err) {
+			continue
+		}
+		defer fp.Close()
+		ec, err := Parse(fp)
+		if err != nil {
+			return nil, err
+		}
+
+		relativeFilename := config.Path
+		if len(dir) < len(relativeFilename) {
+			relativeFilename = relativeFilename[len(dir):]
+		}
+
+		def, err := ec.GetDefinitionForFilename(relativeFilename)
+		if err != nil {
+			return nil, err
+		}
+
+		definition.merge(def)
+
+		if ec.Root {
+			break
+		}
+	}
+
+	return definition, nil
+
+}
+
 // Definition represents a definition inside the .editorconfig file.
 // E.g. a section of the file.
 // The definition is composed of the selector ("*", "*.go", "*.{js.css}", etc),
@@ -63,6 +143,7 @@ type Definition struct {
 	TrimTrailingWhitespace *bool             `ini:"-" json:"-"`
 	InsertFinalNewline     *bool             `ini:"-" json:"-"`
 	Raw                    map[string]string `ini:"-" json:"-"`
+	version                *semver.Version
 }
 
 // Editorconfig represents a .editorconfig file.
@@ -268,7 +349,7 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 			// do nothing
 		} else if d.TabWidth > 0 {
 			iniSec.Key("indent_size").SetValue(strconv.Itoa(d.TabWidth))
-		} else if d.IndentStyle == IndentStyleTab {
+		} else if d.IndentStyle == IndentStyleTab && (d.version == nil || d.version.GTE(v0_10_0)) {
 			iniSec.Key("indent_size").SetValue(IndentStyleTab)
 		}
 	}
@@ -364,7 +445,9 @@ func (e *Editorconfig) Save(filename string) error {
 // folder with `root = true`, and returns the right editorconfig
 // definition for the given file.
 func GetDefinitionForFilename(filename string) (*Definition, error) {
-	return GetDefinitionForFilenameWithConfigname(filename, ConfigNameDefault)
+	return NewDefinition(Config{
+		Path: filename,
+	})
 }
 
 // GetDefinitionForFilenameWithConfigname given a filename and a configname,
@@ -373,43 +456,8 @@ func GetDefinitionForFilename(filename string) (*Definition, error) {
 // folder with `root = true`, and returns the right editorconfig
 // definition for the given file.
 func GetDefinitionForFilenameWithConfigname(filename string, configname string) (*Definition, error) {
-	abs, err := filepath.Abs(filename)
-	if err != nil {
-		return nil, err
-	}
-	definition := &Definition{}
-	definition.Raw = make(map[string]string)
-
-	dir := abs
-	for dir != filepath.Dir(dir) {
-		dir = filepath.Dir(dir)
-		ecFile := filepath.Join(dir, configname)
-		fp, err := os.Open(ecFile)
-		if os.IsNotExist(err) {
-			continue
-		}
-		defer fp.Close()
-		ec, err := Parse(fp)
-		if err != nil {
-			return nil, err
-		}
-
-		relativeFilename := filename
-		if len(dir) < len(abs) {
-			relativeFilename = abs[len(dir):]
-		}
-
-		def, err := ec.GetDefinitionForFilename(relativeFilename)
-		if err != nil {
-			return nil, err
-		}
-
-		definition.merge(def)
-
-		if ec.Root {
-			break
-		}
-	}
-
-	return definition, nil
+	return NewDefinition(Config{
+		Path: filename,
+		Name: configname,
+	})
 }
