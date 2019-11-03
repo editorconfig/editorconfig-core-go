@@ -20,7 +20,7 @@ func testParse(t *testing.T, ec *Editorconfig) {
 	def := ec.Definitions[0]
 	assert.Equal(t, "*", def.Selector)
 	assert.Equal(t, EndOfLineLf, def.EndOfLine)
-	assert.Equal(t, (*bool)(nil), def.InsertFinalNewline)
+	assert.Equal(t, true, *def.InsertFinalNewline)
 	assert.Equal(t, CharsetUTF8, def.Charset)
 	assert.Equal(t, true, *def.TrimTrailingWhitespace)
 
@@ -79,9 +79,9 @@ func TestGetDefinition(t *testing.T) {
 	assert.Equal(t, IndentStyleTab, def.IndentStyle)
 	assert.Equal(t, "4", def.IndentSize)
 	assert.Equal(t, 4, def.TabWidth)
-	assert.Equal(t, (*bool)(nil), def.TrimTrailingWhitespace)
+	assert.Equal(t, true, *def.TrimTrailingWhitespace)
 	assert.Equal(t, CharsetUTF8, def.Charset)
-	assert.Equal(t, (*bool)(nil), def.InsertFinalNewline)
+	assert.Equal(t, true, *def.InsertFinalNewline)
 	assert.Equal(t, EndOfLineLf, def.EndOfLine)
 }
 
@@ -132,7 +132,7 @@ func TestPublicTestDefinitionForFilename(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "4", def.IndentSize)
 	assert.Equal(t, IndentStyleTab, def.IndentStyle)
-	assert.Equal(t, (*bool)(nil), def.InsertFinalNewline)
+	assert.Equal(t, true, *def.InsertFinalNewline)
 	assert.Equal(t, (*bool)(nil), def.TrimTrailingWhitespace)
 }
 
@@ -141,6 +141,6 @@ func TestPublicTestDefinitionForFilenameWithConfigname(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "5", def.IndentSize)
 	assert.Equal(t, IndentStyleSpaces, def.IndentStyle)
-	assert.Equal(t, (*bool)(nil), def.InsertFinalNewline)
-	assert.Equal(t, (*bool)(nil), def.TrimTrailingWhitespace)
+	assert.Equal(t, false, *def.InsertFinalNewline)
+	assert.Equal(t, false, *def.TrimTrailingWhitespace)
 }
