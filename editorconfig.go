@@ -50,9 +50,9 @@ const (
 )
 
 var (
-	v0_10_0 = semver.Version{
+	v0_9_0 = semver.Version{
 		Major: 0,
-		Minor: 10,
+		Minor: 9,
 		Patch: 0,
 	}
 )
@@ -354,7 +354,7 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 			// do nothing
 		} else if d.TabWidth > 0 {
 			iniSec.Key("indent_size").SetValue(strconv.Itoa(d.TabWidth))
-		} else if d.IndentStyle == IndentStyleTab && (d.version == nil || d.version.GTE(v0_10_0)) {
+		} else if d.IndentStyle == IndentStyleTab && (d.version == nil || d.version.GTE(v0_9_0)) {
 			iniSec.Key("indent_size").SetValue(IndentStyleTab)
 		}
 	}

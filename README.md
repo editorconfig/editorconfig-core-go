@@ -8,12 +8,11 @@ A [Editorconfig][editorconfig] file parser and manipulator for Go.
 
 ## Missing features
 
-- `unset`
 - escaping comments in values, probably in [go-ini/ini](https://github.com/go-ini/ini)
 
 ## Installing
 
-We recommend the use of Go 1.11+ modules for this package.
+We recommend the use of Go 1.12+ modules for this package.
 
 Import by the same path. The package name you will use to access it is
 `editorconfig`.
@@ -73,8 +72,8 @@ type Definition struct {
 	IndentSize             string
 	TabWidth               int
 	EndOfLine              string
-	TrimTrailingWhitespace bool
-	InsertFinalNewline     bool
+	TrimTrailingWhitespace *bool
+	InsertFinalNewline     *bool
 	Raw                    map[string]string
 }
 ```
@@ -122,6 +121,12 @@ To run the tests:
 
 ```bash
 go test -v ./...
+```
+
+To run the [integration tests](https://github.com/editorconfig/editorconfig-core-test):
+
+```
+make test-core
 ```
 
 [editorconfig]: http://editorconfig.org/

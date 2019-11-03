@@ -1,5 +1,12 @@
 # Change log
 
+## v2.2.1 - 2019-11-10
+
+- Implement pre 0.9.0 behavior
+  ([#39](https://github.com/editorconfig/editorconfig-core-go/pull/39));
+- Fix values inheritance (regression)
+  ([#43](https://github.com/editorconfig/editorconfig-core-go/pull/43));
+
 ## v2.2.0 - 2019-10-12
 
 - Allow parsing from an `io.Reader`, effectively deprecating `ParseBytes`
