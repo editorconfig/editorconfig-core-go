@@ -1,7 +1,7 @@
 PROJECT_ROOT_DIR := $(CURDIR)
 SRC := $(shell git ls-files *.go */*.go)
 
-.PHONY: bin test test-go test-core submodule
+.PHONY: bin test test-go test-core test-skipped submodule
 
 test: test-go test-core
 
@@ -21,4 +21,11 @@ test-core: editorconfig
 		ctest \
 		-E "^(comments_after_section|(escaped_)?octothorpe_(in_|comments_).*)$$" \
 		--output-on-failure \
+		.
+
+test-skipped: editorconfig
+	cd core-test; \
+		ctest \
+		-R "^(comments_after_section|(escaped_)?octothorpe_(in_|comments_).*)$$" \
+		--show-only \
 		.
