@@ -23,6 +23,7 @@ func testParse(t *testing.T, ec *Editorconfig) {
 	assert.Equal(t, true, *def.InsertFinalNewline)
 	assert.Equal(t, CharsetUTF8, def.Charset)
 	assert.Equal(t, true, *def.TrimTrailingWhitespace)
+	assert.Equal(t, "8", def.IndentSize)
 
 	def = ec.Definitions[1]
 	assert.Equal(t, "*.go", def.Selector)

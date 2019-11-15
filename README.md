@@ -129,4 +129,4 @@ To run the [integration tests](https://github.com/editorconfig/editorconfig-core
 make test-core
 ```
 
-[editorconfig]: http://editorconfig.org/
+[editorconfig]: https://editorconfig.org/

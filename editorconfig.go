@@ -1,5 +1,3 @@
-// Package editorconfig can be used to parse and generate editorconfig files.
-// For more information about editorconfig, see http://editorconfig.org/
 package editorconfig
 
 import (
@@ -421,7 +419,7 @@ func (e *Editorconfig) Write(w io.Writer) error {
 	var (
 		iniFile = ini.Empty()
 	)
-	iniFile.Section(ini.DEFAULT_SECTION).Comment = "http://editorconfig.org"
+	iniFile.Section(ini.DEFAULT_SECTION).Comment = "https://editorconfig.org"
 	if e.Root {
 		iniFile.Section(ini.DEFAULT_SECTION).Key("root").SetValue(boolToString(e.Root))
 	}
