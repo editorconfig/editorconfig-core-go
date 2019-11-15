@@ -193,37 +193,34 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 	editorConfig := &Editorconfig{}
 	editorConfig.Root = iniFile.Section(ini.DEFAULT_SECTION).Key("root").MustBool(false)
 	for _, sectionStr := range iniFile.SectionStrings() {
-		if sectionStr == ini.DEFAULT_SECTION {
+		if sectionStr == ini.DEFAULT_SECTION || len(sectionStr) > MaxSectionLength {
 			continue
 		}
-		if len(sectionStr) > MaxSectionLength {
-			continue
-		}
-		var (
-			iniSection = iniFile.Section(sectionStr)
-			definition = &Definition{}
-			raw        = make(map[string]string)
-		)
+
+		iniSection := iniFile.Section(sectionStr)
+		definition := &Definition{}
 		err := iniSection.MapTo(&definition)
 		if err != nil {
 			return nil, err
 		}
 
 		// Shallow copy all properties
+		raw := make(map[string]string)
 		for k, v := range iniSection.KeysHash() {
 			if len(k) > MaxPropertyLength || len(v) > MaxValueLength {
 				continue
 			}
 			raw[strings.ToLower(k)] = v
 		}
+		definition.Raw = raw
 
 		definition.Selector = sectionStr
-		definition.Raw = raw
 		if err := definition.normalize(); err != nil {
 			return nil, err
 		}
 		editorConfig.Definitions = append(editorConfig.Definitions, definition)
 	}
+
 	return editorConfig, nil
 }
 
@@ -312,39 +309,39 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 	for k, v := range d.Raw {
 		if k == "insert_final_newline" {
 			if d.InsertFinalNewline != nil {
-				iniSec.Key(k).SetValue(strconv.FormatBool(*d.InsertFinalNewline))
+				iniSec.NewKey(k, strconv.FormatBool(*d.InsertFinalNewline))
 			} else {
 				insertFinalNewline, ok := d.Raw["insert_final_newline"]
 				if ok {
-					iniSec.Key(k).SetValue(strings.ToLower(insertFinalNewline))
+					iniSec.NewKey(k, strings.ToLower(insertFinalNewline))
 				}
 			}
 		} else if k == "trim_trailing_whitespace" {
 			if d.TrimTrailingWhitespace != nil {
-				iniSec.Key(k).SetValue(strconv.FormatBool(*d.TrimTrailingWhitespace))
+				iniSec.NewKey(k, strconv.FormatBool(*d.TrimTrailingWhitespace))
 			} else {
 				trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]
 				if ok {
-					iniSec.Key(k).SetValue(strings.ToLower(trimTrailingWhitespace))
+					iniSec.NewKey(k, strings.ToLower(trimTrailingWhitespace))
 				}
 			}
 		} else if k == "charset" {
-			iniSec.Key(k).SetValue(d.Charset)
+			iniSec.NewKey(k, d.Charset)
 		} else if k == "end_of_line" {
-			iniSec.Key(k).SetValue(d.EndOfLine)
+			iniSec.NewKey(k, d.EndOfLine)
 		} else if k == "indent_style" {
-			iniSec.Key(k).SetValue(d.IndentStyle)
+			iniSec.NewKey(k, d.IndentStyle)
 		} else if k == "tab_width" {
 			tabWidth, ok := d.Raw["tab_width"]
 			if ok && tabWidth == "unset" {
-				iniSec.Key(k).SetValue(tabWidth)
+				iniSec.NewKey(k, tabWidth)
 			} else {
-				iniSec.Key(k).SetValue(strconv.Itoa(d.TabWidth))
+				iniSec.NewKey(k, strconv.Itoa(d.TabWidth))
 			}
 		} else if k == "indent_size" {
-			iniSec.Key(k).SetValue(d.IndentSize)
+			iniSec.NewKey(k, d.IndentSize)
 		} else {
-			iniSec.Key(k).SetValue(v)
+			iniSec.NewKey(k, v)
 		}
 	}
 
@@ -353,19 +350,19 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 		if ok && tabWidth == "unset" {
 			// do nothing
 		} else if d.TabWidth > 0 {
-			iniSec.Key("indent_size").SetValue(strconv.Itoa(d.TabWidth))
+			iniSec.NewKey("indent_size", strconv.Itoa(d.TabWidth))
 		} else if d.IndentStyle == IndentStyleTab && (d.version == nil || d.version.GTE(v0_9_0)) {
-			iniSec.Key("indent_size").SetValue(IndentStyleTab)
+			iniSec.NewKey("indent_size", IndentStyleTab)
 		}
 	}
 
 	if _, ok := d.Raw["tab_width"]; !ok {
 		if d.IndentSize == "unset" {
-			iniSec.Key("tab_width").SetValue(d.IndentSize)
+			iniSec.NewKey("tab_width", d.IndentSize)
 		} else {
 			_, err := strconv.Atoi(d.IndentSize)
 			if err == nil {
-				iniSec.Key("tab_width").SetValue(d.Raw["indent_size"])
+				iniSec.NewKey("tab_width", d.Raw["indent_size"])
 			}
 		}
 	}
