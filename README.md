@@ -18,9 +18,7 @@ Import by the same path. The package name you will use to access it is
 `editorconfig`.
 
 ```go
-import (
-    "github.com/editorconfig/editorconfig-core-go/v2"
-)
+import "github.com/editorconfig/editorconfig-core-go/v2"
 ```
 
 ## Usage
@@ -30,13 +28,13 @@ import (
 ```go
 fp, err := os.Open("path/to/.editorconfig")
 if err != nil {
-  log.Fatal(err)
+	log.Fatal(err)
 }
 defer fp.Close()
 
 editorConfig, err := editorconfig.Parse(fp)
 if err != nil {
-    log.Fatal(err)
+	log.Fatal(err)
 }
 ```
 
@@ -46,7 +44,7 @@ if err != nil {
 data := []byte("...")
 editorConfig, err := editorconfig.ParseBytes(data)
 if err != nil {
-    log.Fatal(err)
+	log.Fatal(err)
 }
 ```
 
@@ -105,13 +103,13 @@ You can easily convert a Editorconfig struct to a compatible INI file:
 // serialize to slice of bytes
 data, err := editorConfig.Serialize()
 if err != nil {
-    log.Fatal(err)
+	log.Fatal(err)
 }
 
 // save directly to file
 err := editorConfig.Save("path/to/.editorconfig")
 if err != nil {
-    log.Fatal(err)
+	log.Fatal(err)
 }
 ```
 

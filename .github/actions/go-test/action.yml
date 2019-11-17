@@ -1,0 +1,5 @@
+name: Go test
+description: Run the go tests
+runs:
+  using: docker
+  image: Dockerfile
