@@ -19,13 +19,13 @@ test-core: editorconfig
 		cmake ..
 	cd core-test; \
 		ctest \
-		-E "^(comments_after_section|(escaped_)?octothorpe_(in_|comments_).*)$$" \
+		-E "^octothorpe_in_value$$" \
 		--output-on-failure \
 		.
 
 test-skipped: editorconfig
 	cd core-test; \
 		ctest \
-		-R "^(comments_after_section|(escaped_)?octothorpe_(in_|comments_).*)$$" \
-		--show-only \
+		-R "^octothorpe_in_value$$" \
+		--output-on-failure \
 		.
