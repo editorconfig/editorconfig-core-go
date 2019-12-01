@@ -156,9 +156,7 @@ type Editorconfig struct {
 
 // Parse parses from a reader.
 func Parse(r io.Reader) (*Editorconfig, error) {
-	iniFile, err := ini.LoadSources(ini.LoadOptions{
-		SpaceBeforeInlineComment: true,
-	}, r)
+	iniFile, err := ini.Load(r)
 	if err != nil {
 		return nil, err
 	}
