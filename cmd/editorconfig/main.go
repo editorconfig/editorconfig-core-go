@@ -40,12 +40,17 @@ func main() {
 		os.Exit(1)
 	}
 
+	config := &editorconfig.Config{
+		Name:    configName,
+		Version: configVersion,
+	}
+
+	if len(rest) > 1 {
+		config.Parser = editorconfig.NewCachedParser()
+	}
+
 	for _, file := range rest {
-		def, err := editorconfig.NewDefinition(editorconfig.Config{
-			Path:    file,
-			Name:    configName,
-			Version: configVersion,
-		})
+		def, err := config.Load(file)
 		if err != nil {
 			log.Fatal(err)
 		}
