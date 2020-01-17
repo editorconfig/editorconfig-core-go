@@ -57,13 +57,12 @@ type Editorconfig struct {
 
 // newEditorconfig builds the configuration from an INI file.
 func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
+	editorConfig := &Editorconfig{}
+
+	// Consider mixed-case values for true and false.
 	rootKey := iniFile.Section(ini.DefaultSection).Key("root")
 	rootKey.SetValue(strings.ToLower(rootKey.Value()))
-	isRoot := rootKey.MustBool(false)
-
-	editorConfig := &Editorconfig{
-		Root: isRoot,
-	}
+	editorConfig.Root = rootKey.MustBool(false)
 
 	for _, sectionStr := range iniFile.SectionStrings() {
 		if sectionStr == ini.DefaultSection || len(sectionStr) > MaxSectionLength {

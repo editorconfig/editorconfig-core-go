@@ -11,12 +11,21 @@ import (
 type CachedParser struct {
 	iniFiles map[string]*ini.File
 	regexps  map[string]*regexp.Regexp
+	metrics  map[string]int
 }
 
 func NewCachedParser() *CachedParser {
+	metrics := make(map[string]int)
+
+	metrics["ini_hit"] = 0
+	metrics["ini_miss"] = 0
+	metrics["fnmatch_hit"] = 0
+	metrics["fnmatch_miss"] = 0
+
 	return &CachedParser{
 		iniFiles: make(map[string]*ini.File),
 		regexps:  make(map[string]*regexp.Regexp),
+		metrics:  metrics,
 	}
 }
 
@@ -36,6 +45,10 @@ func (parser *CachedParser) ParseIni(filename string) (*ini.File, error) {
 		}
 
 		parser.iniFiles[filename] = iniFile
+
+		parser.metrics["ini_miss"]++
+	} else {
+		parser.metrics["ini_hit"]++
 	}
 
 	return iniFile, nil
@@ -54,7 +67,22 @@ func (parser *CachedParser) FnmatchCase(selector string, filename string) (bool,
 		}
 
 		parser.regexps[selector] = r
+
+		parser.metrics["fnmatch_miss"]++
+	} else {
+		parser.metrics["fnmatch_hit"]++
 	}
 
 	return r.MatchString(filename), nil
+}
+
+// Metrics returns the metrics from the cache
+func (parser *CachedParser) Metrics() map[string]int {
+	m := make(map[string]int)
+
+	for k, v := range parser.metrics {
+		m[k] = v
+	}
+
+	return m
 }
