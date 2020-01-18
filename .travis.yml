@@ -28,6 +28,7 @@ install:
 
 script:
   - make test
+  - make test-skipped
 
 jobs:
   include:

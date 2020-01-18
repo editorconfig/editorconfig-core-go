@@ -29,5 +29,5 @@ test-skipped: editorconfig
 	cd core-test; \
 		ctest \
 		-R "^octothorpe_in_value$$" \
-		--output-on-failure \
+		--show-only \
 		.
