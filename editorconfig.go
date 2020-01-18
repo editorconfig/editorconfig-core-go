@@ -196,12 +196,12 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 	editorConfig := &Editorconfig{}
 
 	// Consider mixed-case values for true and false.
-	rootKey := iniFile.Section(ini.DEFAULT_SECTION).Key("root")
+	rootKey := iniFile.Section(ini.DefaultSection).Key("root")
 	rootKey.SetValue(strings.ToLower(rootKey.Value()))
 	editorConfig.Root = rootKey.MustBool(false)
 
 	for _, sectionStr := range iniFile.SectionStrings() {
-		if sectionStr == ini.DEFAULT_SECTION || len(sectionStr) > MaxSectionLength {
+		if sectionStr == ini.DefaultSection || len(sectionStr) > MaxSectionLength {
 			continue
 		}
 
@@ -315,39 +315,39 @@ func setValues(d *Definition, iniSection *ini.Section, key string, value string)
 	switch key {
 	case "insert_final_newline":
 		if d.InsertFinalNewline != nil {
-			iniSection.NewKey(key, strconv.FormatBool(*d.InsertFinalNewline))
+			iniSection.NewKey(key, strconv.FormatBool(*d.InsertFinalNewline)) // nolint:errcheck
 		} else {
 			insertFinalNewline, ok := d.Raw["insert_final_newline"]
 			if ok {
-				iniSection.NewKey(key, strings.ToLower(insertFinalNewline))
+				iniSection.NewKey(key, strings.ToLower(insertFinalNewline)) // nolint: errcheck
 			}
 		}
 	case "trim_trailing_whitespace":
 		if d.TrimTrailingWhitespace != nil {
-			iniSection.NewKey(key, strconv.FormatBool(*d.TrimTrailingWhitespace))
+			iniSection.NewKey(key, strconv.FormatBool(*d.TrimTrailingWhitespace)) // nolint:errcheck
 		} else {
 			trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]
 			if ok {
-				iniSection.NewKey(key, strings.ToLower(trimTrailingWhitespace))
+				iniSection.NewKey(key, strings.ToLower(trimTrailingWhitespace)) // nolint:errcheck
 			}
 		}
 	case "charset":
-		iniSection.NewKey(key, d.Charset)
+		iniSection.NewKey(key, d.Charset) // nolint:errcheck
 	case "end_of_line":
-		iniSection.NewKey(key, d.EndOfLine)
+		iniSection.NewKey(key, d.EndOfLine) // nolint:errcheck
 	case "indent_style":
-		iniSection.NewKey(key, d.IndentStyle)
+		iniSection.NewKey(key, d.IndentStyle) // nolint:errcheck
 	case "tab_width":
 		tabWidth, ok := d.Raw["tab_width"]
 		if ok && tabWidth == UnsetValue {
-			iniSection.NewKey(key, tabWidth)
+			iniSection.NewKey(key, tabWidth) // nolint:errcheck
 		} else {
-			iniSection.NewKey(key, strconv.Itoa(d.TabWidth))
+			iniSection.NewKey(key, strconv.Itoa(d.TabWidth)) // nolint:errcheck
 		}
 	case "indent_size":
-		iniSection.NewKey(key, d.IndentSize)
+		iniSection.NewKey(key, d.IndentSize) // nolint:errcheck
 	default:
-		iniSection.NewKey(key, value)
+		iniSection.NewKey(key, value) // nolint:errcheck
 	}
 }
 
@@ -358,19 +358,19 @@ func setRawValues(d *Definition, iniSection *ini.Section) {
 		case ok && tabWidth == UnsetValue:
 			// do nothing
 		case d.TabWidth > 0:
-			iniSection.NewKey("indent_size", strconv.Itoa(d.TabWidth))
+			iniSection.NewKey("indent_size", strconv.Itoa(d.TabWidth)) // nolint:errcheck
 		case d.IndentStyle == IndentStyleTab && (d.version == nil || d.version.GTE(v0_9_0)):
-			iniSection.NewKey("indent_size", IndentStyleTab)
+			iniSection.NewKey("indent_size", IndentStyleTab) // nolint:errcheck
 		}
 	}
 
 	if _, ok := d.Raw["tab_width"]; !ok {
 		if d.IndentSize == UnsetValue {
-			iniSection.NewKey("tab_width", d.IndentSize)
+			iniSection.NewKey("tab_width", d.IndentSize) // nolint:errcheck
 		} else {
 			_, err := strconv.Atoi(d.IndentSize)
 			if err == nil {
-				iniSection.NewKey("tab_width", d.Raw["indent_size"])
+				iniSection.NewKey("tab_width", d.Raw["indent_size"]) // nolint:errcheck
 			}
 		}
 	}
@@ -439,9 +439,9 @@ func (e *Editorconfig) Write(w io.Writer) error {
 	var (
 		iniFile = ini.Empty()
 	)
-	iniFile.Section(ini.DEFAULT_SECTION).Comment = "https://editorconfig.org"
+	iniFile.Section(ini.DefaultSection).Comment = "https://editorconfig.org"
 	if e.Root {
-		iniFile.Section(ini.DEFAULT_SECTION).Key("root").SetValue(boolToString(e.Root))
+		iniFile.Section(ini.DefaultSection).Key("root").SetValue(boolToString(e.Root))
 	}
 	for _, d := range e.Definitions {
 		d.InsertToIniFile(iniFile)
