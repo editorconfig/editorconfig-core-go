@@ -1,5 +1,14 @@
 # Change log
 
+## v2.2.2 - 2020-01-19
+
+- Bump core test to master
+  ([#42](https://github.com/editorconfig/editorconfig-core-go/pull/42));
+- Bugfix error mangled when reading a file which could create a panic
+  ([#47](https://github.com/editorconfig/editorconfig-core-go/pull/47));
+- Bugfix INI file generated would not show the correct value
+  ([#47](https://github.com/editorconfig/editorconfig-core-go/pull/47));
+
 ## v2.2.1 - 2019-11-10
 
 - Implement pre 0.9.0 behavior
