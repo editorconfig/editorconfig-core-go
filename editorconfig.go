@@ -315,11 +315,11 @@ func setValues(d *Definition, iniSection *ini.Section, key string, value string)
 	switch key {
 	case "insert_final_newline":
 		if d.InsertFinalNewline != nil {
-			iniSection.Key(key).SetValue(strconv.FormatBool(*d.InsertFinalNewline))
+			iniSection.NewKey(key, strconv.FormatBool(*d.InsertFinalNewline))
 		} else {
 			insertFinalNewline, ok := d.Raw["insert_final_newline"]
 			if ok {
-				iniSection.Key(key).SetValue(strings.ToLower(insertFinalNewline))
+				iniSection.NewKey(key, strings.ToLower(insertFinalNewline))
 			}
 		}
 	case "trim_trailing_whitespace":
@@ -332,22 +332,22 @@ func setValues(d *Definition, iniSection *ini.Section, key string, value string)
 			}
 		}
 	case "charset":
-		iniSection.Key(key).SetValue(d.Charset)
+		iniSection.NewKey(key, d.Charset)
 	case "end_of_line":
-		iniSection.Key(key).SetValue(d.EndOfLine)
+		iniSection.NewKey(key, d.EndOfLine)
 	case "indent_style":
-		iniSection.Key(key).SetValue(d.IndentStyle)
+		iniSection.NewKey(key, d.IndentStyle)
 	case "tab_width":
 		tabWidth, ok := d.Raw["tab_width"]
 		if ok && tabWidth == UnsetValue {
-			iniSection.Key(key).SetValue(tabWidth)
+			iniSection.NewKey(key, tabWidth)
 		} else {
-			iniSection.Key(key).SetValue(strconv.Itoa(d.TabWidth))
+			iniSection.NewKey(key, strconv.Itoa(d.TabWidth))
 		}
 	case "indent_size":
-		iniSection.Key(key).SetValue(d.IndentSize)
+		iniSection.NewKey(key, d.IndentSize)
 	default:
-		iniSection.Key(key).SetValue(value)
+		iniSection.NewKey(key, value)
 	}
 }
 
