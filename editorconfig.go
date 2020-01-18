@@ -96,7 +96,10 @@ func newDefinition(config Config) (*Definition, error) {
 		dir = filepath.Dir(dir)
 		ecFile := filepath.Join(dir, config.Name)
 		fp, err := os.Open(ecFile)
-		if os.IsNotExist(err) {
+		if err != nil {
+			if !os.IsNotExist(err) {
+				return nil, err
+			}
 			continue
 		}
 		defer fp.Close()
