@@ -13,12 +13,25 @@ builds:
   - linux
   - darwin
   - windows
+dockers:
+- image_templates:
+  - docker.pkg.github.com/editorconfig/editorconfig-core-go/editorconfig:latest
+  - docker.pkg.github.com/editorconfig/editorconfig-core-go/editorconfig:{{ .Tag }}
+  - docker.pkg.github.com/editorconfig/editorconfig-core-go/editorconfig:v{{ .Major }}
+  goos: linux
+  goarch: amd64
+  binaries:
+    - editorconfig
+  build_flag_templates:
+  - "--label=org.label-schema.schema-version=1.0"
+  - "--label=org.label-schema.version={{.Version}}"
+  - "--label=org.label-schema.name={{.ProjectName}}"
 checksum:
   name_template: 'checksums.txt'
 signs:
   - artifacts: checksum
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: "{{ .Tag }}-development"
 changelog:
   sort: asc
   filters:
