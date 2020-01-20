@@ -1,11 +1,14 @@
 ---
 language: go
-dist: xenial
-sudo: true
 
 go:
   - '1.12.x'
   - '1.13.x'
+
+env:
+  - GO111MODULE=on
+    CMAKE_VERSION=3.16.2
+    GOLANGCI_LINT_VERSION=v1.22.0
 
 compiler:
   - gcc
@@ -15,18 +18,23 @@ install:
   - DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
   - mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
   # we use wget to fetch the cmake binaries
-  - travis_retry wget --no-check-certificate https://cmake.org/files/v3.15/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
-  - echo "7c2b17a9be605f523d71b99cc2e5b55b009d82cf9577efb50d4b23056dee1109 cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz" > sha256sum.txt
+  - travis_retry wget --no-check-certificate https://cmake.org/files/v3.16/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
+  - echo "0641046b4c35ac5119cd2f24f16246bfb242b47c89cbad19a9162ccbfb247d47  cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz" > sha256sum.txt
   - sha256sum -c sha256sum.txt
   - tar -xvf cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz > /dev/null
   - mv cmake-${CMAKE_VERSION}-Linux-x86_64 cmake-install
   - PATH=${DEPS_DIR}/cmake-install:${DEPS_DIR}/cmake-install/bin:$PATH
   - cd ${TRAVIS_BUILD_DIR}
 
-env:
-  - GO111MODULE=on
-    CMAKE_VERSION=3.15.4
-
 script:
   - make test
   - make test-skipped
+
+jobs:
+  include:
+    - stage: lint
+      go: 1.13.x
+      script:
+        - curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh
+          | sh -s -- -b $(go env GOPATH)/bin $GOLANGCI_LINT_VERSION
+        - golangci-lint run ./...

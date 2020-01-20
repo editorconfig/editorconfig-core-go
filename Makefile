@@ -25,6 +25,8 @@ test-core: editorconfig
 
 test-skipped: editorconfig
 	cd core-test; \
+		cmake ..
+	cd core-test; \
 		ctest \
 		-R "^octothorpe_in_value$$" \
 		--show-only \

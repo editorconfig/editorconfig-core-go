@@ -6,6 +6,7 @@ import (
 )
 
 func TestTranslate(t *testing.T) {
+	t.Parallel()
 	var tests = [][2]string{
 		{"a*e.c", `a[^/]*e\.c`},
 		{"a**z.c", `a.*z\.c`},
@@ -24,12 +25,10 @@ func TestTranslate(t *testing.T) {
 	for i, test := range tests {
 		title := fmt.Sprintf("%d) %s => %s", i, test[0], test[1])
 		t.Run(title, func(t *testing.T) {
-			result, err := translate(test[0])
-			if err != nil {
-				t.Fatal(err)
-			}
-			if result != test[1] {
-				t.Errorf("%s != %s", test[1], result)
+			t.Parallel()
+			result := translate(test[0]) // nolint: scopelint
+			if result != test[1] {       // nolint: scopelint
+				t.Errorf("%s != %s", test[1], result) // nolint: scopelint
 			}
 		})
 	}

@@ -55,7 +55,7 @@ func main() {
 		)
 		ini.PrettyFormat = false
 		if len(rest) < 2 {
-			def.Selector = ini.DEFAULT_SECTION
+			def.Selector = ini.DefaultSection
 		} else {
 			def.Selector = file
 		}
