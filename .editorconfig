@@ -13,8 +13,11 @@ indent_size = 2
 indent_style = tab
 indent_size = 8
 
-[{*.md,Dockerfile}]
+[*.md]
 indent_size = 4
 trim_trailing_whitespace = false
 
 eclint_indent_style = unset
+
+[Dockerfile]
+indent_size = 4

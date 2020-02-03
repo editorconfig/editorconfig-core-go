@@ -1,23 +1,32 @@
 on: [push]
 
+.checkout: &checkout
+  name: checkout
+  uses: actions/checkout@v1.1.0
+
 jobs:
-  lint:
+  editorconfig lint:
     runs-on: ubuntu-latest
-    name: lint
     steps:
-      - name: checkout
-        uses: actions/checkout@v1.1.0
+      - <<: *checkout
       - name: eclint-action
         uses: greut/eclint-action@v0.1.0
+  golangci-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - <<: *checkout
       - name: golangci-lint
         uses: ./.github/actions/golangci-lint
-  test:
+  go test:
     runs-on: ubuntu-latest
     name: test
     steps:
-      - name: checkout
-        uses: actions/checkout@v1.1.0
+      - <<: *checkout
       - name: go test
         uses: ./.github/actions/go-test
+  core test:
+    runs-on: ubuntu-latest
+    steps:
+      - <<: *checkout
       - name: core test
         uses: ./.github/actions/core-test
