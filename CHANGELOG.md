@@ -2,7 +2,6 @@
 
 ## v2.3.0 - 2020-02-14
 
-
 - Implement a cached `Parser` to allow getting the definition of many files
   at once without re-reading the `.editorconfig` or parsing the _globbing_
   expression more than once.
