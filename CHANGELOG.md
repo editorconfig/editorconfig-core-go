@@ -1,5 +1,14 @@
 # Change log
 
+## v2.3.0 - 2020-02-14
+
+- Implement a cached `Parser` to allow getting the definition of many files
+  at once without re-reading the `.editorconfig` or parsing the _globbing_
+  expression more than once.
+  ([#51](https://github.com/editorconfig/editorconfig-core-go/pull/51));
+- Run golangci-lint on travis
+  ([#26](https://github.com/editorconfig/editorconfig-core-go/pull/26)).
+
 ## v2.2.2 - 2020-01-19
 
 - Bump core test to master
@@ -7,14 +16,14 @@
 - Bugfix error mangled when reading a file which could create a panic
   ([#47](https://github.com/editorconfig/editorconfig-core-go/pull/47));
 - Bugfix INI file generated would not show the correct value
-  ([#47](https://github.com/editorconfig/editorconfig-core-go/pull/47));
+  ([#46](https://github.com/editorconfig/editorconfig-core-go/pull/46)).
 
 ## v2.2.1 - 2019-11-10
 
 - Implement pre 0.9.0 behavior
   ([#39](https://github.com/editorconfig/editorconfig-core-go/pull/39));
 - Fix values inheritance (regression)
-  ([#43](https://github.com/editorconfig/editorconfig-core-go/pull/43));
+  ([#43](https://github.com/editorconfig/editorconfig-core-go/pull/43)).
 
 ## v2.2.0 - 2019-10-12
 
