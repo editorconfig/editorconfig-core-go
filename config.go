@@ -23,6 +23,7 @@ type Config struct {
 	Parser  Parser
 }
 
+// Load loads definition of a given file.
 func (config *Config) Load(filename string) (*Definition, error) {
 	// idiomatic go allows empty struct
 	if config.Parser == nil {

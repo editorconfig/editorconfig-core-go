@@ -8,11 +8,14 @@ import (
 	"gopkg.in/ini.v1"
 )
 
+// CachedParser implements the Parser interface but caches the definition and
+// the regular expressions.
 type CachedParser struct {
 	editorconfigs map[string]*Editorconfig
 	regexps       map[string]*regexp.Regexp
 }
 
+// NewCachedParser initializes the CachedParser.
 func NewCachedParser() *CachedParser {
 	return &CachedParser{
 		editorconfigs: make(map[string]*Editorconfig),
@@ -20,6 +23,7 @@ func NewCachedParser() *CachedParser {
 	}
 }
 
+// ParseIni parses the given filename to a Definition and caches the result.
 func (parser *CachedParser) ParseIni(filename string) (*Editorconfig, error) {
 	ec, ok := parser.editorconfigs[filename]
 	if !ok {
@@ -46,7 +50,7 @@ func (parser *CachedParser) ParseIni(filename string) (*Editorconfig, error) {
 	return ec, nil
 }
 
-// FnmatchCase calls the module's FnmatchCase.
+// FnmatchCase calls the module's FnmatchCase and caches the parsed selector.
 func (parser *CachedParser) FnmatchCase(selector string, filename string) (bool, error) {
 	r, ok := parser.regexps[selector]
 	if !ok {

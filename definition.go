@@ -27,12 +27,12 @@ type Definition struct {
 	version                *semver.Version
 }
 
-// NewDefinition builds a definition from a given config
+// NewDefinition builds a definition from a given config.
 func NewDefinition(config Config) (*Definition, error) {
 	return config.Load(config.Path)
 }
 
-// normalize fixes some values to their lowercaes value
+// normalize fixes some values to their lowercase value.
 func (d *Definition) normalize() error {
 	d.Charset = strings.ToLower(d.Charset)
 	d.EndOfLine = strings.ToLower(d.Raw["end_of_line"])
@@ -76,7 +76,7 @@ func (d *Definition) normalize() error {
 	return nil
 }
 
-// merge the parent definition into the child definition
+// merge the parent definition into the child definition.
 func (d *Definition) merge(md *Definition) {
 	if len(d.Charset) == 0 {
 		d.Charset = md.Charset
@@ -111,7 +111,7 @@ func (d *Definition) merge(md *Definition) {
 	}
 }
 
-// InsertToIniFile ... TODO
+// InsertToIniFile writes the definition into a ini file.
 func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 	iniSec := iniFile.Section(d.Selector)
 	for k, v := range d.Raw {

@@ -6,6 +6,7 @@ import (
 	"gopkg.in/ini.v1"
 )
 
+// SimpleParser implements the Parser interface but without doing any caching.
 type SimpleParser struct{}
 
 // ParseIni calls go-ini's Load on the file.
