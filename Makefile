@@ -9,7 +9,7 @@ submodule:
 	git submodule update --init
 
 editorconfig: $(SRC)
-	go build ./cmd/editorconfig
+	go build github.com/editorconfig/editorconfig-core-go/v2/cmd/editorconfig
 
 test-go:
 	go test -v ./...
