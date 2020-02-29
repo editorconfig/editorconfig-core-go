@@ -7,7 +7,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v1.1.0
       - name: eclint-action
-        uses: greut/eclint-action@v0.1.0
+        uses: greut/eclint-action@v0.1.1
   golangci-lint:
     runs-on: ubuntu-latest
     steps:
