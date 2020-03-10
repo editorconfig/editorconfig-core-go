@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/blang/semver"
+	"golang.org/x/mod/semver"
 	"gopkg.in/ini.v1"
 )
 
@@ -24,7 +24,7 @@ type Definition struct {
 	TrimTrailingWhitespace *bool             `ini:"-" json:"-"`
 	InsertFinalNewline     *bool             `ini:"-" json:"-"`
 	Raw                    map[string]string `ini:"-" json:"-"`
-	version                *semver.Version
+	version                string
 }
 
 // NewDefinition builds a definition from a given config.
@@ -163,7 +163,7 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 			// do nothing
 		case d.TabWidth > 0:
 			iniSec.NewKey("indent_size", strconv.Itoa(d.TabWidth)) // nolint: errcheck
-		case d.IndentStyle == IndentStyleTab && (d.version == nil || d.version.GTE(v0_9_0)):
+		case d.IndentStyle == IndentStyleTab && (d.version == "" || semver.Compare(d.version, "v0.9.0") >= 0):
 			iniSec.NewKey("indent_size", IndentStyleTab) // nolint: errcheck
 		}
 	}
