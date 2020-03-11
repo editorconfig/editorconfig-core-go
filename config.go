@@ -48,6 +48,7 @@ func (config *Config) Load(filename string) (*Definition, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		definition.version = version
 	}
 
@@ -60,6 +61,7 @@ func (config *Config) Load(filename string) (*Definition, error) {
 			if os.IsNotExist(err) {
 				continue
 			}
+
 			return nil, err
 		}
 

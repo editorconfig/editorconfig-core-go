@@ -7,6 +7,7 @@ import (
 
 func TestTranslate(t *testing.T) {
 	t.Parallel()
+
 	var tests = [][2]string{
 		{"a*e.c", `a[^/]*e\.c`},
 		{"a**z.c", `a.*z\.c`},

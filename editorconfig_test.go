@@ -40,6 +40,7 @@ func testParse(t *testing.T, ec *Editorconfig) {
 
 func TestParseFile(t *testing.T) {
 	t.Parallel()
+
 	ec, err := ParseFile(testFile)
 	assert.Nil(t, err)
 
@@ -59,6 +60,7 @@ func TestParseBytes(t *testing.T) {
 func TestParseReader(t *testing.T) {
 	f, err := os.Open(testFile)
 	assert.Nil(t, err)
+
 	defer f.Close()
 
 	ec, err := Parse(f)
@@ -69,6 +71,7 @@ func TestParseReader(t *testing.T) {
 
 func TestGetDefinition(t *testing.T) {
 	t.Parallel()
+
 	ec, err := ParseFile(testFile)
 	if err != nil {
 		t.Errorf("Couldn't parse file: %v", err)
@@ -98,6 +101,7 @@ func TestWrite(t *testing.T) {
 
 	f, err := os.OpenFile(tempFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	assert.Nil(t, err)
+
 	defer func() {
 		f.Close()
 		os.Remove(tempFile)
@@ -114,6 +118,7 @@ func TestWrite(t *testing.T) {
 
 func TestSave(t *testing.T) {
 	t.Parallel()
+
 	ec, err := ParseFile(testFile)
 	if err != nil {
 		t.Errorf("Couldn't parse file: %v", err)
@@ -133,6 +138,7 @@ func TestSave(t *testing.T) {
 
 func TestPublicTestDefinitionForFilename(t *testing.T) {
 	t.Parallel()
+
 	def, err := GetDefinitionForFilename("testdata/root/src/dummy.go")
 	assert.Nil(t, err)
 	assert.Equal(t, "4", def.IndentSize)
@@ -143,6 +149,7 @@ func TestPublicTestDefinitionForFilename(t *testing.T) {
 
 func TestPublicTestDefinitionForFilenameWithConfigname(t *testing.T) {
 	t.Parallel()
+
 	def, err := GetDefinitionForFilenameWithConfigname("testdata/root/src/dummy.go", "a.ini")
 	assert.Nil(t, err)
 	assert.Equal(t, "5", def.IndentSize)
