@@ -82,10 +82,11 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 			if len(k) > MaxPropertyLength || len(v) > MaxValueLength {
 				continue
 			}
+
 			raw[strings.ToLower(k)] = v
 		}
-		definition.Raw = raw
 
+		definition.Raw = raw
 		definition.Selector = sectionStr
 
 		if err := definition.normalize(); err != nil {
@@ -125,10 +126,10 @@ func (e *Editorconfig) GetDefinitionForFilename(name string) (*Definition, error
 		}
 
 		ok, err := e.FnmatchCase(selector, name)
-
 		if err != nil {
 			return nil, err
 		}
+
 		if ok {
 			def.merge(actualDef)
 		}
@@ -150,10 +151,12 @@ func (e *Editorconfig) FnmatchCase(selector string, filename string) (bool, erro
 // content of the file in the INI format.
 func (e *Editorconfig) Serialize() ([]byte, error) {
 	buffer := bytes.NewBuffer(nil)
+
 	err := e.Write(buffer)
 	if err != nil {
 		return nil, err
 	}
+
 	return buffer.Bytes(), nil
 }
 
@@ -162,14 +165,19 @@ func (e *Editorconfig) Write(w io.Writer) error {
 	var (
 		iniFile = ini.Empty()
 	)
+
 	iniFile.Section(ini.DefaultSection).Comment = "https://editorconfig.org"
+
 	if e.Root {
 		iniFile.Section(ini.DefaultSection).Key("root").SetValue(boolToString(e.Root))
 	}
+
 	for _, d := range e.Definitions {
 		d.InsertToIniFile(iniFile)
 	}
+
 	_, err := iniFile.WriteTo(w)
+
 	return err
 }
 
@@ -179,6 +187,7 @@ func (e *Editorconfig) Save(filename string) error {
 	if err != nil {
 		return err
 	}
+
 	return e.Write(f)
 }
 
@@ -186,6 +195,7 @@ func boolToString(b bool) string {
 	if b {
 		return "true"
 	}
+
 	return "false"
 }
 

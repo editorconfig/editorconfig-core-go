@@ -22,6 +22,7 @@ func main() {
 		configVersion   string
 		showVersionFlag bool
 	)
+
 	flag.StringVar(&configName, "f", editorconfig.ConfigNameDefault, "Specify conf filename other than '.editorconfig'")
 	flag.StringVar(&configVersion, "b", "", "Specify version (used by devs to test compatibility)")
 	flag.BoolVar(&showVersionFlag, "v", false, "Display version information")
@@ -55,16 +56,17 @@ func main() {
 			log.Fatal(err)
 		}
 
-		var (
-			iniFile = ini.Empty()
-		)
+		iniFile := ini.Empty()
 		ini.PrettyFormat = false
+
 		if len(rest) < 2 {
 			def.Selector = ini.DefaultSection
 		} else {
 			def.Selector = file
 		}
+
 		def.InsertToIniFile(iniFile)
+
 		_, err = iniFile.WriteTo(os.Stdout)
 		if err != nil {
 			log.Fatal(err)

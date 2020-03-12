@@ -57,6 +57,7 @@ func (parser *CachedParser) FnmatchCase(selector string, filename string) (bool,
 		p := translate(selector)
 
 		var err error
+
 		r, err = regexp.Compile(fmt.Sprintf("^%s$", p))
 		if err != nil {
 			return false, err

@@ -44,6 +44,7 @@ func (d *Definition) normalize() error {
 		if err != nil {
 			return fmt.Errorf("trim_trailing_whitespace=%s is not an acceptable value. %s", trimTrailingWhitespace, err)
 		}
+
 		d.TrimTrailingWhitespace = &trim
 	}
 
@@ -53,6 +54,7 @@ func (d *Definition) normalize() error {
 		if err != nil {
 			return fmt.Errorf("insert_final_newline=%s is not an acceptable value. %s", insertFinalNewline, err)
 		}
+
 		d.InsertFinalNewline = &insert
 	}
 
@@ -63,6 +65,7 @@ func (d *Definition) normalize() error {
 		if err != nil {
 			return fmt.Errorf("tab_width=%s is not an acceptable value. %s", tabWidth, err)
 		}
+
 		d.TabWidth = num
 	}
 
@@ -81,23 +84,29 @@ func (d *Definition) merge(md *Definition) {
 	if len(d.Charset) == 0 {
 		d.Charset = md.Charset
 	}
+
 	if len(d.IndentStyle) == 0 {
 		d.IndentStyle = md.IndentStyle
 	}
+
 	if len(d.IndentSize) == 0 {
 		d.IndentSize = md.IndentSize
 	}
+
 	if d.TabWidth <= 0 {
 		d.TabWidth = md.TabWidth
 	}
+
 	if len(d.EndOfLine) == 0 {
 		d.EndOfLine = md.EndOfLine
 	}
+
 	if trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]; !ok || trimTrailingWhitespace != UnsetValue {
 		if d.TrimTrailingWhitespace == nil {
 			d.TrimTrailingWhitespace = md.TrimTrailingWhitespace
 		}
 	}
+
 	if insertFinalNewline, ok := d.Raw["insert_final_newline"]; !ok || insertFinalNewline != UnsetValue {
 		if d.InsertFinalNewline == nil {
 			d.InsertFinalNewline = md.InsertFinalNewline
@@ -114,6 +123,7 @@ func (d *Definition) merge(md *Definition) {
 // InsertToIniFile writes the definition into a ini file.
 func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 	iniSec := iniFile.Section(d.Selector)
+
 	for k, v := range d.Raw {
 		switch k {
 		case "insert_final_newline":
@@ -124,6 +134,7 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 				if !ok {
 					break
 				}
+
 				v = strings.ToLower(insertFinalNewline)
 			}
 		case "trim_trailing_whitespace":
@@ -134,6 +145,7 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 				if !ok {
 					break
 				}
+
 				v = strings.ToLower(trimTrailingWhitespace)
 			}
 		case "charset":
@@ -158,6 +170,7 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 
 	if _, ok := d.Raw["indent_size"]; !ok {
 		tabWidth, ok := d.Raw["tab_width"]
+
 		switch {
 		case ok && tabWidth == UnsetValue:
 			// do nothing
