@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/editorconfig/editorconfig-core-go/v2/internal/assert"
 )
 
 const (
