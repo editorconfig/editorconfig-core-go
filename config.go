@@ -42,6 +42,7 @@ func (config *Config) Load(filename string) (*Definition, error) {
 		if !strings.HasPrefix(version, "v") {
 			version = "v" + version
 		}
+
 		if ok := semver.IsValid(version); !ok {
 			return nil, fmt.Errorf("version %s appears invalid", config.Version)
 		}
