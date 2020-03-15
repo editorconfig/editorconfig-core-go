@@ -1,18 +1,12 @@
 package editorconfig
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
-	"github.com/blang/semver"
-)
-
-var (
-	v0_9_0 = semver.Version{
-		Major: 0,
-		Minor: 9,
-		Patch: 0,
-	}
+	"golang.org/x/mod/semver"
 )
 
 // Config holds the configuration
@@ -44,9 +38,12 @@ func (config *Config) Load(filename string) (*Definition, error) {
 	definition.Raw = make(map[string]string)
 
 	if config.Version != "" {
-		version, err := semver.New(config.Version)
-		if err != nil {
-			return nil, err
+		version := config.Version
+		if !strings.HasPrefix(version, "v") {
+			version = "v" + version
+		}
+		if ok := semver.IsValid(version); !ok {
+			return nil, fmt.Errorf("version %s appears invalid", config.Version)
 		}
 
 		definition.version = version
