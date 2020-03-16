@@ -1,5 +1,16 @@
 # Change log
 
+## v2.3.1 - 2020-03-16
+
+- Use golang/x/mod/semver for semantic versioning checks
+  ([#55](https://github.com/editorconfig/editorconfig-core-go/pull/55));
+- Enable wsl (WhiteSpace linter)
+  ([#56](https://github.com/editorconfig/editorconfig-core-go/pull/56));
+- Replace testify dependency with Google's go-cmp
+  ([#57](https://github.com/editorconfig/editorconfig-core-go/pull/57));
+- Upgrade go-ini to v1.54.0
+  ([#58](https://github.com/editorconfig/editorconfig-core-go/pull/58)).
+
 ## v2.3.0 - 2020-02-14
 
 - Implement a cached `Parser` to allow getting the definition of many files
