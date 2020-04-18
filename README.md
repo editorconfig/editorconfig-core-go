@@ -1,5 +1,4 @@
-![Build Status](https://github.com/editorconfig/editorconfig-core-go/workflows/main/badge.svg)
-[![Build Status](https://travis-ci.org/editorconfig/editorconfig-core-go.svg?branch=master)](https://travis-ci.org/editorconfig/editorconfig-core-go)
+![Build Status](https://github.com/editorconfig/editorconfig-core-go/workflows/.github/workflows/main.yml/badge.svg)
 [![GoDoc](https://godoc.org/github.com/editorconfig/editorconfig-core-go?status.svg)](https://godoc.org/github.com/editorconfig/editorconfig-core-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/editorconfig/editorconfig-core-go)](https://goreportcard.com/report/github.com/editorconfig/editorconfig-core-go)
 
