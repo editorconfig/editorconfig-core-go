@@ -1,0 +1,5 @@
+name: Core test
+description: Run the editorconfig-core-test suite
+runs:
+  using: docker
+  image: Dockerfile
