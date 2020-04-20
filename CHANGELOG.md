@@ -1,6 +1,6 @@
 # Change log
 
-## v2.3.2 - 2020-04-19
+## v2.3.2 - 2020-04-21
 
 - Upgrade go-ini v1.55.0
   ([#60](https://github.com/editorconfig/editorconfig-core-go/pull/60));
