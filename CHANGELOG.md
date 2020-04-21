@@ -1,5 +1,14 @@
 # Change log
 
+## v2.3.2 - 2020-04-21
+
+- Upgrade go-ini v1.55.0
+  ([#60](https://github.com/editorconfig/editorconfig-core-go/pull/60));
+- Build on latest Go
+  ([#54](https://github.com/editorconfig/editorconfig-core-go/pull/54));
+- Use GitHub action instead of Travis CI
+  ([#50](https://github.com/editorconfig/editorconfig-core-go/pull/50));
+
 ## v2.3.1 - 2020-03-16
 
 - Use golang/x/mod/semver for semantic versioning checks

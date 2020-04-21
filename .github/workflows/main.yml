@@ -1,5 +1,5 @@
 on: [push]
-
+name: test and build
 jobs:
   editorconfig_lint:
     runs-on: ubuntu-latest
