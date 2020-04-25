@@ -47,7 +47,7 @@ func main() {
 	}
 
 	if len(rest) > 1 {
-		config.Parser = editorconfig.NewCachedParser()
+		config.Parser = editorconfig.NewLRUParser()
 	}
 
 	for _, file := range rest {
