@@ -30,7 +30,7 @@ func FnmatchCase(pattern, name string) (bool, error) {
 
 // Translate converts a glob-like pattern into a regexp.
 //
-// Known limitation: it's pretty bad for ranges such as {1...n}
+// Known limitation: it's pretty bad for ranges such as {1..n}
 func Translate(pattern string) string { // nolint: gocyclo
 	index := 0
 	pat := []rune(pattern)
