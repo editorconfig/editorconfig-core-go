@@ -55,8 +55,8 @@ type Editorconfig struct {
 	config      *Config
 }
 
-// newEditorconfig builds the configuration from an INI file.
-func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
+// NewEditorconfig builds the configuration from an INI file.
+func NewEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 	editorConfig := &Editorconfig{}
 
 	// Consider mixed-case values for true and false.
@@ -206,7 +206,7 @@ func Parse(r io.Reader) (*Editorconfig, error) {
 		return nil, err
 	}
 
-	return newEditorconfig(iniFile)
+	return NewEditorconfig(iniFile)
 }
 
 // ParseBytes parses from a slice of bytes.
@@ -218,7 +218,7 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 		return nil, err
 	}
 
-	return newEditorconfig(iniFile)
+	return NewEditorconfig(iniFile)
 }
 
 // ParseFile parses from a file.
@@ -230,7 +230,7 @@ func ParseFile(path string) (*Editorconfig, error) {
 		return nil, err
 	}
 
-	return newEditorconfig(iniFile)
+	return NewEditorconfig(iniFile)
 }
 
 // GetDefinitionForFilename given a filename, searches

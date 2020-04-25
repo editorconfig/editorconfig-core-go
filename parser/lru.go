@@ -1,35 +1,36 @@
-package editorconfig
+package parser
 
 import (
 	"fmt"
 	"os"
 	"regexp"
 
+	"github.com/editorconfig/editorconfig-core-go/v2"
 	"github.com/hashicorp/golang-lru"
 	"gopkg.in/ini.v1"
 )
 
-// LRUParser implements the Parser interface but caches the definition and
+// LRU implements the  interface but caches the definition and
 // the regular expressions using Hashicorp's LRU cache.
 //
 // https://github.com/hashicorp/golang-lru
-type LRUParser struct {
+type LRU struct {
 	editorconfigs *lru.Cache
 	regexps       *lru.Cache
 }
 
-// NewLRUParser initializes the LRUParser.
-func NewLRUParser() *LRUParser {
+// NewLRU initializes the LRU.
+func NewLRU() *LRU {
 	c, _ := lru.New(64)
 	r, _ := lru.New(256)
-	return &LRUParser{
+	return &LRU{
 		editorconfigs: c,
 		regexps:       r,
 	}
 }
 
 // ParseIni parses the given filename to a Definition and caches the result.
-func (parser *LRUParser) ParseIni(filename string) (*Editorconfig, error) {
+func (parser *LRU) ParseIni(filename string) (*editorconfig.Editorconfig, error) {
 	ec, ok := parser.editorconfigs.Get(filename)
 	if !ok {
 		fp, err := os.Open(filename)
@@ -44,7 +45,7 @@ func (parser *LRUParser) ParseIni(filename string) (*Editorconfig, error) {
 			return nil, err
 		}
 
-		ec, err = newEditorconfig(iniFile)
+		ec, err = editorconfig.NewEditorconfig(iniFile)
 		if err != nil {
 			return nil, err
 		}
@@ -52,14 +53,14 @@ func (parser *LRUParser) ParseIni(filename string) (*Editorconfig, error) {
 		parser.editorconfigs.Add(filename, ec)
 	}
 
-	return ec.(*Editorconfig), nil
+	return ec.(*editorconfig.Editorconfig), nil
 }
 
 // FnmatchCase calls the module's FnmatchCase and caches the parsed selector.
-func (parser *LRUParser) FnmatchCase(selector string, filename string) (bool, error) {
+func (parser *LRU) FnmatchCase(selector string, filename string) (bool, error) {
 	r, ok := parser.regexps.Get(selector)
 	if !ok {
-		p := translate(selector)
+		p := editorconfig.Translate(selector)
 
 		var err error
 

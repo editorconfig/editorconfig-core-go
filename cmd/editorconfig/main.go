@@ -9,6 +9,7 @@ import (
 	"gopkg.in/ini.v1"
 
 	"github.com/editorconfig/editorconfig-core-go/v2"
+	"github.com/editorconfig/editorconfig-core-go/v2/parser"
 )
 
 const (
@@ -47,7 +48,7 @@ func main() {
 	}
 
 	if len(rest) > 1 {
-		config.Parser = editorconfig.NewLRUParser()
+		config.Parser = parser.NewCached()
 	}
 
 	for _, file := range rest {

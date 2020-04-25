@@ -1,30 +1,31 @@
-package editorconfig
+package parser
 
 import (
 	"fmt"
 	"os"
 	"regexp"
 
+	"github.com/editorconfig/editorconfig-core-go/v2"
 	"gopkg.in/ini.v1"
 )
 
-// CachedParser implements the Parser interface but caches the definition and
+// Cached implements the  interface but caches the definition and
 // the regular expressions.
-type CachedParser struct {
-	editorconfigs map[string]*Editorconfig
+type Cached struct {
+	editorconfigs map[string]*editorconfig.Editorconfig
 	regexps       map[string]*regexp.Regexp
 }
 
-// NewCachedParser initializes the CachedParser.
-func NewCachedParser() *CachedParser {
-	return &CachedParser{
-		editorconfigs: make(map[string]*Editorconfig),
+// NewCached initializes the Cached.
+func NewCached() *Cached {
+	return &Cached{
+		editorconfigs: make(map[string]*editorconfig.Editorconfig),
 		regexps:       make(map[string]*regexp.Regexp),
 	}
 }
 
 // ParseIni parses the given filename to a Definition and caches the result.
-func (parser *CachedParser) ParseIni(filename string) (*Editorconfig, error) {
+func (parser *Cached) ParseIni(filename string) (*editorconfig.Editorconfig, error) {
 	ec, ok := parser.editorconfigs[filename]
 	if !ok {
 		fp, err := os.Open(filename)
@@ -39,7 +40,7 @@ func (parser *CachedParser) ParseIni(filename string) (*Editorconfig, error) {
 			return nil, err
 		}
 
-		ec, err = newEditorconfig(iniFile)
+		ec, err = editorconfig.NewEditorconfig(iniFile)
 		if err != nil {
 			return nil, err
 		}
@@ -51,10 +52,10 @@ func (parser *CachedParser) ParseIni(filename string) (*Editorconfig, error) {
 }
 
 // FnmatchCase calls the module's FnmatchCase and caches the parsed selector.
-func (parser *CachedParser) FnmatchCase(selector string, filename string) (bool, error) {
+func (parser *Cached) FnmatchCase(selector string, filename string) (bool, error) {
 	r, ok := parser.regexps[selector]
 	if !ok {
-		p := translate(selector)
+		p := editorconfig.Translate(selector)
 
 		var err error
 

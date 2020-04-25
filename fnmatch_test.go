@@ -1,8 +1,10 @@
-package editorconfig
+package editorconfig_test
 
 import (
 	"fmt"
 	"testing"
+
+	"github.com/editorconfig/editorconfig-core-go/v2"
 )
 
 func TestTranslate(t *testing.T) {
@@ -27,8 +29,8 @@ func TestTranslate(t *testing.T) {
 		title := fmt.Sprintf("%d) %s => %s", i, test[0], test[1])
 		t.Run(title, func(t *testing.T) {
 			t.Parallel()
-			result := translate(test[0]) // nolint: scopelint
-			if result != test[1] {       // nolint: scopelint
+			result := editorconfig.Translate(test[0]) // nolint: scopelint
+			if result != test[1] {                    // nolint: scopelint
 				t.Errorf("%s != %s", test[1], result) // nolint: scopelint
 			}
 		})
