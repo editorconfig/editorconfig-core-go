@@ -23,6 +23,7 @@ type LRU struct {
 func NewLRU() *LRU {
 	c, _ := lru.New(64)
 	r, _ := lru.New(256)
+
 	return &LRU{
 		editorconfigs: c,
 		regexps:       r,
