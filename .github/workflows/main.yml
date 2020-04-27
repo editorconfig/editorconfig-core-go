@@ -5,14 +5,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v1.1.0
+        uses: actions/checkout@v2
       - name: eclint-action
-        uses: greut/eclint-action@v0.1.9
+        uses: greut/eclint-action@v0
   golangci-lint:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v1.1.0
+        uses: actions/checkout@v2
       - name: golangci-lint
         uses: ./.github/actions/golangci-lint
   go-test:
@@ -20,13 +20,17 @@ jobs:
     name: test
     steps:
       - name: checkout
-        uses: actions/checkout@v1.1.0
+        uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.14.x
       - name: go test
-        uses: ./.github/actions/go-test
+        run: go test -v ./...
   core-test:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v1.1.0
+        uses: actions/checkout@v2
       - name: core test
         uses: ./.github/actions/core-test
