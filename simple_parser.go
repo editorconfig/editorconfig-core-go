@@ -6,7 +6,7 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-// SimpleParser implements the Parser interface but without doing any caching.
+// SimpleParser implements the  interface but without doing any caching.
 type SimpleParser struct{}
 
 // ParseIni calls go-ini's Load on the file.
@@ -23,7 +23,7 @@ func (parser *SimpleParser) ParseIni(filename string) (*Editorconfig, error) {
 		return nil, err
 	}
 
-	return newEditorconfig(iniFile)
+	return NewEditorconfig(iniFile)
 }
 
 // FnmatchCase calls the module's FnmatchCase.

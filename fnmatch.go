@@ -18,7 +18,7 @@ var (
 
 // FnmatchCase tests whether the name matches the given pattern case included.
 func FnmatchCase(pattern, name string) (bool, error) {
-	p := translate(pattern)
+	p := Translate(pattern)
 
 	r, err := regexp.Compile(fmt.Sprintf("^%s$", p))
 	if err != nil {
@@ -28,7 +28,10 @@ func FnmatchCase(pattern, name string) (bool, error) {
 	return r.MatchString(name), nil
 }
 
-func translate(pattern string) string { // nolint: gocyclo
+// Translate converts a glob-like pattern into a regexp.
+//
+// Known limitation: it's pretty bad for ranges such as {1..n}
+func Translate(pattern string) string { // nolint: gocyclo
 	index := 0
 	pat := []rune(pattern)
 	length := len(pat)
@@ -143,7 +146,7 @@ func translate(pattern string) string { // nolint: gocyclo
 					result.WriteString(strconv.Itoa(to))
 					result.WriteRune(')')
 				} else {
-					r := translate(inner)
+					r := Translate(inner)
 
 					result.WriteString(fmt.Sprintf("\\{%s\\}", r))
 				}
