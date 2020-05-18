@@ -30,12 +30,14 @@ func testParse(t *testing.T, ec *Editorconfig) {
 	assert.Equal(t, IndentStyleTab, def.IndentStyle)
 	assert.Equal(t, "4", def.IndentSize)
 	assert.Equal(t, 4, def.TabWidth)
+	assert.Equal(t, 120, def.MaxLineLength)
 
 	def = ec.Definitions[2]
 	assert.Equal(t, "*.{js,css,less,htm,html}", def.Selector)
 	assert.Equal(t, IndentStyleSpaces, def.IndentStyle)
 	assert.Equal(t, "2", def.IndentSize)
 	assert.Equal(t, 2, def.TabWidth)
+	assert.Equal(t, 0, def.MaxLineLength)
 }
 
 func TestParseFile(t *testing.T) {

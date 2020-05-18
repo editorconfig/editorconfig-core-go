@@ -19,6 +19,7 @@ type Definition struct {
 	Charset                string            `ini:"charset" json:"charset,omitempty"`
 	IndentStyle            string            `ini:"indent_style" json:"indent_style,omitempty"`
 	IndentSize             string            `ini:"indent_size" json:"indent_size,omitempty"`
+	MaxLineLength          int               `ini:"-" json:"-"`
 	TabWidth               int               `ini:"-" json:"-"`
 	EndOfLine              string            `ini:"end_of_line" json:"end_of_line,omitempty"`
 	TrimTrailingWhitespace *bool             `ini:"-" json:"-"`
@@ -58,6 +59,17 @@ func (d *Definition) normalize() error {
 		d.InsertFinalNewline = &insert
 	}
 
+	// max_line_length from Raw
+	maxLineLength, ok := d.Raw["max_line_length"]
+	if ok && (maxLineLength != UnsetValue && maxLineLength != OffValue) {
+		num, err := strconv.Atoi(maxLineLength)
+		if err != nil {
+			return fmt.Errorf("max_line_length=%s is not an acceptable value. %s", maxLineLength, err)
+		}
+
+		d.MaxLineLength = num
+	}
+
 	// tab_width from Raw
 	tabWidth, ok := d.Raw["tab_width"]
 	if ok && tabWidth != UnsetValue {
@@ -91,6 +103,10 @@ func (d *Definition) merge(md *Definition) {
 
 	if len(d.IndentSize) == 0 {
 		d.IndentSize = md.IndentSize
+	}
+
+	if d.MaxLineLength <= 0 {
+		d.MaxLineLength = md.MaxLineLength
 	}
 
 	if d.TabWidth <= 0 {
@@ -154,6 +170,13 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) {
 			v = d.EndOfLine
 		case "indent_style":
 			v = d.IndentStyle
+		case "max_line_length":
+			maxLineLength, ok := d.Raw["max_line_length"]
+			if ok && (maxLineLength == UnsetValue || maxLineLength == OffValue) {
+				v = maxLineLength
+			} else {
+				v = strconv.Itoa(d.MaxLineLength)
+			}
 		case "tab_width":
 			tabWidth, ok := d.Raw["tab_width"]
 			if ok && tabWidth == UnsetValue {
