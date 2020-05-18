@@ -24,11 +24,6 @@ archives:
     format: zip
   files:
   - none*
-- id: binary
-  builds:
-  - editorconfig
-  format: binary
-  name_template: editorconfig
 
 dockers:
 - image_templates:
