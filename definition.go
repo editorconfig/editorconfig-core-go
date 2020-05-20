@@ -43,7 +43,7 @@ func (d *Definition) normalize() error {
 	if ok && trimTrailingWhitespace != UnsetValue {
 		trim, err := strconv.ParseBool(trimTrailingWhitespace)
 		if err != nil {
-			return fmt.Errorf("trim_trailing_whitespace=%s is not an acceptable value. %s", trimTrailingWhitespace, err)
+			return fmt.Errorf("trim_trailing_whitespace=%s is not an acceptable value. %w", trimTrailingWhitespace, err)
 		}
 
 		d.TrimTrailingWhitespace = &trim
@@ -53,7 +53,7 @@ func (d *Definition) normalize() error {
 	if ok && insertFinalNewline != UnsetValue {
 		insert, err := strconv.ParseBool(insertFinalNewline)
 		if err != nil {
-			return fmt.Errorf("insert_final_newline=%s is not an acceptable value. %s", insertFinalNewline, err)
+			return fmt.Errorf("insert_final_newline=%s is not an acceptable value. %w", insertFinalNewline, err)
 		}
 
 		d.InsertFinalNewline = &insert
@@ -75,7 +75,7 @@ func (d *Definition) normalize() error {
 	if ok && tabWidth != UnsetValue {
 		num, err := strconv.Atoi(tabWidth)
 		if err != nil {
-			return fmt.Errorf("tab_width=%s is not an acceptable value. %s", tabWidth, err)
+			return fmt.Errorf("tab_width=%s is not an acceptable value. %w", tabWidth, err)
 		}
 
 		d.TabWidth = num

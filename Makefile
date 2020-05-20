@@ -9,7 +9,9 @@ submodule:
 	git submodule update --init
 
 editorconfig: $(SRC)
-	go build github.com/editorconfig/editorconfig-core-go/v2/cmd/editorconfig
+	go build \
+		-ldflags "-X main.version=1.99.99" \
+		github.com/editorconfig/editorconfig-core-go/v2/cmd/editorconfig
 
 test-go:
 	go test -v ./...
