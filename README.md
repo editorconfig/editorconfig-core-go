@@ -12,7 +12,7 @@ A [Editorconfig][editorconfig] file parser and manipulator for Go.
 
 ## Installing
 
-We recommend the use of Go 1.12+ modules for this package.
+We recommend the use of Go 1.13+ modules for this package.
 
 Import by the same path. The package name you will use to access it is
 `editorconfig`.
