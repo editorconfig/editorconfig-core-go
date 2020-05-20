@@ -64,7 +64,7 @@ func (d *Definition) normalize() error {
 	if ok && (maxLineLength != UnsetValue && maxLineLength != OffValue) {
 		num, err := strconv.Atoi(maxLineLength)
 		if err != nil {
-			return fmt.Errorf("max_line_length=%s is not an acceptable value. %s", maxLineLength, err)
+			return fmt.Errorf("max_line_length=%s is not an acceptable value. %w", maxLineLength, err)
 		}
 
 		d.MaxLineLength = num
