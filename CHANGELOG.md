@@ -1,5 +1,14 @@
 # Change log
 
+## v2.3.3 - 2020-05-19
+
+- Using goreleaser
+  ([#22](https://github.com/editorconfig/editorconfig-core-go/pull/22));
+- Upgrade go-cmp, go-ini, x/mod
+  ([#60](https://github.com/editorconfig/editorconfig-core-go/pull/65));
+- Update CI actions
+  ([#63](https://github.com/editorconfig/editorconfig-core-go/pull/63));
+
 ## v2.3.2 - 2020-04-21
 
 - Upgrade go-ini v1.55.0
