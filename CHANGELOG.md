@@ -1,5 +1,14 @@
 # Change log
 
+## v2.3.4 - 2020-06-22
+
+- Wrap errors using Go 1.13 syntax
+  ([#61](https://github.com/editorconfig/editorconfig-core-go/pull/61));
+- Upgrade base Docker image
+  ([#68](https://github.com/editorconfig/editorconfig-core-go/pull/68));
+- Upgrade go-ini v1.57.0, go-cmp v0.5.0
+  ([#70](https://github.com/editorconfig/editorconfig-core-go/pull/70)).
+
 ## v2.3.3 - 2020-05-19
 
 - Using goreleaser
