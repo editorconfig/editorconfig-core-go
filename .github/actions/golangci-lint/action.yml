@@ -1,5 +1,0 @@
-name: golangci-lint
-description: Lint the files using Golangci-lint
-runs:
-  using: docker
-  image: Dockerfile
