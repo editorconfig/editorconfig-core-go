@@ -6,6 +6,7 @@ linters:
   enable:
     - goconst
     - gocyclo
+    - goerr113
     - gofmt
     - godox
     - golint
