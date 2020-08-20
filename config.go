@@ -1,6 +1,7 @@
 package editorconfig
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -8,6 +9,9 @@ import (
 
 	"golang.org/x/mod/semver"
 )
+
+// ErrInvalidVersion represents a standard error with the semantic version.
+var ErrInvalidVersion = errors.New("invalid semantic version")
 
 // Config holds the configuration
 type Config struct {
@@ -44,7 +48,7 @@ func (config *Config) Load(filename string) (*Definition, error) {
 		}
 
 		if ok := semver.IsValid(version); !ok {
-			return nil, fmt.Errorf("version %s appears invalid", config.Version) // nolint: goerr113
+			return nil, fmt.Errorf("version %s error: %w", config.Version, ErrInvalidVersion)
 		}
 
 		definition.version = version
