@@ -1,5 +1,14 @@
 # Change log
 
+## v2.3.5 - 2020-08-20
+
+- Upgrade go-cmp v0.5.1
+  ([#73](https://github.com/editorconfig/editorconfig-core-go/pull/73)).
+- Replace custom GitHub Action with official GolangCI Lint
+  ([#74](https://github.com/editorconfig/editorconfig-core-go/pull/74)).
+- Upgrade go-ini v1.58.0
+  ([#75](https://github.com/editorconfig/editorconfig-core-go/pull/75)).
+
 ## v2.3.4 - 2020-06-22
 
 - Wrap errors using Go 1.13 syntax
