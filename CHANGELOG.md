@@ -1,11 +1,20 @@
 # Change log
 
+## v2.3.6 - 2020-08-25
+
+- Use goerr113 linter
+  ([#77](https://github.com/editorconfig/editorconfig-core-go/pull/77));
+- Upgrade go-ini v1.60.0
+  ([#78](https://github.com/editorconfig/editorconfig-core-go/pull/78));
+- Upgrade go-ini v1.60.1
+  ([#79](https://github.com/editorconfig/editorconfig-core-go/pull/79)).
+
 ## v2.3.5 - 2020-08-20
 
 - Upgrade go-cmp v0.5.1
-  ([#73](https://github.com/editorconfig/editorconfig-core-go/pull/73)).
+  ([#73](https://github.com/editorconfig/editorconfig-core-go/pull/73));
 - Replace custom GitHub Action with official GolangCI Lint
-  ([#74](https://github.com/editorconfig/editorconfig-core-go/pull/74)).
+  ([#74](https://github.com/editorconfig/editorconfig-core-go/pull/74));
 - Upgrade go-ini v1.58.0
   ([#75](https://github.com/editorconfig/editorconfig-core-go/pull/75)).
 
