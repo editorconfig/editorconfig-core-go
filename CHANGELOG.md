@@ -1,5 +1,10 @@
 # Change log
 
+## v2.3.7 - 2020-09-05
+
+- Upgrade go-ini v1.60.2, and go-cmp v0.5.2
+  ([#81](https://github.com/editorconfig/editorconfig-core-go/pull/81)).
+
 ## v2.3.6 - 2020-08-25
 
 - Use goerr113 linter
