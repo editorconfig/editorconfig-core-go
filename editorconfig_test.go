@@ -1,10 +1,12 @@
 package editorconfig
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
+	"testing/iotest"
 
 	"github.com/editorconfig/editorconfig-core-go/v2/internal/assert"
 )
@@ -67,6 +69,16 @@ func TestParseReader(t *testing.T) {
 	assert.Nil(t, err)
 
 	testParse(t, ec)
+}
+
+func TestParseReaderTimeoutError(t *testing.T) {
+	f, err := os.Open(testFile)
+	assert.Nil(t, err)
+
+	defer f.Close()
+
+	_, err = Parse(iotest.TimeoutReader(f))
+	assert.Equal(t, true, errors.Is(err, iotest.ErrTimeout))
 }
 
 func TestGetDefinition(t *testing.T) {
