@@ -1,6 +1,6 @@
 # Change log
 
-## v2.3.9 - 2020-11-29
+## v2.3.9 - 2020-11-28
 
 - Fix path separator on Windows
   ([#83](https://github.com/editorconfig/editorconfig-core-go/pull/89));
