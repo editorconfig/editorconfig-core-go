@@ -39,11 +39,9 @@ const (
 	CharsetUTF8BOM = "utf-8 bom"
 )
 
-// Limits for section name, properties, and values.
+// Limit for section name.
 const (
-	MaxPropertyLength = 50
-	MaxSectionLength  = 4096
-	MaxValueLength    = 255
+	MaxSectionLength = 4096
 )
 
 // Editorconfig represents a .editorconfig file.
@@ -80,10 +78,6 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 
 		// Shallow copy all the properties
 		for k, v := range iniSection.KeysHash() {
-			if len(k) > MaxPropertyLength || len(v) > MaxValueLength {
-				continue
-			}
-
 			raw[strings.ToLower(k)] = v
 		}
 
