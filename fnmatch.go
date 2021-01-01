@@ -9,11 +9,11 @@ import (
 )
 
 var (
-	// findLeftBrackets matches the opening left bracket {
+	// findLeftBrackets matches the opening left bracket {.
 	findLeftBrackets = regexp.MustCompile(`(^|[^\\])\{`)
-	// findLeftBrackets matches the closing right bracket {
+	// findLeftBrackets matches the closing right bracket {.
 	findRightBrackets = regexp.MustCompile(`(^|[^\\])\}`)
-	// findNumericRange matches a range of number, e.g. -2..5
+	// findNumericRange matches a range of number, e.g. -2..5.
 	findNumericRange = regexp.MustCompile(`^([+-]?\d+)\.\.([+-]?\d+)$`)
 )
 
@@ -23,13 +23,13 @@ func FnmatchCase(pattern, name string) (bool, error) {
 
 	r, err := regexp.Compile(fmt.Sprintf("^%s$", p))
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("error compiling %q: %w", pattern, err)
 	}
 
 	return r.MatchString(name), nil
 }
 
-func translate(pattern string) string { // nolint: gocyclo
+func translate(pattern string) string { // nolint: funlen,gocognit,gocyclo
 	index := 0
 	pat := []rune(pattern)
 	length := len(pat)
@@ -72,7 +72,7 @@ func translate(pattern string) string { // nolint: gocyclo
 		case '?':
 			result.WriteString(fmt.Sprintf("[^%s]", pathSeparator))
 		case '[':
-			if inBrackets {
+			if inBrackets { // nolint: nestif
 				result.WriteString("\\[")
 			} else {
 				hasSlash := false
@@ -86,6 +86,7 @@ func translate(pattern string) string { // nolint: gocyclo
 					res.WriteRune(pat[p])
 					if pat[p] == '/' && pat[p-1] != '\\' {
 						hasSlash = true
+
 						break
 					}
 					p++
@@ -124,6 +125,7 @@ func translate(pattern string) string { // nolint: gocyclo
 
 				if pat[p] == ',' && pat[p-1] != '\\' {
 					hasComma = true
+
 					break
 				}
 				p++

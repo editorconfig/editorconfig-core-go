@@ -11,7 +11,7 @@ import (
 	"github.com/editorconfig/editorconfig-core-go/v2"
 )
 
-// version indicates the current version number
+// version indicates the current version number.
 var version = "dev"
 
 func main() {
@@ -28,7 +28,7 @@ func main() {
 	flag.Parse()
 
 	if showVersionFlag {
-		fmt.Printf("EditorConfig Core Go, Version %s\n", version)
+		fmt.Printf("EditorConfig Core Go, Version %s\n", version) // nolint: forbidigo
 		os.Exit(0)
 	}
 

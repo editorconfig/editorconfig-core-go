@@ -2,6 +2,7 @@ package editorconfig
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"runtime"
@@ -11,26 +12,26 @@ import (
 )
 
 const (
-	// ConfigNameDefault represents the name of the configuration file
+	// ConfigNameDefault represents the name of the configuration file.
 	ConfigNameDefault = ".editorconfig"
-	// UnsetValue is the value that unsets a preexisting variable
+	// UnsetValue is the value that unsets a preexisting variable.
 	UnsetValue = "unset"
 )
 
-// IndentStyle possible values
+// IndentStyle possible values.
 const (
 	IndentStyleTab    = "tab"
 	IndentStyleSpaces = "space"
 )
 
-// EndOfLine possible values
+// EndOfLine possible values.
 const (
 	EndOfLineLf   = "lf"
 	EndOfLineCr   = "cr"
 	EndOfLineCrLf = "crlf"
 )
 
-// Charset possible values
+// Charset possible values.
 const (
 	CharsetLatin1  = "latin1"
 	CharsetUTF8    = "utf-8"
@@ -73,7 +74,7 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 		raw := make(map[string]string)
 
 		if err := iniSection.MapTo(&definition); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error mapping current section: %w", err)
 		}
 
 		// Shallow copy all the properties
@@ -85,7 +86,7 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 		definition.Selector = sectionStr
 
 		if err := definition.normalize(); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("normalization error: %w", err)
 		}
 
 		editorConfig.Definitions = append(editorConfig.Definitions, definition)
@@ -153,7 +154,7 @@ func (e *Editorconfig) Serialize() ([]byte, error) {
 
 	err := e.Write(buffer)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot write into buffer: %w", err)
 	}
 
 	return buffer.Bytes(), nil
@@ -161,9 +162,7 @@ func (e *Editorconfig) Serialize() ([]byte, error) {
 
 // Write writes the Editorconfig to the Writer in a compatible INI file.
 func (e *Editorconfig) Write(w io.Writer) error {
-	var (
-		iniFile = ini.Empty()
-	)
+	iniFile := ini.Empty()
 
 	iniFile.Section(ini.DefaultSection).Comment = "https://editorconfig.org"
 
@@ -176,15 +175,18 @@ func (e *Editorconfig) Write(w io.Writer) error {
 	}
 
 	_, err := iniFile.WriteTo(w)
+	if err != nil {
+		return fmt.Errorf("error writing ini file: %w", err)
+	}
 
-	return err
+	return nil
 }
 
 // Save saves the Editorconfig to a compatible INI file.
 func (e *Editorconfig) Save(filename string) error {
-	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot open file %q: %w", filename, err)
 	}
 
 	return e.Write(f)
@@ -202,7 +204,7 @@ func boolToString(b bool) string {
 func Parse(r io.Reader) (*Editorconfig, error) {
 	iniFile, err := ini.Load(r)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot load ini file: %w", err)
 	}
 
 	return newEditorconfig(iniFile)
@@ -214,7 +216,7 @@ func Parse(r io.Reader) (*Editorconfig, error) {
 func ParseBytes(data []byte) (*Editorconfig, error) {
 	iniFile, err := ini.Load(data)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot load ini file: %w", err)
 	}
 
 	return newEditorconfig(iniFile)
@@ -226,7 +228,7 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 func ParseFile(path string) (*Editorconfig, error) {
 	iniFile, err := ini.Load(path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot load ini file: %w", err)
 	}
 
 	return newEditorconfig(iniFile)
@@ -239,6 +241,7 @@ func ParseFile(path string) (*Editorconfig, error) {
 // definition for the given file.
 func GetDefinitionForFilename(filename string) (*Definition, error) {
 	config := new(Config)
+
 	return config.Load(filename)
 }
 

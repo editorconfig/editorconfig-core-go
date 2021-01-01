@@ -7,6 +7,8 @@ import (
 )
 
 func Equal(t *testing.T, x, y interface{}) {
+	t.Helper()
+
 	r := DiffReporter{}
 	if !cmp.Equal(x, y, cmp.Reporter(&r)) {
 		t.Error(r.String())
@@ -14,5 +16,7 @@ func Equal(t *testing.T, x, y interface{}) {
 }
 
 func Nil(t *testing.T, x interface{}) {
+	t.Helper()
+
 	Equal(t, x, nil)
 }
