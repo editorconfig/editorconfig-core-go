@@ -1,9 +1,18 @@
 # Change log
 
+## v2.3.10 - 2021-02-05
+
+- Upgrade core-test
+  ([#93](https://github.com/editorconfig/editorconfig-core-go/pull/93));
+- Upgrade x/mod v0.4.0
+  ([#94](https://github.com/editorconfig/editorconfig-core-go/pull/94));
+- Upgrade golangci-lint to v1.34
+  ([#95](https://github.com/editorconfig/editorconfig-core-go/pull/95)).
+
 ## v2.3.9 - 2020-11-28
 
 - Fix path separator on Windows
-  ([#83](https://github.com/editorconfig/editorconfig-core-go/pull/89));
+  ([#69](https://github.com/editorconfig/editorconfig-core-go/pull/69));
 - Upgrade go-cmp v0.5.4
   ([#91](https://github.com/editorconfig/editorconfig-core-go/pull/91)).
 
