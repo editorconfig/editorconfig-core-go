@@ -11,11 +11,11 @@ import (
 var (
 	// findLeftBrackets matches the opening left bracket {.
 	findLeftBrackets = regexp.MustCompile(`(^|[^\\])\{`)
-	// findDoubleLeftBrackets matches the duplicated opening left bracket {{
+	// findDoubleLeftBrackets matches the duplicated opening left bracket {{.
 	findDoubleLeftBrackets = regexp.MustCompile(`(^|[^\\])\{\{`)
 	// findLeftBrackets matches the closing right bracket {.
 	findRightBrackets = regexp.MustCompile(`(^|[^\\])\}`)
-	// findDoubleRightBrackets matches the duplicated opening left bracket {{
+	// findDoubleRightBrackets matches the duplicated opening left bracket {{.
 	findDoubleRightBrackets = regexp.MustCompile(`(^|[^\\])\}\}`)
 	// findNumericRange matches a range of number, e.g. -2..5.
 	findNumericRange = regexp.MustCompile(`^([+-]?\d+)\.\.([+-]?\d+)$`)
@@ -51,6 +51,7 @@ func translate(pattern string) string { // nolint: funlen,gocognit,gocyclo
 	doubleRight := len(findDoubleRightBrackets.FindAllString(pattern, -1))
 	matchesBraces := left+doubleLeft == right+doubleRight
 	pathSeparator := "/"
+
 	if runtime.GOOS == "windows" {
 		pathSeparator = regexp.QuoteMeta("\\")
 	}
