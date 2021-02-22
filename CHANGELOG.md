@@ -1,6 +1,6 @@
 # Change log
 
-## v2.4.0 - 2021-02-18
+## v2.4.0 - 2021-02-22
 
 - Fix new core-test
   ([#100](https://github.com/editorconfig/editorconfig-core-go/pull/100));
