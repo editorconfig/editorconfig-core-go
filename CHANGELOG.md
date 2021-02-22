@@ -1,5 +1,16 @@
 # Change log
 
+## v2.4.0 - 2021-02-22
+
+- Fix new core-test
+  ([#100](https://github.com/editorconfig/editorconfig-core-go/pull/100));
+- Upgrade github CI versions
+  ([#99](https://github.com/editorconfig/editorconfig-core-go/pull/99));
+- Upgrade x/mod v0.4.1
+  ([#98](https://github.com/editorconfig/editorconfig-core-go/pull/98));
+- Fix goreleaser deprecations
+  ([#97](https://github.com/editorconfig/editorconfig-core-go/pull/97)).
+
 ## v2.3.10 - 2021-02-05
 
 - Upgrade core-test
