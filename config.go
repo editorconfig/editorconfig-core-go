@@ -60,7 +60,7 @@ func (config *Config) Load(filename string) (*Definition, error) { // nolint: fu
 
 		ec, err := config.Parser.ParseIni(filepath.Join(dir, ecFile))
 		if err != nil {
-			if os.IsNotExist(err) {
+			if errors.Is(err, os.ErrNotExist) {
 				continue
 			}
 
