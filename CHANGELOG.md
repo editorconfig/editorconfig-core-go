@@ -1,5 +1,10 @@
 # Change log
 
+## v2.4.1 - 2021-02-25
+
+- Fix for Go 1.16 os.IsNotExist wrapping
+  ([#102](https://github.com/editorconfig/editorconfig-core-go/pull/102)).
+
 ## v2.4.0 - 2021-02-22
 
 - Fix new core-test
