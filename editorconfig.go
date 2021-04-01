@@ -184,7 +184,7 @@ func (e *Editorconfig) Write(w io.Writer) error {
 
 // Save saves the Editorconfig to a compatible INI file.
 func (e *Editorconfig) Save(filename string) error {
-	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
+	f, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("cannot open file %q: %w", filename, err)
 	}
