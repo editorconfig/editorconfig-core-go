@@ -69,6 +69,7 @@ type Definition struct {
 	Charset                string
 	IndentStyle            string
 	IndentSize             string
+	MaxLength              int
 	TabWidth               int
 	EndOfLine              string
 	TrimTrailingWhitespace *bool
