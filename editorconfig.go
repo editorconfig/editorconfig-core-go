@@ -141,7 +141,12 @@ func (e *Editorconfig) GetDefinitionForFilename(name string) (*Definition, error
 // FnmatchCase calls the matcher from the config's parser or the vanilla's.
 func (e *Editorconfig) FnmatchCase(selector string, filename string) (bool, error) {
 	if e.config != nil && e.config.Parser != nil {
-		return e.config.Parser.FnmatchCase(selector, filename)
+		ok, err := e.config.Parser.FnmatchCase(selector, filename)
+		if !ok {
+			return ok, fmt.Errorf("filename match failed: %w", err)
+		}
+
+		return ok, nil
 	}
 
 	return FnmatchCase(selector, filename)
@@ -152,8 +157,7 @@ func (e *Editorconfig) FnmatchCase(selector string, filename string) (bool, erro
 func (e *Editorconfig) Serialize() ([]byte, error) {
 	buffer := bytes.NewBuffer(nil)
 
-	err := e.Write(buffer)
-	if err != nil {
+	if err := e.Write(buffer); err != nil {
 		return nil, fmt.Errorf("cannot write into buffer: %w", err)
 	}
 
@@ -174,8 +178,7 @@ func (e *Editorconfig) Write(w io.Writer) error {
 		d.InsertToIniFile(iniFile)
 	}
 
-	_, err := iniFile.WriteTo(w)
-	if err != nil {
+	if _, err := iniFile.WriteTo(w); err != nil {
 		return fmt.Errorf("error writing ini file: %w", err)
 	}
 
