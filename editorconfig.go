@@ -142,7 +142,7 @@ func (e *Editorconfig) GetDefinitionForFilename(name string) (*Definition, error
 func (e *Editorconfig) FnmatchCase(selector string, filename string) (bool, error) {
 	if e.config != nil && e.config.Parser != nil {
 		ok, err := e.config.Parser.FnmatchCase(selector, filename)
-		if !ok {
+		if err != nil {
 			return ok, fmt.Errorf("filename match failed: %w", err)
 		}
 
