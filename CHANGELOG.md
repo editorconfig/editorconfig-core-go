@@ -1,5 +1,15 @@
 # Change log
 
+## v2.4.3 - 2021-09-21
+
+- Upgrade go-cmp v0.5.6
+  ([#110](https://github.com/editorconfig/editorconfig-core-go/pull/110));
+- Upgrade go-ini v1.63.2;
+- Upgrade x/mod v0.5.0
+  ([#111](https://github.com/editorconfig/editorconfig-core-go/pull/111));
+- Fix problems spotted by golangci-lint
+  ([#115](https://github.com/editorconfig/editorconfig-core-go/pull/115));
+
 ## v2.4.2 - 2021-03-21
 
 - Upgrade google/go-cmp v0.5.5
