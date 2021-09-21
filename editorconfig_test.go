@@ -113,7 +113,7 @@ func TestWrite(t *testing.T) { // nolint: paralleltest
 
 	tempFile := filepath.Join(os.TempDir(), ".editorconfig")
 
-	f, err := os.OpenFile(tempFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(tempFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 	assert.Nil(t, err)
 
 	defer func() {

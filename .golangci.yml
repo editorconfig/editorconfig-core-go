@@ -1,6 +1,6 @@
 linters-settings:
-  golint:
-    min-confidence: 0.3
+  gci:
+    local-prefixes: github.com/editorconfig/editorconfig-core-go
   cyclop:
     max-complexity: 15
     package-average: 10
@@ -8,9 +8,12 @@ linters-settings:
 linters:
   disable:
     - exhaustivestruct
+    - golint
     - gomnd
     - interfacer
     - maligned
+    - scopelint
+    - tagliatelle
   presets:
     - bugs
     - complexity
