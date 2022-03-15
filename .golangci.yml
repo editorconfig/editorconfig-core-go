@@ -1,6 +1,9 @@
 linters-settings:
   gci:
-    local-prefixes: github.com/editorconfig/editorconfig-core-go
+    sections:
+      - standard
+      - default
+      - prefix(github.com/editorconfig/editorconfig-core-go)
   cyclop:
     max-complexity: 15
     package-average: 10
