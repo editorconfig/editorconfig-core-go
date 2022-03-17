@@ -1,6 +1,6 @@
 # Change log
 
-## v2.4.4 - 2022-03-16
+## v2.4.4 - 2022-03-17
 
 - Upgrade gopkg.in/ini.v1 from 1.53 to 1.66.4;
 - Upgrade github.com/google/go-cmp from 0.5.6 to 0.5.7;
