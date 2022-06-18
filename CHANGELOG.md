@@ -1,5 +1,11 @@
 # Change log
 
+## v2.4.5 - 2022-06-18
+
+- Bump Go version to 1.17 in the go.mod
+- Upgrade go.pkg.in/ini.v1 from 1.66.4 to 1.66.6
+- Upgrade github.com/google/go-cmp from 0.5.7 to 0.5.8
+
 ## v2.4.4 - 2022-03-17
 
 - Upgrade gopkg.in/ini.v1 from 1.53 to 1.66.4;
