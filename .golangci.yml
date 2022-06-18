@@ -9,8 +9,10 @@ linters-settings:
     package-average: 10
 
 linters:
+  enable-all: true
   disable:
     - exhaustivestruct
+    - exhaustruct
     - golint
     - gomnd
     - interfacer
@@ -18,11 +20,4 @@ linters:
     - scopelint
     - tagliatelle
     - varnamelen
-  presets:
-    - bugs
-    - complexity
-    - format
-    - performance
-    - style
-    - unused
   fast: false
