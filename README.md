@@ -1,5 +1,5 @@
 ![Build Status](https://github.com/editorconfig/editorconfig-core-go/workflows/.github/workflows/main.yml/badge.svg)
-[![GoDoc](https://godoc.org/github.com/editorconfig/editorconfig-core-go?status.svg)](https://godoc.org/github.com/editorconfig/editorconfig-core-go)
+[![Go Reference](https://pkg.go.dev/badge/github.com/editorconfig/editorconfig-core-go/v2.svg)](https://pkg.go.dev/github.com/editorconfig/editorconfig-core-go/v2)
 [![Go Report Card](https://goreportcard.com/badge/github.com/editorconfig/editorconfig-core-go)](https://goreportcard.com/report/github.com/editorconfig/editorconfig-core-go)
 
 # Editorconfig Core Go
