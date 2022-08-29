@@ -14,7 +14,7 @@ type SimpleParser struct{}
 func (parser *SimpleParser) ParseIni(filename string) (*Editorconfig, error) {
 	fp, err := os.Open(filename)
 	if err != nil {
-		return nil, err // nolint: wrapcheck
+		return nil, err //nolint:wrapcheck
 	}
 
 	defer fp.Close()

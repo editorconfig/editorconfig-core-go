@@ -28,7 +28,7 @@ func main() {
 	flag.Parse()
 
 	if showVersionFlag {
-		fmt.Printf("EditorConfig Core Go, Version %s\n", version) // nolint: forbidigo
+		fmt.Printf("EditorConfig Core Go, Version %s\n", version) //nolint:forbidigo
 		os.Exit(0)
 	}
 

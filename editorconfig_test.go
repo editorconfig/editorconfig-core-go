@@ -1,8 +1,7 @@
-package editorconfig // nolint: testpackage
+package editorconfig //nolint:testpackage
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -51,8 +50,8 @@ func TestParseFile(t *testing.T) {
 	testParse(t, ec)
 }
 
-func TestParseBytes(t *testing.T) { // nolint: paralleltest
-	data, err := ioutil.ReadFile(testFile)
+func TestParseBytes(t *testing.T) { //nolint:paralleltest
+	data, err := os.ReadFile(testFile)
 	assert.Nil(t, err)
 
 	ec, err := ParseBytes(data)
@@ -61,7 +60,7 @@ func TestParseBytes(t *testing.T) { // nolint: paralleltest
 	testParse(t, ec)
 }
 
-func TestParseReader(t *testing.T) { // nolint: paralleltest
+func TestParseReader(t *testing.T) { //nolint:paralleltest
 	f, err := os.Open(testFile)
 	assert.Nil(t, err)
 
@@ -73,7 +72,7 @@ func TestParseReader(t *testing.T) { // nolint: paralleltest
 	testParse(t, ec)
 }
 
-func TestParseReaderTimeoutError(t *testing.T) { // nolint: paralleltest
+func TestParseReaderTimeoutError(t *testing.T) { //nolint:paralleltest
 	f, err := os.Open(testFile)
 	assert.Nil(t, err)
 
@@ -105,7 +104,7 @@ func TestGetDefinition(t *testing.T) {
 	assert.Equal(t, EndOfLineLf, def.EndOfLine)
 }
 
-func TestWrite(t *testing.T) { // nolint: paralleltest
+func TestWrite(t *testing.T) { //nolint:paralleltest
 	ec, err := ParseFile(testFile)
 	if err != nil {
 		t.Errorf("Couldn't parse file: %v", err)
