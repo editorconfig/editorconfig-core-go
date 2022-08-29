@@ -16,7 +16,7 @@ const (
 	ConfigNameDefault = ".editorconfig"
 	// UnsetValue is the value that unsets a preexisting variable.
 	UnsetValue = "unset"
-	// OffValue is the value that disables max_length (non-standard)
+	// OffValue is the value that disables max_length (non-standard).
 	OffValue = "off"
 )
 

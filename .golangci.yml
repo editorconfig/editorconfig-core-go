@@ -5,7 +5,7 @@ linters-settings:
       - default
       - prefix(github.com/editorconfig/editorconfig-core-go)
   cyclop:
-    max-complexity: 15
+    max-complexity: 16
     package-average: 10
 
 linters:
