@@ -1,18 +1,23 @@
 linters-settings:
-  golint:
-    min-confidence: 0.3
+  gci:
+    sections:
+      - standard
+      - default
+      - prefix(github.com/editorconfig/editorconfig-core-go)
+  cyclop:
+    max-complexity: 15
+    package-average: 10
 
 linters:
-  enable:
-    - goconst
-    - gocyclo
-    - gofmt
-    - godox
+  enable-all: true
+  disable:
+    - exhaustivestruct
+    - exhaustruct
     - golint
-    - gocritic
-    - megacheck
-    - misspell
-    - prealloc
-    - unparam
+    - gomnd
+    - interfacer
+    - maligned
     - scopelint
-    - wsl
+    - tagliatelle
+    - varnamelen
+  fast: false

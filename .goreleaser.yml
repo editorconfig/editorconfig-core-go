@@ -27,19 +27,18 @@ archives:
 
 dockers:
 - image_templates:
-  - docker.pkg.github.com/editorconfig/editorconfig-core-go/editorconfig:latest
-  - docker.pkg.github.com/editorconfig/editorconfig-core-go/editorconfig:{{ .Tag }}
-  - docker.pkg.github.com/editorconfig/editorconfig-core-go/editorconfig:v{{ .Major }}
-  - docker.pkg.github.com/editorconfig/editorconfig-core-go/editorconfig:v{{ .Major }}.{{ .Minor }}
+  - ghcr.io/editorconfig/editorconfig-core-go/editorconfig:latest
+  - ghcr.io/editorconfig/editorconfig-core-go/editorconfig:{{ .Tag }}
+  - ghcr.io/editorconfig/editorconfig-core-go/editorconfig:v{{ .Major }}
+  - ghcr.io/editorconfig/editorconfig-core-go/editorconfig:v{{ .Major }}.{{ .Minor }}
   goos: linux
   goarch: amd64
-  binaries:
+  ids:
   - editorconfig
   build_flag_templates:
   - "--pull"
-  - "--label=org.label-schema.schema-version=1.0"
-  - "--label=org.label-schema.version={{ .Version }}"
-  - "--label=org.label-schema.name={{ .ProjectName }}"
+  - "--label=org.opencontainers.image.version={{ .Version }}"
+  - "--label=org.opencontainers.image.title={{ .ProjectName }}"
 
 nfpms:
 - vendor: EditorConfig

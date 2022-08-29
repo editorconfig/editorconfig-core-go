@@ -1,5 +1,107 @@
 # Change log
 
+## v2.4.5 - 2022-06-18
+
+- Bump Go version to 1.17 in the go.mod
+- Upgrade go.pkg.in/ini.v1 from 1.66.4 to 1.66.6
+- Upgrade github.com/google/go-cmp from 0.5.7 to 0.5.8
+
+## v2.4.4 - 2022-03-17
+
+- Upgrade gopkg.in/ini.v1 from 1.53 to 1.66.4;
+- Upgrade github.com/google/go-cmp from 0.5.6 to 0.5.7;
+- Upgrade golang.org/x/mod from 0.5.0 to 0.5.1.
+
+## v2.4.3 - 2021-09-21
+
+- Upgrade go-cmp v0.5.6
+  ([#110](https://github.com/editorconfig/editorconfig-core-go/pull/110));
+- Upgrade go-ini v1.63.2;
+- Upgrade x/mod v0.5.0
+  ([#111](https://github.com/editorconfig/editorconfig-core-go/pull/111));
+- Fix problems spotted by golangci-lint
+  ([#115](https://github.com/editorconfig/editorconfig-core-go/pull/115));
+
+## v2.4.2 - 2021-03-21
+
+- Upgrade google/go-cmp v0.5.5
+  ([#105](https://github.com/editorconfig/editorconfig-core-go/pull/105));
+- Upgrade x/mod v0.4.2
+  ([#106](https://github.com/editorconfig/editorconfig-core-go/pull/106)).
+
+## v2.4.1 - 2021-02-25
+
+- Fix for Go 1.16 os.IsNotExist wrapping
+  ([#102](https://github.com/editorconfig/editorconfig-core-go/pull/102)).
+
+## v2.4.0 - 2021-02-22
+
+- Fix new core-test
+  ([#100](https://github.com/editorconfig/editorconfig-core-go/pull/100));
+- Upgrade github CI versions
+  ([#99](https://github.com/editorconfig/editorconfig-core-go/pull/99));
+- Upgrade x/mod v0.4.1
+  ([#98](https://github.com/editorconfig/editorconfig-core-go/pull/98));
+- Fix goreleaser deprecations
+  ([#97](https://github.com/editorconfig/editorconfig-core-go/pull/97)).
+
+## v2.3.10 - 2021-02-05
+
+- Upgrade core-test
+  ([#93](https://github.com/editorconfig/editorconfig-core-go/pull/93));
+- Upgrade x/mod v0.4.0
+  ([#94](https://github.com/editorconfig/editorconfig-core-go/pull/94));
+- Upgrade golangci-lint to v1.34
+  ([#95](https://github.com/editorconfig/editorconfig-core-go/pull/95)).
+
+## v2.3.9 - 2020-11-28
+
+- Fix path separator on Windows
+  ([#69](https://github.com/editorconfig/editorconfig-core-go/pull/69));
+- Upgrade go-cmp v0.5.4
+  ([#91](https://github.com/editorconfig/editorconfig-core-go/pull/91)).
+
+## v2.3.8 - 2020-10-17
+
+- Feat more tests
+  ([#83](https://github.com/editorconfig/editorconfig-core-go/pull/83));
+- Upgrade go-ini v1.61.0
+  ([#84](https://github.com/editorconfig/editorconfig-core-go/pull/84));
+- Upgrade go-ini v1.62.0
+  ([#85](https://github.com/editorconfig/editorconfig-core-go/pull/85)).
+
+## v2.3.7 - 2020-09-05
+
+- Upgrade go-ini v1.60.2, and go-cmp v0.5.2
+  ([#81](https://github.com/editorconfig/editorconfig-core-go/pull/81)).
+
+## v2.3.6 - 2020-08-25
+
+- Use goerr113 linter
+  ([#77](https://github.com/editorconfig/editorconfig-core-go/pull/77));
+- Upgrade go-ini v1.60.0
+  ([#78](https://github.com/editorconfig/editorconfig-core-go/pull/78));
+- Upgrade go-ini v1.60.1
+  ([#79](https://github.com/editorconfig/editorconfig-core-go/pull/79)).
+
+## v2.3.5 - 2020-08-20
+
+- Upgrade go-cmp v0.5.1
+  ([#73](https://github.com/editorconfig/editorconfig-core-go/pull/73));
+- Replace custom GitHub Action with official GolangCI Lint
+  ([#74](https://github.com/editorconfig/editorconfig-core-go/pull/74));
+- Upgrade go-ini v1.58.0
+  ([#75](https://github.com/editorconfig/editorconfig-core-go/pull/75)).
+
+## v2.3.4 - 2020-06-22
+
+- Wrap errors using Go 1.13 syntax
+  ([#61](https://github.com/editorconfig/editorconfig-core-go/pull/61));
+- Upgrade base Docker image
+  ([#68](https://github.com/editorconfig/editorconfig-core-go/pull/68));
+- Upgrade go-ini v1.57.0, go-cmp v0.5.0
+  ([#70](https://github.com/editorconfig/editorconfig-core-go/pull/70)).
+
 ## v2.3.3 - 2020-05-19
 
 - Using goreleaser

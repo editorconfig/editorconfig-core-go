@@ -1,10 +1,12 @@
-package editorconfig
+package editorconfig // nolint: testpackage
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
+	"testing/iotest"
 
 	"github.com/editorconfig/editorconfig-core-go/v2/internal/assert"
 )
@@ -14,6 +16,8 @@ const (
 )
 
 func testParse(t *testing.T, ec *Editorconfig) {
+	t.Helper()
+
 	assert.Equal(t, true, ec.Root)
 	assert.Equal(t, 3, len(ec.Definitions))
 
@@ -49,7 +53,7 @@ func TestParseFile(t *testing.T) {
 	testParse(t, ec)
 }
 
-func TestParseBytes(t *testing.T) {
+func TestParseBytes(t *testing.T) { // nolint: paralleltest
 	data, err := ioutil.ReadFile(testFile)
 	assert.Nil(t, err)
 
@@ -59,7 +63,7 @@ func TestParseBytes(t *testing.T) {
 	testParse(t, ec)
 }
 
-func TestParseReader(t *testing.T) {
+func TestParseReader(t *testing.T) { // nolint: paralleltest
 	f, err := os.Open(testFile)
 	assert.Nil(t, err)
 
@@ -69,6 +73,16 @@ func TestParseReader(t *testing.T) {
 	assert.Nil(t, err)
 
 	testParse(t, ec)
+}
+
+func TestParseReaderTimeoutError(t *testing.T) { // nolint: paralleltest
+	f, err := os.Open(testFile)
+	assert.Nil(t, err)
+
+	defer f.Close()
+
+	_, err = Parse(iotest.TimeoutReader(f))
+	assert.Equal(t, true, errors.Is(err, iotest.ErrTimeout))
 }
 
 func TestGetDefinition(t *testing.T) {
@@ -93,7 +107,7 @@ func TestGetDefinition(t *testing.T) {
 	assert.Equal(t, EndOfLineLf, def.EndOfLine)
 }
 
-func TestWrite(t *testing.T) {
+func TestWrite(t *testing.T) { // nolint: paralleltest
 	ec, err := ParseFile(testFile)
 	if err != nil {
 		t.Errorf("Couldn't parse file: %v", err)
@@ -101,7 +115,7 @@ func TestWrite(t *testing.T) {
 
 	tempFile := filepath.Join(os.TempDir(), ".editorconfig")
 
-	f, err := os.OpenFile(tempFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(tempFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0o644)
 	assert.Nil(t, err)
 
 	defer func() {

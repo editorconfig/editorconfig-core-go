@@ -1,5 +1,5 @@
 ![Build Status](https://github.com/editorconfig/editorconfig-core-go/workflows/.github/workflows/main.yml/badge.svg)
-[![GoDoc](https://godoc.org/github.com/editorconfig/editorconfig-core-go?status.svg)](https://godoc.org/github.com/editorconfig/editorconfig-core-go)
+[![Go Reference](https://pkg.go.dev/badge/github.com/editorconfig/editorconfig-core-go/v2.svg)](https://pkg.go.dev/github.com/editorconfig/editorconfig-core-go/v2)
 [![Go Report Card](https://goreportcard.com/badge/github.com/editorconfig/editorconfig-core-go)](https://goreportcard.com/report/github.com/editorconfig/editorconfig-core-go)
 
 # Editorconfig Core Go
@@ -9,10 +9,11 @@ A [Editorconfig][editorconfig] file parser and manipulator for Go.
 ## Missing features
 
 - escaping comments in values, probably in [go-ini/ini](https://github.com/go-ini/ini)
+- [adjacent nested braces](https://github.com/editorconfig/editorconfig-core-test/pull/44)
 
 ## Installing
 
-We recommend the use of Go 1.13+ modules for this package.
+We recommend the use of Go 1.17+ modules for this package. Lower versions, such as 1.13, should be fine.
 
 Import by the same path. The package name you will use to access it is
 `editorconfig`.
