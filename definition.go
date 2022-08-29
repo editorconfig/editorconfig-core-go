@@ -137,7 +137,7 @@ func (d *Definition) merge(md *Definition) {
 }
 
 // InsertToIniFile writes the definition into a ini file.
-func (d *Definition) InsertToIniFile(iniFile *ini.File) { // nolint: funlen,gocognit,cyclop
+func (d *Definition) InsertToIniFile(iniFile *ini.File) { //nolint:funlen,gocognit,cyclop
 	iniSec := iniFile.Section(d.Selector)
 
 	for k, v := range d.Raw {
@@ -188,7 +188,7 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) { // nolint: funlen,goco
 			v = d.IndentSize
 		}
 
-		iniSec.NewKey(k, v) // nolint: errcheck
+		iniSec.NewKey(k, v) //nolint:errcheck
 	}
 
 	if _, ok := d.Raw["indent_size"]; !ok {
@@ -198,19 +198,19 @@ func (d *Definition) InsertToIniFile(iniFile *ini.File) { // nolint: funlen,goco
 		case ok && tabWidth == UnsetValue:
 			// do nothing
 		case d.TabWidth > 0:
-			iniSec.NewKey("indent_size", strconv.Itoa(d.TabWidth)) // nolint: errcheck
+			iniSec.NewKey("indent_size", strconv.Itoa(d.TabWidth)) //nolint:errcheck
 		case d.IndentStyle == IndentStyleTab && (d.version == "" || semver.Compare(d.version, "v0.9.0") >= 0):
-			iniSec.NewKey("indent_size", IndentStyleTab) // nolint: errcheck
+			iniSec.NewKey("indent_size", IndentStyleTab) //nolint:errcheck
 		}
 	}
 
 	if _, ok := d.Raw["tab_width"]; !ok {
 		if d.IndentSize == UnsetValue {
-			iniSec.NewKey("tab_width", d.IndentSize) // nolint: errcheck
+			iniSec.NewKey("tab_width", d.IndentSize) //nolint:errcheck
 		} else {
 			_, err := strconv.Atoi(d.IndentSize)
 			if err == nil {
-				iniSec.NewKey("tab_width", d.Raw["indent_size"]) // nolint: errcheck
+				iniSec.NewKey("tab_width", d.Raw["indent_size"]) //nolint:errcheck
 			}
 		}
 	}

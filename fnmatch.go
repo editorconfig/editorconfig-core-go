@@ -33,7 +33,7 @@ func FnmatchCase(pattern, name string) (bool, error) {
 	return r.MatchString(name), nil
 }
 
-func translate(pattern string) string { // nolint: funlen,gocognit,gocyclo,cyclop,maintidx
+func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop,maintidx
 	index := 0
 	pat := []rune(pattern)
 	length := len(pat)
@@ -81,7 +81,7 @@ func translate(pattern string) string { // nolint: funlen,gocognit,gocyclo,cyclo
 		case '?':
 			result.WriteString(fmt.Sprintf("[^%s]", pathSeparator))
 		case '[':
-			if inBrackets { // nolint: nestif
+			if inBrackets { //nolint:nestif
 				result.WriteString("\\[")
 			} else {
 				hasSlash := false

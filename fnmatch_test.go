@@ -1,4 +1,4 @@
-package editorconfig // nolint: testpackage
+package editorconfig //nolint:testpackage
 
 import (
 	"testing"

@@ -22,7 +22,7 @@ type Config struct {
 }
 
 // Load loads definition of a given file.
-func (config *Config) Load(filename string) (*Definition, error) { // nolint: funlen
+func (config *Config) Load(filename string) (*Definition, error) { //nolint:funlen
 	// idiomatic go allows empty struct
 	if config.Parser == nil {
 		config.Parser = new(SimpleParser)
