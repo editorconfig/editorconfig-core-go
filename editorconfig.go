@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/hashicorp/go-multierror"
 	"gopkg.in/ini.v1"
 )
 
@@ -56,8 +57,9 @@ type Editorconfig struct {
 }
 
 // newEditorconfig builds the configuration from an INI file.
-func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
+func newEditorconfig(iniFile *ini.File) (*Editorconfig, error, error) {
 	editorConfig := &Editorconfig{}
+	var warning error
 
 	// Consider mixed-case values for true and false.
 	rootKey := iniFile.Section(ini.DefaultSection).Key("root")
@@ -74,7 +76,7 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 		raw := make(map[string]string)
 
 		if err := iniSection.MapTo(&definition); err != nil {
-			return nil, fmt.Errorf("error mapping current section: %w", err)
+			return nil, warning, fmt.Errorf("error mapping current section: %w", err)
 		}
 
 		// Shallow copy all the properties
@@ -86,13 +88,14 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error) {
 		definition.Selector = sectionStr
 
 		if err := definition.normalize(); err != nil {
-			return nil, fmt.Errorf("normalization error: %w", err)
+			// Append those error(s) into the warning
+			warning = multierror.Append(warning, err)
 		}
 
 		editorConfig.Definitions = append(editorConfig.Definitions, definition)
 	}
 
-	return editorConfig, nil
+	return editorConfig, warning, nil
 }
 
 // GetDefinitionForFilename returns a definition for the given filename.
@@ -210,6 +213,21 @@ func Parse(r io.Reader) (*Editorconfig, error) {
 		return nil, fmt.Errorf("cannot load ini file: %w", err)
 	}
 
+	ec, warning, err := newEditorconfig(iniFile)
+	if warning != nil {
+		err = multierror.Append(warning)
+	}
+
+	return ec, err
+}
+
+// ParseGraceful parses from a reader with warnings not treated as a fatal error.
+func ParseGraceful(r io.Reader) (*Editorconfig, error, error) {
+	iniFile, err := ini.Load(r)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot load ini file: %w", err)
+	}
+
 	return newEditorconfig(iniFile)
 }
 
@@ -222,7 +240,12 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 		return nil, fmt.Errorf("cannot load ini file: %w", err)
 	}
 
-	return newEditorconfig(iniFile)
+	ec, warning, err := newEditorconfig(iniFile)
+	if warning != nil {
+		err = multierror.Append(warning)
+	}
+
+	return ec, err
 }
 
 // ParseFile parses from a file.
@@ -234,13 +257,17 @@ func ParseFile(path string) (*Editorconfig, error) {
 		return nil, fmt.Errorf("cannot load ini file: %w", err)
 	}
 
-	return newEditorconfig(iniFile)
+	ec, warning, err := newEditorconfig(iniFile)
+	if warning != nil {
+		err = multierror.Append(warning)
+	}
+
+	return ec, err
 }
 
-// GetDefinitionForFilename given a filename, searches
-// for .editorconfig files, starting from the file folder,
-// walking through the previous folders, until it reaches a
-// folder with `root = true`, and returns the right editorconfig
+// GetDefinitionForFilename given a filename, searches for .editorconfig files,
+// starting from the file folder, walking through the previous folders, until
+// it reaches a folder with `root = true`, and returns the right editorconfig
 // definition for the given file.
 func GetDefinitionForFilename(filename string) (*Definition, error) {
 	config := new(Config)
@@ -248,15 +275,40 @@ func GetDefinitionForFilename(filename string) (*Definition, error) {
 	return config.Load(filename)
 }
 
+// GetDefinitionForFilenameGraceful given a filename, searches for
+// .editorconfig files, starting from the file folder, walking through the
+// previous folders, until it reaches a folder with `root = true`, and returns
+// the right editorconfig definition for the given file.
+//
+// In case of non-fatal errors, a multierror warning is return as well.
+func GetDefinitionForFilenameGracefuGracefull(filename string) (*Definition, error, error) {
+	config := new(Config)
+
+	return config.LoadGraceful(filename)
+}
+
 // GetDefinitionForFilenameWithConfigname given a filename and a configname,
-// searches for configname files, starting from the file folder,
-// walking through the previous folders, until it reaches a
-// folder with `root = true`, and returns the right editorconfig
-// definition for the given file.
+// searches for configname files, starting from the file folder, walking
+// through the previous folders, until it reaches a folder with `root = true`,
+// and returns the right editorconfig definition for the given file.
 func GetDefinitionForFilenameWithConfigname(filename string, configname string) (*Definition, error) {
 	config := &Config{
 		Name: configname,
 	}
 
 	return config.Load(filename)
+}
+
+// GetDefinitionForFilenameWithConfignameGraceful given a filename and a
+// configname, searches for configname files, starting from the file folder,
+// walking through the previous folders, until it reaches a folder with `root =
+// true`, and returns the right editorconfig definition for the given file.
+//
+// In case of non-fatal errors, a multierror warning is return as well.
+func GetDefinitionForFilenameWithConfignameGraceful(filename string, configname string) (*Definition, error, error) {
+	config := &Config{
+		Name: configname,
+	}
+
+	return config.LoadGraceful(filename)
 }

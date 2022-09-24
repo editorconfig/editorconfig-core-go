@@ -40,8 +40,9 @@ func main() {
 	}
 
 	config := &editorconfig.Config{
-		Name:    configName,
-		Version: configVersion,
+		Name:     configName,
+		Version:  configVersion,
+		Graceful: false,
 	}
 
 	if len(rest) > 1 {

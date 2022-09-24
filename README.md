@@ -24,7 +24,7 @@ import "github.com/editorconfig/editorconfig-core-go/v2"
 
 ## Usage
 
-### Parse from file
+### Parse from a file
 
 ```go
 fp, err := os.Open("path/to/.editorconfig")
@@ -36,6 +36,26 @@ defer fp.Close()
 editorConfig, err := editorconfig.Parse(fp)
 if err != nil {
 	log.Fatal(err)
+}
+```
+
+### Graceful parsing from a file
+
+```
+fp, err := os.Open("path/to/.editorconfig")
+if err != nil {
+	log.Fatal(err)
+}
+defer fp.Close()
+
+editorConfig, warning, err := editorconfig.ParseGraceful(fp)
+if err != nil {
+	log.Fatal(err)
+}
+
+// Log the warning(s) encountered while reading the editorconfig file
+if warning != nil {
+	log.Print(warning)
 }
 ```
 
