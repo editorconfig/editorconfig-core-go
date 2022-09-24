@@ -30,7 +30,7 @@ func (config *Config) Load(filename string) (*Definition, error) {
 		err = multierror.Append(err, warning)
 	}
 
-	return definition, err
+	return definition, err //nolint:wrapcheck
 }
 
 // Load loads definition of a given file with warnings and error.
@@ -67,6 +67,7 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 	}
 
 	var warning error
+
 	dir := filename
 	for dir != filepath.Dir(dir) {
 		dir = filepath.Dir(dir)
@@ -81,7 +82,7 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 				continue
 			}
 
-			return nil, warning, fmt.Errorf("cannot parse the ini file %q: %w", ecFile, err)
+			return nil, nil, fmt.Errorf("cannot parse the ini file %q: %w", ecFile, err)
 		}
 
 		// give it the current config.
@@ -94,7 +95,7 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 
 		def, err := ec.GetDefinitionForFilename(relativeFilename)
 		if err != nil {
-			return nil, warning, fmt.Errorf("cannot get definition for %q: %w", relativeFilename, err)
+			return nil, nil, fmt.Errorf("cannot get definition for %q: %w", relativeFilename, err)
 		}
 
 		definition.merge(def)
@@ -104,5 +105,5 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 		}
 	}
 
-	return definition, warning, nil
+	return definition, warning, nil //nolint:wrapcheck
 }

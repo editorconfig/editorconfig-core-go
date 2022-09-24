@@ -59,6 +59,7 @@ type Editorconfig struct {
 // newEditorconfig builds the configuration from an INI file.
 func newEditorconfig(iniFile *ini.File) (*Editorconfig, error, error) {
 	editorConfig := &Editorconfig{}
+
 	var warning error
 
 	// Consider mixed-case values for true and false.
@@ -95,7 +96,7 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error, error) {
 		editorConfig.Definitions = append(editorConfig.Definitions, definition)
 	}
 
-	return editorConfig, warning, nil
+	return editorConfig, warning, nil //nolint:wrapcheck
 }
 
 // GetDefinitionForFilename returns a definition for the given filename.
@@ -218,7 +219,7 @@ func Parse(r io.Reader) (*Editorconfig, error) {
 		err = multierror.Append(warning)
 	}
 
-	return ec, err
+	return ec, err //nolint:wrapcheck
 }
 
 // ParseGraceful parses from a reader with warnings not treated as a fatal error.
@@ -245,7 +246,7 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 		err = multierror.Append(warning)
 	}
 
-	return ec, err
+	return ec, err //nolint:wrapcheck
 }
 
 // ParseFile parses from a file.
@@ -262,7 +263,7 @@ func ParseFile(path string) (*Editorconfig, error) {
 		err = multierror.Append(warning)
 	}
 
-	return ec, err
+	return ec, err //nolint:wrapcheck
 }
 
 // GetDefinitionForFilename given a filename, searches for .editorconfig files,

@@ -7,8 +7,9 @@ import (
 	"testing"
 	"testing/iotest"
 
-	"github.com/editorconfig/editorconfig-core-go/v2/internal/assert"
 	"github.com/hashicorp/go-multierror"
+
+	"github.com/editorconfig/editorconfig-core-go/v2/internal/assert"
 )
 
 const (
@@ -166,7 +167,7 @@ func TestPublicTestDefinitionForFilenameWithConfigname(t *testing.T) {
 
 	def, warning, err := GetDefinitionForFilenameWithConfignameGraceful("testdata/root/src/dummy.go", "a.ini")
 
-	if merr, ok := warning.(*multierror.Error); ok {
+	if merr, ok := warning.(*multierror.Error); ok { //nolint:errorlint
 		// 3 errors are expected
 		assert.Equal(t, 3, len(merr.Errors))
 	}

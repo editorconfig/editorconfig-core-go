@@ -45,8 +45,10 @@ func (d *Definition) normalize() error {
 	if ok && trimTrailingWhitespace != UnsetValue {
 		trim, err := strconv.ParseBool(trimTrailingWhitespace)
 		if err != nil {
-
-			result = multierror.Append(result, fmt.Errorf("trim_trailing_whitespace=%s is not an acceptable value. %w", trimTrailingWhitespace, err))
+			result = multierror.Append(
+				result,
+				fmt.Errorf("trim_trailing_whitespace=%s is not an acceptable value. %w", trimTrailingWhitespace, err),
+			)
 		} else {
 			d.TrimTrailingWhitespace = &trim
 		}
@@ -56,7 +58,10 @@ func (d *Definition) normalize() error {
 	if ok && insertFinalNewline != UnsetValue {
 		insert, err := strconv.ParseBool(insertFinalNewline)
 		if err != nil {
-			result = multierror.Append(result, fmt.Errorf("insert_final_newline=%s is not an acceptable value. %w", insertFinalNewline, err))
+			result = multierror.Append(
+				result,
+				fmt.Errorf("insert_final_newline=%s is not an acceptable value. %w", insertFinalNewline, err),
+			)
 		} else {
 			d.InsertFinalNewline = &insert
 		}
@@ -80,7 +85,7 @@ func (d *Definition) normalize() error {
 		d.TabWidth = num
 	}
 
-	return result
+	return result //nolint:wrapcheck
 }
 
 // merge the parent definition into the child definition.

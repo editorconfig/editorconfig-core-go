@@ -18,7 +18,7 @@ func (parser *SimpleParser) ParseIni(filename string) (*Editorconfig, error) {
 		err = multierror.Append(err, warning)
 	}
 
-	return ec, err
+	return ec, err //nolint:wrapcheck
 }
 
 // ParseIni calls go-ini's Load on the file and keep warnings in a separate error.
