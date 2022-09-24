@@ -35,7 +35,7 @@ func NewDefinition(config Config) (*Definition, error) {
 
 // normalize fixes some values to their lowercase value.
 func (d *Definition) normalize() error {
-	var result error
+	var result *multierror.Error
 
 	d.Charset = strings.ToLower(d.Charset)
 	d.EndOfLine = strings.ToLower(d.Raw["end_of_line"])
@@ -85,7 +85,7 @@ func (d *Definition) normalize() error {
 		d.TabWidth = num
 	}
 
-	return result //nolint:wrapcheck
+	return result.ErrorOrNil()
 }
 
 // merge the parent definition into the child definition.

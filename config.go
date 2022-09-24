@@ -40,7 +40,7 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 		config.Parser = new(SimpleParser)
 	}
 
-	filename, err := filepath.Abs(filename)
+	absFilename, err := filepath.Abs(filename)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot get absolute path for %q: %w", filename, err)
 	}
@@ -66,9 +66,9 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 		definition.version = version
 	}
 
-	var warning error
+	var warning *multierror.Error
 
-	dir := filename
+	dir := absFilename
 	for dir != filepath.Dir(dir) {
 		dir = filepath.Dir(dir)
 
@@ -88,7 +88,7 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 		// give it the current config.
 		ec.config = config
 
-		relativeFilename := filename
+		relativeFilename := absFilename
 		if len(dir) < len(relativeFilename) {
 			relativeFilename = relativeFilename[len(dir):]
 		}
@@ -105,5 +105,5 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 		}
 	}
 
-	return definition, warning, nil //nolint:wrapcheck
+	return definition, warning.ErrorOrNil(), nil
 }

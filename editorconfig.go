@@ -77,7 +77,7 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error, error) {
 		raw := make(map[string]string)
 
 		if err := iniSection.MapTo(&definition); err != nil {
-			return nil, warning, fmt.Errorf("error mapping current section: %w", err)
+			return nil, nil, fmt.Errorf("error mapping current section: %w", err)
 		}
 
 		// Shallow copy all the properties
