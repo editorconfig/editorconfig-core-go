@@ -27,11 +27,11 @@ func NewCachedParser() *CachedParser {
 // ParseIni parses the given filename to a Definition and caches the result.
 func (parser *CachedParser) ParseIni(filename string) (*Editorconfig, error) {
 	ec, warning, err := parser.ParseIniGraceful(filename)
-	if warning != nil {
-		err = multierror.Append(err, warning)
+	if err != nil {
+		return nil, err
 	}
 
-	return ec, err //nolint:wrapcheck
+	return ec, warning
 }
 
 // ParseIniGraceful parses the given filename to a Definition and caches the result.
@@ -53,6 +53,7 @@ func (parser *CachedParser) ParseIniGraceful(filename string) (*Editorconfig, er
 		}
 
 		var warn error
+
 		ec, warn, err = newEditorconfig(iniFile)
 		if err != nil {
 			return nil, nil, fmt.Errorf("error creating config: %w", err)
@@ -65,7 +66,7 @@ func (parser *CachedParser) ParseIniGraceful(filename string) (*Editorconfig, er
 		parser.editorconfigs[filename] = ec
 	}
 
-	return ec, warning.ErrorOrNil(), nil
+	return ec, warning.ErrorOrNil(), nil //nolint:wrapcheck
 }
 
 // FnmatchCase calls the module's FnmatchCase and caches the parsed selector.

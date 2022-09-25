@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/hashicorp/go-multierror"
 	"gopkg.in/ini.v1"
 )
 
@@ -14,11 +13,11 @@ type SimpleParser struct{}
 // ParseInit calls go-ini's Load on the file.
 func (parser *SimpleParser) ParseIni(filename string) (*Editorconfig, error) {
 	ec, warning, err := parser.ParseIniGraceful(filename)
-	if warning != nil {
-		err = multierror.Append(err, warning)
+	if err != nil {
+		return nil, err
 	}
 
-	return ec, err //nolint:wrapcheck
+	return ec, warning
 }
 
 // ParseIni calls go-ini's Load on the file and keep warnings in a separate error.

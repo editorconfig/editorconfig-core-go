@@ -85,7 +85,7 @@ func (d *Definition) normalize() error {
 		d.TabWidth = num
 	}
 
-	return result.ErrorOrNil()
+	return result.ErrorOrNil() //nolint:wrapcheck
 }
 
 // merge the parent definition into the child definition.

@@ -105,5 +105,5 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 		}
 	}
 
-	return definition, warning.ErrorOrNil(), nil
+	return definition, warning.ErrorOrNil(), nil //nolint:wrapcheck
 }
