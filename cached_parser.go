@@ -5,6 +5,7 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/hashicorp/go-multierror"
 	"gopkg.in/ini.v1"
 )
 
@@ -25,29 +26,47 @@ func NewCachedParser() *CachedParser {
 
 // ParseIni parses the given filename to a Definition and caches the result.
 func (parser *CachedParser) ParseIni(filename string) (*Editorconfig, error) {
+	ec, warning, err := parser.ParseIniGraceful(filename)
+	if err != nil {
+		return nil, err
+	}
+
+	return ec, warning
+}
+
+// ParseIniGraceful parses the given filename to a Definition and caches the result.
+func (parser *CachedParser) ParseIniGraceful(filename string) (*Editorconfig, error, error) {
+	var warning *multierror.Error
+
 	ec, ok := parser.editorconfigs[filename]
 	if !ok {
 		fp, err := os.Open(filename)
 		if err != nil {
-			return nil, fmt.Errorf("error opening %q: %w", filename, err)
+			return nil, nil, fmt.Errorf("error opening %q: %w", filename, err)
 		}
 
 		defer fp.Close()
 
 		iniFile, err := ini.Load(fp)
 		if err != nil {
-			return nil, fmt.Errorf("error loading ini file %q: %w", filename, err)
+			return nil, nil, fmt.Errorf("error loading ini file %q: %w", filename, err)
 		}
 
-		ec, err = newEditorconfig(iniFile)
+		var warn error
+
+		ec, warn, err = newEditorconfig(iniFile)
 		if err != nil {
-			return nil, fmt.Errorf("error creating config: %w", err)
+			return nil, nil, fmt.Errorf("error creating config: %w", err)
+		}
+
+		if warn != nil {
+			warning = multierror.Append(warning, warn)
 		}
 
 		parser.editorconfigs[filename] = ec
 	}
 
-	return ec, nil
+	return ec, warning.ErrorOrNil(), nil //nolint:wrapcheck
 }
 
 // FnmatchCase calls the module's FnmatchCase and caches the parsed selector.

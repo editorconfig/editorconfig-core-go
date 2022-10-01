@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/hashicorp/go-multierror"
 	"golang.org/x/mod/semver"
 	"gopkg.in/ini.v1"
 )
@@ -34,6 +35,8 @@ func NewDefinition(config Config) (*Definition, error) {
 
 // normalize fixes some values to their lowercase value.
 func (d *Definition) normalize() error {
+	var result *multierror.Error
+
 	d.Charset = strings.ToLower(d.Charset)
 	d.EndOfLine = strings.ToLower(d.Raw["end_of_line"])
 	d.IndentStyle = strings.ToLower(d.Raw["indent_style"])
@@ -42,20 +45,26 @@ func (d *Definition) normalize() error {
 	if ok && trimTrailingWhitespace != UnsetValue {
 		trim, err := strconv.ParseBool(trimTrailingWhitespace)
 		if err != nil {
-			return fmt.Errorf("trim_trailing_whitespace=%s is not an acceptable value. %w", trimTrailingWhitespace, err)
+			result = multierror.Append(
+				result,
+				fmt.Errorf("trim_trailing_whitespace=%s is not an acceptable value. %w", trimTrailingWhitespace, err),
+			)
+		} else {
+			d.TrimTrailingWhitespace = &trim
 		}
-
-		d.TrimTrailingWhitespace = &trim
 	}
 
 	insertFinalNewline, ok := d.Raw["insert_final_newline"]
 	if ok && insertFinalNewline != UnsetValue {
 		insert, err := strconv.ParseBool(insertFinalNewline)
 		if err != nil {
-			return fmt.Errorf("insert_final_newline=%s is not an acceptable value. %w", insertFinalNewline, err)
+			result = multierror.Append(
+				result,
+				fmt.Errorf("insert_final_newline=%s is not an acceptable value. %w", insertFinalNewline, err),
+			)
+		} else {
+			d.InsertFinalNewline = &insert
 		}
-
-		d.InsertFinalNewline = &insert
 	}
 
 	// tab_width from Raw
@@ -63,10 +72,10 @@ func (d *Definition) normalize() error {
 	if ok && tabWidth != UnsetValue {
 		num, err := strconv.Atoi(tabWidth)
 		if err != nil {
-			return fmt.Errorf("tab_width=%s is not an acceptable value. %w", tabWidth, err)
+			result = multierror.Append(result, fmt.Errorf("tab_width=%s is not an acceptable value. %w", tabWidth, err))
+		} else {
+			d.TabWidth = num
 		}
-
-		d.TabWidth = num
 	}
 
 	// tab_width defaults to indent_size:
@@ -76,7 +85,7 @@ func (d *Definition) normalize() error {
 		d.TabWidth = num
 	}
 
-	return nil
+	return result.ErrorOrNil() //nolint:wrapcheck
 }
 
 // merge the parent definition into the child definition.

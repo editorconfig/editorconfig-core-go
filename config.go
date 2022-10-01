@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/hashicorp/go-multierror"
 	"golang.org/x/mod/semver"
 )
 
@@ -15,22 +16,33 @@ var ErrInvalidVersion = errors.New("invalid semantic version")
 
 // Config holds the configuration.
 type Config struct {
-	Path    string
-	Name    string
-	Version string
-	Parser  Parser
+	Path     string
+	Name     string
+	Version  string
+	Parser   Parser
+	Graceful bool
 }
 
 // Load loads definition of a given file.
-func (config *Config) Load(filename string) (*Definition, error) { //nolint:funlen
+func (config *Config) Load(filename string) (*Definition, error) {
+	definition, warning, err := config.LoadGraceful(filename)
+	if warning != nil {
+		err = multierror.Append(err, warning)
+	}
+
+	return definition, err //nolint:wrapcheck
+}
+
+// Load loads definition of a given file with warnings and error.
+func (config *Config) LoadGraceful(filename string) (*Definition, error, error) { //nolint:funlen
 	// idiomatic go allows empty struct
 	if config.Parser == nil {
 		config.Parser = new(SimpleParser)
 	}
 
-	filename, err := filepath.Abs(filename)
+	absFilename, err := filepath.Abs(filename)
 	if err != nil {
-		return nil, fmt.Errorf("cannot get absolute path for %q: %w", filename, err)
+		return nil, nil, fmt.Errorf("cannot get absolute path for %q: %w", filename, err)
 	}
 
 	ecFile := config.Name
@@ -48,36 +60,42 @@ func (config *Config) Load(filename string) (*Definition, error) { //nolint:funl
 		}
 
 		if ok := semver.IsValid(version); !ok {
-			return nil, fmt.Errorf("version %s error: %w", config.Version, ErrInvalidVersion)
+			return nil, nil, fmt.Errorf("version %s error: %w", config.Version, ErrInvalidVersion)
 		}
 
 		definition.version = version
 	}
 
-	dir := filename
+	var warning *multierror.Error
+
+	dir := absFilename
 	for dir != filepath.Dir(dir) {
 		dir = filepath.Dir(dir)
 
-		ec, err := config.Parser.ParseIni(filepath.Join(dir, ecFile))
+		ec, warn, err := config.Parser.ParseIniGraceful(filepath.Join(dir, ecFile))
+		if warn != nil {
+			warning = multierror.Append(warning, warn)
+		}
+
 		if err != nil {
 			if errors.Is(err, os.ErrNotExist) {
 				continue
 			}
 
-			return nil, fmt.Errorf("cannot parse the ini file %q: %w", ecFile, err)
+			return nil, nil, fmt.Errorf("cannot parse the ini file %q: %w", ecFile, err)
 		}
 
 		// give it the current config.
 		ec.config = config
 
-		relativeFilename := filename
+		relativeFilename := absFilename
 		if len(dir) < len(relativeFilename) {
 			relativeFilename = relativeFilename[len(dir):]
 		}
 
 		def, err := ec.GetDefinitionForFilename(relativeFilename)
 		if err != nil {
-			return nil, fmt.Errorf("cannot get definition for %q: %w", relativeFilename, err)
+			return nil, nil, fmt.Errorf("cannot get definition for %q: %w", relativeFilename, err)
 		}
 
 		definition.merge(def)
@@ -87,5 +105,5 @@ func (config *Config) Load(filename string) (*Definition, error) { //nolint:funl
 		}
 	}
 
-	return definition, nil
+	return definition, warning.ErrorOrNil(), nil //nolint:wrapcheck
 }
