@@ -1,5 +1,12 @@
 # Change log
 
+## v2.5.0 - 2022-10-01
+
+- Feature add a graceful parser that reports errors in the .editorconfig file as warnings
+- Bump Go version to 1.18 in the go.mod
+- Bump go.pkg.in/ini.v1 to 1.67.0
+- Bump google/go-cmp to 0.5.9
+
 ## v2.4.5 - 2022-06-18
 
 - Bump Go version to 1.17 in the go.mod
