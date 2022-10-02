@@ -1,5 +1,9 @@
 # Change log
 
+## v2.5.1 - 2022-10-02
+
+- Fix typo in new method
+
 ## v2.5.0 - 2022-10-01
 
 - Feature add a graceful parser that reports errors in the .editorconfig file as warnings
