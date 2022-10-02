@@ -282,7 +282,7 @@ func GetDefinitionForFilename(filename string) (*Definition, error) {
 // the right editorconfig definition for the given file.
 //
 // In case of non-fatal errors, a multierror warning is return as well.
-func GetDefinitionForFilenameGracefuGracefull(filename string) (*Definition, error, error) {
+func GetDefinitionForFilenameGraceful(filename string) (*Definition, error, error) {
 	config := new(Config)
 
 	return config.LoadGraceful(filename)
