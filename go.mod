@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/google/go-cmp v0.5.9
 	github.com/hashicorp/go-multierror v1.1.1
-	golang.org/x/mod v0.5.1
+	golang.org/x/mod v0.6.0
 	gopkg.in/ini.v1 v1.67.0
 )
 
