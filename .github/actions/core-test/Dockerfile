@@ -1,10 +1,13 @@
-FROM golang:buster
+FROM golang:bullseye
 
-RUN set -xe && \
-    apt-get update -y && \
+SHELL [ "/bin/bash", "-x", "-e", "-c" ]
+
+ARG DEBIAN_FRONTEND=noninteraactive
+RUN apt-get update -y && \
     apt-get install -qy --no-install-recommends \
         cmake \
         git \
-        make
+        make && \
+    git config --system --add safe.directory '*'
 
-CMD [ "make", "submodule", "test-core", "test-skipped" ]
+CMD [ "make", "test-core", "test-skipped" ]
