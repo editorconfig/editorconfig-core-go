@@ -1,13 +1,12 @@
 FROM golang:bullseye
 
-RUN set -xe && \
-    apt-get update -y && \
-    apt-get install -qy --no-install-recommends \
+RUN set -xe \
+ && apt-get update -y \
+ &&  apt-get install -qy --no-install-recommends \
         cmake \
         git \
-        make \
- && git config --global --add safe.directory /github/workspace
+        make
 
 VOLUME /github/workspace
 
-CMD [ "make", "submodule", "test-core", "test-skipped" ]
+CMD [ "make", "test-core", "test-skipped" ]
