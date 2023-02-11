@@ -1,4 +1,4 @@
-FROM golang:buster
+FROM golang:bullseye
 
 RUN set -xe && \
     apt-get update -y && \

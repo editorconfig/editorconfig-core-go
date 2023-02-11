@@ -25,5 +25,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
+
+      - run: git config --global --add safe.directory /github/workspace
+
       - name: core test
         uses: ./.github/actions/core-test
