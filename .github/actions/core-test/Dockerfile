@@ -1,6 +1,6 @@
 FROM golang:bullseye
 
-SHELL [ "/bin/ash", "-x", "-e" ]
+SHELL [ "/bin/bash", "-x", "-e" ]
 
 RUN set -xe && \
     apt-get update -y && \
