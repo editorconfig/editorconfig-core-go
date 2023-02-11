@@ -7,6 +7,7 @@ RUN apt-get update -y && \
     apt-get install -qy --no-install-recommends \
         cmake \
         git \
-        make
+        make && \
+    git config --system --add safe.directory '*'
 
 CMD [ "make", "test-core", "test-skipped" ]
