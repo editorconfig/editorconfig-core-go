@@ -1,11 +1,11 @@
 package editorconfig
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/hashicorp/go-multierror"
 	"golang.org/x/mod/semver"
 	"gopkg.in/ini.v1"
 )
@@ -35,7 +35,7 @@ func NewDefinition(config Config) (*Definition, error) {
 
 // normalize fixes some values to their lowercase value.
 func (d *Definition) normalize() error {
-	var result *multierror.Error
+	var result error
 
 	d.Charset = strings.ToLower(d.Charset)
 	d.EndOfLine = strings.ToLower(d.Raw["end_of_line"])
@@ -45,7 +45,7 @@ func (d *Definition) normalize() error {
 	if ok && trimTrailingWhitespace != UnsetValue {
 		trim, err := strconv.ParseBool(trimTrailingWhitespace)
 		if err != nil {
-			result = multierror.Append(
+			result = errors.Join(
 				result,
 				fmt.Errorf("trim_trailing_whitespace=%s is not an acceptable value. %w", trimTrailingWhitespace, err),
 			)
@@ -58,7 +58,7 @@ func (d *Definition) normalize() error {
 	if ok && insertFinalNewline != UnsetValue {
 		insert, err := strconv.ParseBool(insertFinalNewline)
 		if err != nil {
-			result = multierror.Append(
+			result = errors.Join(
 				result,
 				fmt.Errorf("insert_final_newline=%s is not an acceptable value. %w", insertFinalNewline, err),
 			)
@@ -72,7 +72,7 @@ func (d *Definition) normalize() error {
 	if ok && tabWidth != UnsetValue {
 		num, err := strconv.Atoi(tabWidth)
 		if err != nil {
-			result = multierror.Append(result, fmt.Errorf("tab_width=%s is not an acceptable value. %w", tabWidth, err))
+			result = errors.Join(result, fmt.Errorf("tab_width=%s is not an acceptable value. %w", tabWidth, err))
 		} else {
 			d.TabWidth = num
 		}
@@ -85,7 +85,7 @@ func (d *Definition) normalize() error {
 		d.TabWidth = num
 	}
 
-	return result.ErrorOrNil() //nolint:wrapcheck
+	return result //nolint:wrapcheck
 }
 
 // merge the parent definition into the child definition.
