@@ -66,7 +66,7 @@ func (parser *CachedParser) ParseIniGraceful(filename string) (*Editorconfig, er
 		parser.editorconfigs[filename] = ec
 	}
 
-	return ec, warning, nil //nolint:wrapcheck
+	return ec, warning, nil
 }
 
 // FnmatchCase calls the module's FnmatchCase and caches the parsed selector.

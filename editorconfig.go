@@ -96,7 +96,7 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error, error) {
 		editorConfig.Definitions = append(editorConfig.Definitions, definition)
 	}
 
-	return editorConfig, warning, nil //nolint:wrapcheck
+	return editorConfig, warning, nil
 }
 
 // GetDefinitionForFilename returns a definition for the given filename.
@@ -219,7 +219,7 @@ func Parse(r io.Reader) (*Editorconfig, error) {
 		err = errors.Join(warning, err)
 	}
 
-	return ec, err //nolint:wrapcheck
+	return ec, err
 }
 
 // ParseGraceful parses from a reader with warnings not treated as a fatal error.
@@ -246,7 +246,7 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 		err = errors.Join(warning, err)
 	}
 
-	return ec, err //nolint:wrapcheck
+	return ec, err
 }
 
 // ParseFile parses from a file.
@@ -263,7 +263,7 @@ func ParseFile(path string) (*Editorconfig, error) {
 		err = errors.Join(warning, err)
 	}
 
-	return ec, err //nolint:wrapcheck
+	return ec, err
 }
 
 // GetDefinitionForFilename given a filename, searches for .editorconfig files,

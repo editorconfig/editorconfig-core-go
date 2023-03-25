@@ -29,7 +29,7 @@ func (config *Config) Load(filename string) (*Definition, error) {
 		err = errors.Join(err, warning)
 	}
 
-	return definition, err //nolint:wrapcheck
+	return definition, err
 }
 
 // Load loads definition of a given file with warnings and error.
@@ -104,5 +104,5 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 		}
 	}
 
-	return definition, warning, nil //nolint:wrapcheck
+	return definition, warning, nil
 }
