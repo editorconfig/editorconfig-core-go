@@ -1,5 +1,9 @@
 # Change log
 
+## v2.5.2 - 2023-04-19
+
+- Bump golang.org/x/mod from 0.5.1 to 0.10.0
+
 ## v2.5.1 - 2022-10-02
 
 - Fix typo in new method
