@@ -41,7 +41,7 @@ if err != nil {
 
 ### Graceful parsing from a file
 
-```
+```go
 fp, err := os.Open("path/to/.editorconfig")
 if err != nil {
 	log.Fatal(err)
@@ -144,7 +144,7 @@ go test -v ./...
 
 To run the [integration tests](https://github.com/editorconfig/editorconfig-core-test):
 
-```
+```bash
 make test-core
 ```
 
