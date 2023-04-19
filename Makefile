@@ -21,7 +21,7 @@ test-core: editorconfig
 		cmake ..
 	cd core-test; \
 		ctest \
-		-E "^(octothorpe_in_value|(backslashed_)*semicolon_of_hash_in_property)$$" \
+		-E "^(octothorpe_in_value|(backslashed_)*semicolon_or_hash_in_property)$$" \
 		--output-on-failure \
 		.
 
