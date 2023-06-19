@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/google/go-cmp v0.5.9
-	golang.org/x/mod v0.10.0
+	golang.org/x/mod v0.11.0
 	gopkg.in/ini.v1 v1.67.0
 )
 
