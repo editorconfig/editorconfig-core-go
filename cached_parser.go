@@ -1,11 +1,11 @@
 package editorconfig
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"regexp"
 
-	"github.com/hashicorp/go-multierror"
 	"gopkg.in/ini.v1"
 )
 
@@ -36,7 +36,7 @@ func (parser *CachedParser) ParseIni(filename string) (*Editorconfig, error) {
 
 // ParseIniGraceful parses the given filename to a Definition and caches the result.
 func (parser *CachedParser) ParseIniGraceful(filename string) (*Editorconfig, error, error) {
-	var warning *multierror.Error
+	var warning error
 
 	ec, ok := parser.editorconfigs[filename]
 	if !ok {
@@ -60,13 +60,13 @@ func (parser *CachedParser) ParseIniGraceful(filename string) (*Editorconfig, er
 		}
 
 		if warn != nil {
-			warning = multierror.Append(warning, warn)
+			warning = errors.Join(warning, warn)
 		}
 
 		parser.editorconfigs[filename] = ec
 	}
 
-	return ec, warning.ErrorOrNil(), nil //nolint:wrapcheck
+	return ec, warning, nil
 }
 
 // FnmatchCase calls the module's FnmatchCase and caches the parsed selector.

@@ -4,10 +4,9 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"testing/iotest"
-
-	"github.com/hashicorp/go-multierror"
 
 	"github.com/editorconfig/editorconfig-core-go/v2/internal/assert"
 )
@@ -167,10 +166,10 @@ func TestPublicTestDefinitionForFilenameWithConfigname(t *testing.T) {
 
 	def, warning, err := GetDefinitionForFilenameWithConfignameGraceful("testdata/root/src/dummy.go", "a.ini")
 
-	if merr, ok := warning.(*multierror.Error); ok { //nolint:errorlint
-		// 3 errors are expected
-		assert.Equal(t, 3, len(merr.Errors))
-	}
+	// Checking that we've got three warnings by splitting the lines
+	message := warning.Error()
+	merr := strings.Split(message, "\n")
+	assert.Equal(t, 3, len(merr))
 
 	assert.Nil(t, err)
 	assert.Equal(t, "5", def.IndentSize)

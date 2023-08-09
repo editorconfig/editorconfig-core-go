@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/hashicorp/go-multierror"
 	"golang.org/x/mod/semver"
 )
 
@@ -27,10 +26,10 @@ type Config struct {
 func (config *Config) Load(filename string) (*Definition, error) {
 	definition, warning, err := config.LoadGraceful(filename)
 	if warning != nil {
-		err = multierror.Append(err, warning)
+		err = errors.Join(err, warning)
 	}
 
-	return definition, err //nolint:wrapcheck
+	return definition, err
 }
 
 // Load loads definition of a given file with warnings and error.
@@ -66,7 +65,7 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 		definition.version = version
 	}
 
-	var warning *multierror.Error
+	var warning error
 
 	dir := absFilename
 	for dir != filepath.Dir(dir) {
@@ -74,7 +73,7 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 
 		ec, warn, err := config.Parser.ParseIniGraceful(filepath.Join(dir, ecFile))
 		if warn != nil {
-			warning = multierror.Append(warning, warn)
+			warning = errors.Join(warning, warn)
 		}
 
 		if err != nil {
@@ -105,5 +104,5 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 		}
 	}
 
-	return definition, warning.ErrorOrNil(), nil //nolint:wrapcheck
+	return definition, warning, nil
 }
