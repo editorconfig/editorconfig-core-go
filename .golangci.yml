@@ -8,6 +8,7 @@ linters-settings:
         allow:
         - $gostd
         - "github.com/editorconfig/editorconfig-core-go/v2"
+        - "github.com/hashicorp/go-multierror"
         deny: []
       internal:
         files:
