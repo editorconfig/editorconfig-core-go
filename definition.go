@@ -17,14 +17,14 @@ import (
 type Definition struct {
 	Selector string `ini:"-" json:"-"`
 
-	Charset                string            `ini:"charset" json:"charset,omitempty"`
+	Charset                string            `ini:"charset"      json:"charset,omitempty"`
 	IndentStyle            string            `ini:"indent_style" json:"indent_style,omitempty"`
-	IndentSize             string            `ini:"indent_size" json:"indent_size,omitempty"`
-	TabWidth               int               `ini:"-" json:"-"`
-	EndOfLine              string            `ini:"end_of_line" json:"end_of_line,omitempty"`
-	TrimTrailingWhitespace *bool             `ini:"-" json:"-"`
-	InsertFinalNewline     *bool             `ini:"-" json:"-"`
-	Raw                    map[string]string `ini:"-" json:"-"`
+	IndentSize             string            `ini:"indent_size"  json:"indent_size,omitempty"`
+	TabWidth               int               `ini:"-"            json:"-"`
+	EndOfLine              string            `ini:"end_of_line"  json:"end_of_line,omitempty"`
+	TrimTrailingWhitespace *bool             `ini:"-"            json:"-"`
+	InsertFinalNewline     *bool             `ini:"-"            json:"-"`
+	Raw                    map[string]string `ini:"-"            json:"-"`
 	version                string
 }
 

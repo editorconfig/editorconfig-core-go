@@ -1,4 +1,22 @@
 linters-settings:
+  depguard:
+    rules:
+      main:
+        files:
+        - "!**/internal/**/*.go"
+        - "!$test"
+        allow:
+        - $gostd
+        - "github.com/editorconfig/editorconfig-core-go/v2"
+        - "github.com/hashicorp/go-multierror"
+        deny: []
+      internal:
+        files:
+        - "**/internal/**/*.go"
+        - "!$test"
+        allow:
+        - $gostd
+        - "github.com/google/go-cmp"
   gci:
     sections:
       - standard
