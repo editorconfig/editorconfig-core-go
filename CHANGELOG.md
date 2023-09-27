@@ -1,5 +1,12 @@
 # Change log
 
+## v2.6.0 - 2023-09-27
+
+- Fix path matching on Windows. The spec says that:
+
+  > Backslashes (`\\`) are not allowed as path separators (even on Windows).
+- Replace go-multierror with Go 1.20 errors.Join
+
 ## v2.5.2 - 2023-04-19
 
 - Bump golang.org/x/mod from 0.5.1 to 0.10.0
