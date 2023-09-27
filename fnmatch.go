@@ -3,7 +3,6 @@ package editorconfig
 import (
 	"fmt"
 	"regexp"
-	"runtime"
 	"strconv"
 	"strings"
 )
@@ -33,7 +32,7 @@ func FnmatchCase(pattern, name string) (bool, error) {
 	return r.MatchString(name), nil
 }
 
-func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop,maintidx
+func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop
 	index := 0
 	pat := []rune(pattern)
 	length := len(pat)
@@ -51,10 +50,6 @@ func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop,
 	doubleRight := len(findDoubleRightBrackets.FindAllString(pattern, -1))
 	matchesBraces := left+doubleLeft == right+doubleRight
 	pathSeparator := "/"
-
-	if runtime.GOOS == "windows" {
-		pathSeparator = regexp.QuoteMeta("\\")
-	}
 
 	for index < length {
 		r := pat[index]
