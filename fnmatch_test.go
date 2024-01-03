@@ -25,6 +25,7 @@ func TestTranslate(t *testing.T) {
 		{"{e,\\},f}", `(?:e|}|f)`},
 		{"{a,{b,c}}", `(?:a|(?:b|c))`},
 		{"{{a,b},c}", `(?:(?:a|b)|c)`},
+		{"{a/**,b/**}", `(?:a.*|b.*)`},
 	}
 
 	for _, test := range tests {
