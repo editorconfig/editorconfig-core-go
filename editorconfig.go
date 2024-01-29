@@ -35,9 +35,9 @@ const (
 const (
 	CharsetLatin1  = "latin1"
 	CharsetUTF8    = "utf-8"
+	CharsetUTF8BOM = "utf-8-bom"
 	CharsetUTF16BE = "utf-16be"
 	CharsetUTF16LE = "utf-16le"
-	CharsetUTF8BOM = "utf-8 bom"
 )
 
 // Limit for section name.
