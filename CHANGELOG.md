@@ -1,5 +1,11 @@
 # Change log
 
+## v2.6.1 - 2024-01-29
+
+- Fix utf-8-bom contains a dash
+- Bump google/go-cmp to 0.6.0
+- Bump x/mod to 0.14.0
+
 ## v2.6.0 - 2023-09-27
 
 - Fix path matching on Windows. The spec says that:
