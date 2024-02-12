@@ -33,11 +33,13 @@ const (
 
 // Charset possible values.
 const (
-	CharsetLatin1  = "latin1"
-	CharsetUTF8    = "utf-8"
-	CharsetUTF8BOM = "utf-8-bom"
-	CharsetUTF16BE = "utf-16be"
-	CharsetUTF16LE = "utf-16le"
+	CharsetLatin1     = "latin1"
+	CharsetUTF16BE    = "utf-16be"
+	CharsetUTF16BEBOM = "utf-16be-bom"
+	CharsetUTF16LE    = "utf-16le"
+	CharsetUTF16LEBOM = "utf-16le-bom"
+	CharsetUTF8       = "utf-8"
+	CharsetUTF8BOM    = "utf-8-bom"
 )
 
 // Limit for section name.
