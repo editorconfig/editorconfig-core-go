@@ -31,6 +31,7 @@ func TestTranslate(t *testing.T) {
 		test := test
 		t.Run(test.pattern, func(t *testing.T) {
 			t.Parallel()
+
 			result := translate(test.pattern)
 			if result != test.expected {
 				t.Errorf("%s != %s", test.expected, result)

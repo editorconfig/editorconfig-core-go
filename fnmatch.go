@@ -32,7 +32,7 @@ func FnmatchCase(pattern, name string) (bool, error) {
 	return r.MatchString(name), nil
 }
 
-func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop
+func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop,maintidx
 	index := 0
 	pat := []rune(pattern)
 	length := len(pat)
@@ -60,6 +60,7 @@ func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop
 			p := index
 			if p < length && pat[p] == '*' {
 				result.WriteString(".*")
+
 				index++
 			} else {
 				result.WriteString(fmt.Sprintf("[^%s]*", pathSeparator))
@@ -87,25 +88,32 @@ func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop
 					if pat[p] == ']' && pat[p-1] != '\\' {
 						break
 					}
+
 					res.WriteRune(pat[p])
+
 					if pat[p] == '/' && pat[p-1] != '\\' {
 						hasSlash = true
 
 						break
 					}
+
 					p++
 				}
+
 				if hasSlash {
 					result.WriteString("\\[" + res.String())
+
 					index = p + 1
 				} else {
-					inBrackets = true
 					if index < length && pat[index] == '!' || pat[index] == '^' {
-						index++
 						result.WriteString("[^")
+
+						index++
 					} else {
 						result.WriteRune('[')
 					}
+
+					inBrackets = true
 				}
 			}
 		case ']':
@@ -113,6 +121,7 @@ func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop
 				result.WriteString("\\]")
 			} else {
 				result.WriteRune(r)
+
 				inBrackets = false
 			}
 		case '{':
@@ -132,6 +141,7 @@ func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop
 
 					break
 				}
+
 				p++
 			}
 
@@ -163,6 +173,7 @@ func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop
 				index = p + 1
 			case matchesBraces:
 				result.WriteString("(?:")
+
 				braceLevel++
 			default:
 				result.WriteString("\\{")
