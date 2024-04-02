@@ -1,5 +1,11 @@
 # Change log
 
+## v2.6.2 - 2024-04-02
+
+- Fix paths on Windows
+- Bump golangci-lint to 1.56
+- Bump x/mod to 0.16.0
+
 ## v2.6.1 - 2024-01-29
 
 - Fix utf-8-bom contains a dash
