@@ -92,6 +92,9 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 			relativeFilename = relativeFilename[len(dir):]
 		}
 
+		// turn any Windows-y filename into the standard forward slash ones.
+		relativeFilename = filepath.ToSlash(relativeFilename)
+
 		def, err := ec.GetDefinitionForFilename(relativeFilename)
 		if err != nil {
 			return nil, nil, fmt.Errorf("cannot get definition for %q: %w", relativeFilename, err)
