@@ -32,6 +32,7 @@ linters:
     - execinquery
     - exhaustruct
     - gomnd
+    - mnd
     - tagliatelle
     - typecheck
     - varnamelen

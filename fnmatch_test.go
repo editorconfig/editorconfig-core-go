@@ -28,7 +28,6 @@ func TestTranslate(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.pattern, func(t *testing.T) {
 			t.Parallel()
 
