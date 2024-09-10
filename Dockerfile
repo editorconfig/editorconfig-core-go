@@ -1,4 +1,4 @@
-FROM linuxkit/ca-certificates:v0.8
+FROM alpine:3.20
 
 COPY editorconfig /usr/local/bin/
 
