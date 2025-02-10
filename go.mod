@@ -6,7 +6,7 @@ toolchain go1.23.0
 
 require (
 	github.com/google/go-cmp v0.6.0
-	golang.org/x/mod v0.22.0
+	golang.org/x/mod v0.23.0
 	gopkg.in/ini.v1 v1.67.0
 )
 
