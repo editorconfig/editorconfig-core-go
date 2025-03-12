@@ -1,5 +1,11 @@
 # Change log
 
+## v2.6.3 - 2025-03-12
+
+- Targets Go 1.22
+- Bump x/mod to 0.23
+- Bump google/go-cmp to 0.7.0
+
 ## v2.6.2 - 2024-04-02
 
 - Fix paths on Windows

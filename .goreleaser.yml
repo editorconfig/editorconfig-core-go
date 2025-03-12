@@ -1,3 +1,5 @@
+version: 2
+
 project_name: editorconfig-core-go
 
 before:
@@ -21,7 +23,8 @@ archives:
   - editorconfig
   format_overrides:
   - goos: windows
-    format: zip
+    formats:
+      - zip
   files:
   - none*
 
@@ -57,7 +60,7 @@ signs:
 - artifacts: checksum
 
 snapshot:
-  name_template: "{{ .Tag }}-development"
+  version_template: "{{ .Tag }}-development"
 
 changelog:
   sort: asc
