@@ -9,6 +9,8 @@ linters-settings:
         - $gostd
         - "github.com/editorconfig/editorconfig-core-go/v2"
         - "github.com/hashicorp/go-multierror"
+        - "golang.org/x/mod/semver"
+        - "gopkg.in/ini.v1"
         deny: []
       internal:
         files:
@@ -29,11 +31,10 @@ linters-settings:
 linters:
   enable-all: true
   disable:
-    - execinquery
     - exhaustruct
-    - gomnd
     - mnd
     - tagliatelle
+    - tenv
     - typecheck
     - varnamelen
   fast: false
