@@ -12,7 +12,7 @@ type Parser interface {
 	// a joined errors and might be ignored in some cases.
 	ParseIniGraceful(filename string) (*Editorconfig, error, error)
 
-	// FnmatchCase takes a pattern, a filename, and tells wether the given filename
+	// FnmatchCase takes a pattern, a filename, and tells whether the given filename
 	// matches the globbing pattern.
 	FnmatchCase(pattern string, filename string) (bool, error)
 }
