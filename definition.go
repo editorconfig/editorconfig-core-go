@@ -33,6 +33,79 @@ func NewDefinition(config Config) (*Definition, error) {
 	return config.Load(config.Path)
 }
 
+// InsertToIniFile writes the definition into a ini file.
+func (d *Definition) InsertToIniFile(iniFile *ini.File) { //nolint:funlen,gocognit,cyclop
+	iniSec := iniFile.Section(d.Selector)
+
+	for k, v := range d.Raw {
+		switch k {
+		case "insert_final_newline":
+			if d.InsertFinalNewline != nil {
+				v = strconv.FormatBool(*d.InsertFinalNewline)
+			} else {
+				insertFinalNewline, ok := d.Raw["insert_final_newline"]
+				if !ok {
+					break
+				}
+
+				v = strings.ToLower(insertFinalNewline)
+			}
+		case "trim_trailing_whitespace":
+			if d.TrimTrailingWhitespace != nil {
+				v = strconv.FormatBool(*d.TrimTrailingWhitespace)
+			} else {
+				trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]
+				if !ok {
+					break
+				}
+
+				v = strings.ToLower(trimTrailingWhitespace)
+			}
+		case "charset":
+			v = d.Charset
+		case "end_of_line":
+			v = d.EndOfLine
+		case "indent_style":
+			v = d.IndentStyle
+		case "tab_width":
+			tabWidth, ok := d.Raw["tab_width"]
+			if ok && tabWidth == UnsetValue {
+				v = tabWidth
+			} else {
+				v = strconv.Itoa(d.TabWidth)
+			}
+		case "indent_size":
+			v = d.IndentSize
+		}
+
+		iniSec.NewKey(k, v) //nolint:errcheck
+	}
+
+	if _, ok := d.Raw["indent_size"]; !ok {
+		tabWidth, ok := d.Raw["tab_width"]
+
+		switch {
+		case ok && tabWidth == UnsetValue:
+			// do nothing
+		case d.TabWidth > 0:
+			iniSec.NewKey("indent_size", strconv.Itoa(d.TabWidth)) //nolint:errcheck
+		case d.IndentStyle == IndentStyleTab && (d.version == "" || semver.Compare(d.version, "v0.9.0") >= 0):
+			iniSec.NewKey("indent_size", IndentStyleTab) //nolint:errcheck
+		}
+	}
+
+	if _, ok := d.Raw["tab_width"]; !ok {
+		if d.IndentSize == UnsetValue {
+			iniSec.NewKey("tab_width", d.IndentSize) //nolint:errcheck
+		} else {
+			_, err := strconv.Atoi(d.IndentSize)
+			if err == nil {
+				iniSec.NewKey("tab_width", d.Raw["indent_size"]) //nolint:errcheck
+			}
+		}
+	}
+}
+
 // normalize fixes some values to their lowercase value.
 func (d *Definition) normalize() error {
 	var result error
@@ -125,79 +198,6 @@ func (d *Definition) merge(md *Definition) {
 	for k, v := range md.Raw {
 		if _, ok := d.Raw[k]; !ok {
 			d.Raw[k] = v
-		}
-	}
-}
-
-// InsertToIniFile writes the definition into a ini file.
-func (d *Definition) InsertToIniFile(iniFile *ini.File) { //nolint:funlen,gocognit,cyclop
-	iniSec := iniFile.Section(d.Selector)
-
-	for k, v := range d.Raw {
-		switch k {
-		case "insert_final_newline":
-			if d.InsertFinalNewline != nil {
-				v = strconv.FormatBool(*d.InsertFinalNewline)
-			} else {
-				insertFinalNewline, ok := d.Raw["insert_final_newline"]
-				if !ok {
-					break
-				}
-
-				v = strings.ToLower(insertFinalNewline)
-			}
-		case "trim_trailing_whitespace":
-			if d.TrimTrailingWhitespace != nil {
-				v = strconv.FormatBool(*d.TrimTrailingWhitespace)
-			} else {
-				trimTrailingWhitespace, ok := d.Raw["trim_trailing_whitespace"]
-				if !ok {
-					break
-				}
-
-				v = strings.ToLower(trimTrailingWhitespace)
-			}
-		case "charset":
-			v = d.Charset
-		case "end_of_line":
-			v = d.EndOfLine
-		case "indent_style":
-			v = d.IndentStyle
-		case "tab_width":
-			tabWidth, ok := d.Raw["tab_width"]
-			if ok && tabWidth == UnsetValue {
-				v = tabWidth
-			} else {
-				v = strconv.Itoa(d.TabWidth)
-			}
-		case "indent_size":
-			v = d.IndentSize
-		}
-
-		iniSec.NewKey(k, v) //nolint:errcheck
-	}
-
-	if _, ok := d.Raw["indent_size"]; !ok {
-		tabWidth, ok := d.Raw["tab_width"]
-
-		switch {
-		case ok && tabWidth == UnsetValue:
-			// do nothing
-		case d.TabWidth > 0:
-			iniSec.NewKey("indent_size", strconv.Itoa(d.TabWidth)) //nolint:errcheck
-		case d.IndentStyle == IndentStyleTab && (d.version == "" || semver.Compare(d.version, "v0.9.0") >= 0):
-			iniSec.NewKey("indent_size", IndentStyleTab) //nolint:errcheck
-		}
-	}
-
-	if _, ok := d.Raw["tab_width"]; !ok {
-		if d.IndentSize == UnsetValue {
-			iniSec.NewKey("tab_width", d.IndentSize) //nolint:errcheck
-		} else {
-			_, err := strconv.Atoi(d.IndentSize)
-			if err == nil {
-				iniSec.NewKey("tab_width", d.Raw["indent_size"]) //nolint:errcheck
-			}
 		}
 	}
 }

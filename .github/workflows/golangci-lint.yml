@@ -24,4 +24,4 @@ jobs:
         env:
           GOTOOLCHAIN: local
         with:
-          version: v1.64
+          version: v2.1

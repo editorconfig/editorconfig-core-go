@@ -39,9 +39,11 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 		config.Parser = new(SimpleParser)
 	}
 
+	empty := (*Definition)(nil)
+
 	absFilename, err := filepath.Abs(filename)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot get absolute path for %q: %w", filename, err)
+		return empty, nil, fmt.Errorf("cannot get absolute path for %q: %w", filename, err)
 	}
 
 	ecFile := config.Name
@@ -59,7 +61,7 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 		}
 
 		if ok := semver.IsValid(version); !ok {
-			return nil, nil, fmt.Errorf("version %s error: %w", config.Version, ErrInvalidVersion)
+			return empty, nil, fmt.Errorf("version %s error: %w", config.Version, ErrInvalidVersion)
 		}
 
 		definition.version = version
@@ -81,7 +83,7 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 				continue
 			}
 
-			return nil, nil, fmt.Errorf("cannot parse the ini file %q: %w", ecFile, err)
+			return empty, nil, fmt.Errorf("cannot parse the ini file %q: %w", ecFile, err)
 		}
 
 		// give it the current config.
@@ -97,7 +99,7 @@ func (config *Config) LoadGraceful(filename string) (*Definition, error, error) 
 
 		def, err := ec.GetDefinitionForFilename(relativeFilename)
 		if err != nil {
-			return nil, nil, fmt.Errorf("cannot get definition for %q: %w", relativeFilename, err)
+			return empty, nil, fmt.Errorf("cannot get definition for %q: %w", relativeFilename, err)
 		}
 
 		definition.merge(def)

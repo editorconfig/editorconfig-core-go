@@ -38,25 +38,27 @@ func (parser *CachedParser) ParseIni(filename string) (*Editorconfig, error) {
 func (parser *CachedParser) ParseIniGraceful(filename string) (*Editorconfig, error, error) {
 	var warning error
 
+	empty := (*Editorconfig)(nil)
+
 	ec, ok := parser.editorconfigs[filename]
 	if !ok {
 		fp, err := os.Open(filename)
 		if err != nil {
-			return nil, nil, fmt.Errorf("error opening %q: %w", filename, err)
+			return empty, nil, fmt.Errorf("error opening %q: %w", filename, err)
 		}
 
 		defer fp.Close()
 
 		iniFile, err := ini.Load(fp)
 		if err != nil {
-			return nil, nil, fmt.Errorf("error loading ini file %q: %w", filename, err)
+			return empty, nil, fmt.Errorf("error loading ini file %q: %w", filename, err)
 		}
 
 		var warn error
 
 		ec, warn, err = newEditorconfig(iniFile)
 		if err != nil {
-			return nil, nil, fmt.Errorf("error creating config: %w", err)
+			return empty, nil, fmt.Errorf("error creating config: %w", err)
 		}
 
 		if warn != nil {

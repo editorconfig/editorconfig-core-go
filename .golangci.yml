@@ -1,40 +1,60 @@
-linters-settings:
-  depguard:
-    rules:
-      main:
-        files:
-        - "!**/internal/**/*.go"
-        - "!$test"
-        allow:
-        - $gostd
-        - "github.com/editorconfig/editorconfig-core-go/v2"
-        - "github.com/hashicorp/go-multierror"
-        - "golang.org/x/mod/semver"
-        - "gopkg.in/ini.v1"
-        deny: []
-      internal:
-        files:
-        - "**/internal/**/*.go"
-        - "!$test"
-        allow:
-        - $gostd
-        - "github.com/google/go-cmp"
-  gci:
-    sections:
-      - standard
-      - default
-      - prefix(github.com/editorconfig/editorconfig-core-go)
-  cyclop:
-    max-complexity: 15
-    package-average: 10
-
+version: "2"
 linters:
-  enable-all: true
+  default: all
   disable:
     - exhaustruct
     - mnd
     - tagliatelle
-    - tenv
-    - typecheck
     - varnamelen
-  fast: false
+  settings:
+    cyclop:
+      max-complexity: 15
+      package-average: 10
+    depguard:
+      rules:
+        internal:
+          files:
+            - '**/internal/**/*.go'
+            - '!$test'
+          allow:
+            - $gostd
+            - github.com/google/go-cmp
+        main:
+          files:
+            - '!**/internal/**/*.go'
+            - '!$test'
+          allow:
+            - $gostd
+            - github.com/editorconfig/editorconfig-core-go/v2
+            - github.com/hashicorp/go-multierror
+            - golang.org/x/mod/semver
+            - gopkg.in/ini.v1
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/editorconfig/editorconfig-core-go)
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

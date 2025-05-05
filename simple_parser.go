@@ -22,16 +22,18 @@ func (parser *SimpleParser) ParseIni(filename string) (*Editorconfig, error) {
 
 // ParseIni calls go-ini's Load on the file and keep warnings in a separate error.
 func (parser *SimpleParser) ParseIniGraceful(filename string) (*Editorconfig, error, error) {
+	empty := &Editorconfig{}
+
 	fp, err := os.Open(filename)
 	if err != nil {
-		return nil, nil, err //nolint:wrapcheck
+		return empty, nil, err //nolint:wrapcheck
 	}
 
 	defer fp.Close()
 
 	iniFile, err := ini.Load(fp)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot load %q: %w", filename, err)
+		return empty, nil, fmt.Errorf("cannot load %q: %w", filename, err)
 	}
 
 	return newEditorconfig(iniFile)

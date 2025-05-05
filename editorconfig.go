@@ -76,7 +76,7 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error, error) {
 		raw := make(map[string]string)
 
 		if err := iniSection.MapTo(&definition); err != nil {
-			return nil, nil, fmt.Errorf("error mapping current section: %w", err)
+			return editorConfig, nil, fmt.Errorf("error mapping current section: %w", err)
 		}
 
 		// Shallow copy all the properties
@@ -221,7 +221,7 @@ func Parse(r io.Reader) (*Editorconfig, error) {
 func ParseGraceful(r io.Reader) (*Editorconfig, error, error) {
 	iniFile, err := ini.Load(r)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot load ini file: %w", err)
+		return &Editorconfig{}, nil, fmt.Errorf("cannot load ini file: %w", err)
 	}
 
 	return newEditorconfig(iniFile)
