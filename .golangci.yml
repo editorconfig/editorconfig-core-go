@@ -6,6 +6,7 @@ linters:
     - mnd
     - tagliatelle
     - varnamelen
+    - wsl
   settings:
     cyclop:
       max-complexity: 15
@@ -29,6 +30,10 @@ linters:
             - github.com/hashicorp/go-multierror
             - golang.org/x/mod/semver
             - gopkg.in/ini.v1
+    wsl_v5:
+      allow-first-in-block: true
+      allow-whole-block: false
+      branch-max-lines: 2
   exclusions:
     generated: lax
     presets:

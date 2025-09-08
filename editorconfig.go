@@ -75,7 +75,8 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error, error) {
 		definition := &Definition{}
 		raw := make(map[string]string)
 
-		if err := iniSection.MapTo(&definition); err != nil {
+		err := iniSection.MapTo(&definition)
+		if err != nil {
 			return editorConfig, nil, fmt.Errorf("error mapping current section: %w", err)
 		}
 
@@ -87,7 +88,8 @@ func newEditorconfig(iniFile *ini.File) (*Editorconfig, error, error) {
 		definition.Raw = raw
 		definition.Selector = sectionStr
 
-		if err := definition.normalize(); err != nil {
+		err = definition.normalize()
+		if err != nil {
 			// Append those error(s) into the warning
 			warning = errors.Join(warning, err)
 		}
@@ -156,7 +158,8 @@ func (e *Editorconfig) FnmatchCase(selector string, filename string) (bool, erro
 func (e *Editorconfig) Serialize() ([]byte, error) {
 	buffer := bytes.NewBuffer(nil)
 
-	if err := e.Write(buffer); err != nil {
+	err := e.Write(buffer)
+	if err != nil {
 		return nil, fmt.Errorf("cannot write into buffer: %w", err)
 	}
 
@@ -177,7 +180,8 @@ func (e *Editorconfig) Write(w io.Writer) error {
 		d.InsertToIniFile(iniFile)
 	}
 
-	if _, err := iniFile.WriteTo(w); err != nil {
+	_, err := iniFile.WriteTo(w)
+	if err != nil {
 		return fmt.Errorf("error writing ini file: %w", err)
 	}
 
