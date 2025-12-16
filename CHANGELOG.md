@@ -1,8 +1,14 @@
 # Change log
 
+## v2.6.4 - 2025-12-16
+
+- Target Go 1.24
+- Bump x/mod to 0.31
+- Typos
+
 ## v2.6.3 - 2025-03-12
 
-- Targets Go 1.22
+- Target Go 1.22
 - Bump x/mod to 0.23
 - Bump google/go-cmp to 0.7.0
 
