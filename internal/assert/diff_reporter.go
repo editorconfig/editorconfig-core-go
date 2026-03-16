@@ -1,4 +1,4 @@
-// this code is from the examples
+// Package assert contains code from the examples
 // https://pkg.go.dev/github.com/google/go-cmp/cmp?tab=doc#Reporter
 package assert
 

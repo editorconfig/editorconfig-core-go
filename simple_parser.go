@@ -10,7 +10,7 @@ import (
 // SimpleParser implements the Parser interface but without doing any caching.
 type SimpleParser struct{}
 
-// ParseInit calls go-ini's Load on the file.
+// ParseIni calls go-ini's Load on the file.
 func (parser *SimpleParser) ParseIni(filename string) (*Editorconfig, error) {
 	ec, warning, err := parser.ParseIniGraceful(filename)
 	if err != nil {
@@ -20,7 +20,7 @@ func (parser *SimpleParser) ParseIni(filename string) (*Editorconfig, error) {
 	return ec, warning
 }
 
-// ParseIni calls go-ini's Load on the file and keep warnings in a separate error.
+// ParseIniGraceful calls go-ini's Load on the file and keep warnings in a separate error.
 func (parser *SimpleParser) ParseIniGraceful(filename string) (*Editorconfig, error, error) {
 	empty := &Editorconfig{}
 
