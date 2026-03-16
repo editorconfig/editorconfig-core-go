@@ -32,7 +32,7 @@ func (config *Config) Load(filename string) (*Definition, error) {
 	return definition, err
 }
 
-// Load loads definition of a given file with warnings and error.
+// LoadGraceful loads definition of a given file with warnings and error.
 func (config *Config) LoadGraceful(filename string) (*Definition, error, error) { //nolint:funlen
 	// idiomatic go allows empty struct
 	if config.Parser == nil {

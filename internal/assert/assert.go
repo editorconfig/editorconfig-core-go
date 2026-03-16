@@ -6,7 +6,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func Equal(t *testing.T, x, y interface{}) {
+func Equal(t *testing.T, x, y any) {
 	t.Helper()
 
 	r := DiffReporter{}
@@ -15,7 +15,7 @@ func Equal(t *testing.T, x, y interface{}) {
 	}
 }
 
-func Nil(t *testing.T, x interface{}) {
+func Nil(t *testing.T, x any) {
 	t.Helper()
 
 	Equal(t, x, nil)

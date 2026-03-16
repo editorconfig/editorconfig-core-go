@@ -63,19 +63,19 @@ func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop,
 
 				index++
 			} else {
-				result.WriteString(fmt.Sprintf("[^%s]*", pathSeparator))
+				fmt.Fprintf(&result, "[^%s]*", pathSeparator)
 			}
 		case '/':
 			p := index
 			if p+2 < length && pat[p] == '*' && pat[p+1] == '*' && pat[p+2] == '/' {
-				result.WriteString(fmt.Sprintf("(?:%s|%s.*%s)", pathSeparator, pathSeparator, pathSeparator))
+				fmt.Fprintf(&result, "(?:%s|%s.*%s)", pathSeparator, pathSeparator, pathSeparator)
 
 				index += 3
 			} else {
 				result.WriteRune(r)
 			}
 		case '?':
-			result.WriteString(fmt.Sprintf("[^%s]", pathSeparator))
+			fmt.Fprintf(&result, "[^%s]", pathSeparator)
 		case '[':
 			if inBrackets { //nolint:nestif
 				result.WriteString("\\[")
@@ -167,7 +167,7 @@ func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop,
 				} else {
 					r := translate(inner)
 
-					result.WriteString(fmt.Sprintf("\\{%s\\}", r))
+					fmt.Fprintf(&result, "\\{%s\\}", r)
 				}
 
 				index = p + 1
