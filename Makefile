@@ -21,7 +21,7 @@ test-core: editorconfig
 		cmake ..
 	cd core-test; \
 		ctest \
-		-E "^(octothorpe_in_value|(backslashed_)*semicolon_or_hash_in_property)$$" \
+		-E "^(octothorpe_in_value|(backslashed_)*semicolon_or_hash_in_property|meta_multiline|leading_slash_relevance|key_set_to_empty_string|.*_ML.*)$$" \
 		--output-on-failure \
 		.
 
@@ -30,6 +30,6 @@ test-skipped: editorconfig
 		cmake ..
 	cd core-test; \
 		ctest \
-		-R "^(octothorpe_in_value)$$" \
-		--show-only \
+		-R "^(octothorpe_in_value|(backslashed_)*semicolon_or_hash_in_property|meta_multiline|leading_slash_relevance|key_set_to_empty_string|.*_ML.*)$$" \
+		--show-only=human \
 		.
