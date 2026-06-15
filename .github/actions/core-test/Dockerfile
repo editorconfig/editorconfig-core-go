@@ -1,4 +1,4 @@
-FROM golang:bullseye
+FROM golang:trixie
 
 SHELL [ "/bin/bash", "-x", "-e", "-c" ]
 
