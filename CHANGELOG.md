@@ -1,5 +1,11 @@
 # Change log
 
+## v2.6.5 - 2026-09-16
+
+- Target Go 1.25
+- Bump x/mod to 0.40
+- Bump ini.v1 to 1.67.3
+
 ## v2.6.4 - 2025-12-16
 
 - Target Go 1.24
