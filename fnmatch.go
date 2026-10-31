@@ -32,7 +32,7 @@ func FnmatchCase(pattern, name string) (bool, error) {
 	return r.MatchString(name), nil
 }
 
-func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop,maintidx
+func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop
 	index := 0
 	pat := []rune(pattern)
 	length := len(pat)
@@ -54,6 +54,14 @@ func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop,
 	for index < length {
 		r := pat[index]
 		index++
+
+		if isEscaped {
+			result.WriteString(regexp.QuoteMeta(string(r)))
+
+			isEscaped = false
+
+			continue
+		}
 
 		switch r {
 		case '*':
@@ -180,32 +188,22 @@ func translate(pattern string) string { //nolint:funlen,gocognit,gocyclo,cyclop,
 			}
 		case '}':
 			if braceLevel > 0 {
-				if isEscaped {
-					result.WriteRune('}')
+				result.WriteRune(')')
 
-					isEscaped = false
-				} else {
-					result.WriteRune(')')
-
-					braceLevel--
-				}
+				braceLevel--
 			} else {
 				result.WriteString("\\}")
 			}
 		case ',':
-			if braceLevel == 0 || isEscaped {
+			if braceLevel == 0 {
 				result.WriteRune(r)
 			} else {
 				result.WriteRune('|')
 			}
+		case '\\':
+			isEscaped = true
 		default:
-			if r != '\\' || isEscaped {
-				result.WriteString(regexp.QuoteMeta(string(r)))
-
-				isEscaped = false
-			} else {
-				isEscaped = true
-			}
+			result.WriteString(regexp.QuoteMeta(string(r)))
 		}
 	}
 
