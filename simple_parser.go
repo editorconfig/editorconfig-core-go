@@ -3,8 +3,6 @@ package editorconfig
 import (
 	"fmt"
 	"os"
-
-	"gopkg.in/ini.v1"
 )
 
 // SimpleParser implements the Parser interface but without doing any caching.
@@ -31,7 +29,7 @@ func (parser *SimpleParser) ParseIniGraceful(filename string) (*Editorconfig, er
 
 	defer fp.Close()
 
-	iniFile, err := ini.Load(fp)
+	iniFile, err := loadIni(fp)
 	if err != nil {
 		return empty, nil, fmt.Errorf("cannot load %q: %w", filename, err)
 	}

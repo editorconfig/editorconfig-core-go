@@ -177,3 +177,45 @@ func TestPublicTestDefinitionForFilenameWithConfigname(t *testing.T) {
 	assert.Equal(t, false, *def.InsertFinalNewline)
 	assert.Equal(t, false, *def.TrimTrailingWhitespace)
 }
+
+func TestParseRepeatedBOM(t *testing.T) { //nolint:paralleltest
+	const bom = "\xef\xbb\xbf"
+
+	source := bom + bom + "# editorconfig.org\n\nroot = true\n\n[*.go]\nindent_style = tab\n"
+	path := filepath.Join(t.TempDir(), ".editorconfig")
+	assert.Nil(t, os.WriteFile(path, []byte(source), 0o600))
+
+	tests := []struct {
+		name  string
+		parse func() (*Editorconfig, error)
+	}{
+		{"Parse", func() (*Editorconfig, error) {
+			return Parse(strings.NewReader(source))
+		}},
+		{"ParseGraceful", func() (*Editorconfig, error) {
+			ec, _, err := ParseGraceful(strings.NewReader(source))
+
+			return ec, err
+		}},
+		{"ParseBytes", func() (*Editorconfig, error) {
+			return ParseBytes([]byte(source))
+		}},
+		{"ParseFile", func() (*Editorconfig, error) {
+			return ParseFile(path)
+		}},
+		{"SimpleParser", func() (*Editorconfig, error) {
+			return (&SimpleParser{}).ParseIni(path)
+		}},
+		{"CachedParser", func() (*Editorconfig, error) {
+			return NewCachedParser().ParseIni(path)
+		}},
+	}
+	for _, tt := range tests { //nolint:paralleltest
+		t.Run(tt.name, func(t *testing.T) {
+			ec, err := tt.parse()
+			assert.Nil(t, err)
+			assert.Equal(t, true, ec.Root)
+			assert.Equal(t, 1, len(ec.Definitions))
+		})
+	}
+}
