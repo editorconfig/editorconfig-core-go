@@ -4,6 +4,6 @@ go 1.26.0
 
 require (
 	github.com/google/go-cmp v0.7.0
-	golang.org/x/mod v0.42.0
+	golang.org/x/mod v0.43.0
 	gopkg.in/ini.v1 v1.68.0
 )
