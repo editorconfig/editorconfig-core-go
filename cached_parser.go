@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-
-	"gopkg.in/ini.v1"
 )
 
 // CachedParser implements the Parser interface but caches the definition and
@@ -49,7 +47,7 @@ func (parser *CachedParser) ParseIniGraceful(filename string) (*Editorconfig, er
 
 		defer fp.Close()
 
-		iniFile, err := ini.Load(fp)
+		iniFile, err := loadIni(fp)
 		if err != nil {
 			return empty, nil, fmt.Errorf("error loading ini file %q: %w", filename, err)
 		}

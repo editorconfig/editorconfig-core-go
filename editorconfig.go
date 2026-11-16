@@ -1,6 +1,7 @@
 package editorconfig
 
 import (
+	"bufio"
 	"bytes"
 	"errors"
 	"fmt"
@@ -16,6 +17,8 @@ const (
 	ConfigNameDefault = ".editorconfig"
 	// UnsetValue is the value that unsets a preexisting variable.
 	UnsetValue = "unset"
+
+	utf8BOM = "\xef\xbb\xbf"
 )
 
 // IndentStyle possible values.
@@ -206,9 +209,29 @@ func boolToString(b bool) string {
 	return "false"
 }
 
+// loadIni reads an ini file from r. go-ini removes one byte order mark, so a
+// file that starts with several would fail on the second one.
+func loadIni(r io.Reader) (*ini.File, error) {
+	reader := bufio.NewReader(r)
+
+	for {
+		head, err := reader.Peek(len(utf8BOM))
+		if err != nil || string(head) != utf8BOM {
+			break
+		}
+
+		_, err = reader.Discard(len(utf8BOM))
+		if err != nil {
+			return nil, fmt.Errorf("cannot skip byte order mark: %w", err)
+		}
+	}
+
+	return ini.Load(reader) //nolint:wrapcheck
+}
+
 // Parse parses from a reader.
 func Parse(r io.Reader) (*Editorconfig, error) {
-	iniFile, err := ini.Load(r)
+	iniFile, err := loadIni(r)
 	if err != nil {
 		return nil, fmt.Errorf("cannot load ini file: %w", err)
 	}
@@ -223,7 +246,7 @@ func Parse(r io.Reader) (*Editorconfig, error) {
 
 // ParseGraceful parses from a reader with warnings not treated as a fatal error.
 func ParseGraceful(r io.Reader) (*Editorconfig, error, error) {
-	iniFile, err := ini.Load(r)
+	iniFile, err := loadIni(r)
 	if err != nil {
 		return &Editorconfig{}, nil, fmt.Errorf("cannot load ini file: %w", err)
 	}
@@ -235,7 +258,7 @@ func ParseGraceful(r io.Reader) (*Editorconfig, error, error) {
 //
 // Deprecated: use Parse instead.
 func ParseBytes(data []byte) (*Editorconfig, error) {
-	iniFile, err := ini.Load(data)
+	iniFile, err := loadIni(bytes.NewReader(data))
 	if err != nil {
 		return nil, fmt.Errorf("cannot load ini file: %w", err)
 	}
@@ -252,7 +275,14 @@ func ParseBytes(data []byte) (*Editorconfig, error) {
 //
 // Deprecated: use Parse instead.
 func ParseFile(path string) (*Editorconfig, error) {
-	iniFile, err := ini.Load(path)
+	fp, err := os.Open(path)
+	if err != nil {
+		return nil, fmt.Errorf("cannot load ini file: %w", err)
+	}
+
+	defer fp.Close()
+
+	iniFile, err := loadIni(fp)
 	if err != nil {
 		return nil, fmt.Errorf("cannot load ini file: %w", err)
 	}
